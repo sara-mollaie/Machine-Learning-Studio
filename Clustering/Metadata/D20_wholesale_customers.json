@@ -1,0 +1,431 @@
+{
+    "id": "D20",
+    "name": "Wholesale Customers",
+    "level": "Intermediate",
+    "domain": "Business/Retail",
+    "task": "Clustering",
+    "description": "Find patterns from spending data at wholesale and group similar customers based on annual spending.",
+    "source": "Data Science Dojo",
+    "source_url": "https://code.datasciencedojo.com/datasciencedojo/datasets/tree/master/Wholesale%20Customers",
+    "dataset_statistics": {
+        "rows": 440,
+        "columns": 8,
+        "column_names": [
+            "Channel",
+            "Region",
+            "Fresh",
+            "Milk",
+            "Grocery",
+            "Frozen",
+            "Detergents_Paper",
+            "Delicassen"
+        ],
+        "data_types": {
+            "Channel": "int64",
+            "Region": "int64",
+            "Fresh": "int64",
+            "Milk": "int64",
+            "Grocery": "int64",
+            "Frozen": "int64",
+            "Detergents_Paper": "int64",
+            "Delicassen": "int64"
+        },
+        "missing_values": {
+            "Channel": 0,
+            "Region": 0,
+            "Fresh": 0,
+            "Milk": 0,
+            "Grocery": 0,
+            "Frozen": 0,
+            "Detergents_Paper": 0,
+            "Delicassen": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "Channel": {
+                "count": 440.0,
+                "mean": 1.32,
+                "std": 0.47,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Region": {
+                "count": 440.0,
+                "mean": 2.54,
+                "std": 0.77,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 3.0,
+                "75%": 3.0,
+                "max": 3.0
+            },
+            "Fresh": {
+                "count": 440.0,
+                "mean": 12000.3,
+                "std": 12647.33,
+                "min": 3.0,
+                "25%": 3127.75,
+                "50%": 8504.0,
+                "75%": 16933.75,
+                "max": 112151.0
+            },
+            "Milk": {
+                "count": 440.0,
+                "mean": 5796.27,
+                "std": 7380.38,
+                "min": 55.0,
+                "25%": 1533.0,
+                "50%": 3627.0,
+                "75%": 7190.25,
+                "max": 73498.0
+            },
+            "Grocery": {
+                "count": 440.0,
+                "mean": 7951.28,
+                "std": 9503.16,
+                "min": 3.0,
+                "25%": 2153.0,
+                "50%": 4755.5,
+                "75%": 10655.75,
+                "max": 92780.0
+            },
+            "Frozen": {
+                "count": 440.0,
+                "mean": 3071.93,
+                "std": 4854.67,
+                "min": 25.0,
+                "25%": 742.25,
+                "50%": 1526.0,
+                "75%": 3554.25,
+                "max": 60869.0
+            },
+            "Detergents_Paper": {
+                "count": 440.0,
+                "mean": 2881.49,
+                "std": 4767.85,
+                "min": 3.0,
+                "25%": 256.75,
+                "50%": 816.5,
+                "75%": 3922.0,
+                "max": 40827.0
+            },
+            "Delicassen": {
+                "count": 440.0,
+                "mean": 1524.87,
+                "std": 2820.11,
+                "min": 3.0,
+                "25%": 408.25,
+                "50%": 965.5,
+                "75%": 1820.25,
+                "max": 47943.0
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Fresh",
+            "Milk",
+            "Grocery",
+            "Frozen",
+            "Detergents_Paper",
+            "Delicassen"
+        ],
+        "analysis_only_columns": [
+            "Channel",
+            "Region"
+        ],
+        "excluded_columns": [
+            "Channel",
+            "Region"
+        ]
+    },
+    "preprocessing": {
+        "transformation": "Log Transformation",
+        "transformation_method": "numpy.log1p",
+        "normalization": "MinMaxScaler",
+        "input_features": [
+            "Fresh",
+            "Milk",
+            "Grocery",
+            "Frozen",
+            "Detergents_Paper",
+            "Delicassen"
+        ],
+        "missing_value_method": "Median Imputation"
+    },
+    "k_selection": {
+        "k_range": [
+            2,
+            10
+        ],
+        "best_k_silhouette": 2,
+        "best_k_calinski_harabasz": 2,
+        "best_k_davies_bouldin": 2,
+        "best_k_combined": 2,
+        "candidate_ks": [
+            2,
+            3
+        ],
+        "final_k": 2,
+        "manual_override": true,
+        "metrics_per_k": {
+            "1": {
+                "Inertia": 59.7404,
+                "Silhouette": null,
+                "Calinski-Harabasz": null,
+                "Davies-Bouldin": null
+            },
+            "2": {
+                "Inertia": 40.9726,
+                "Silhouette": 0.3004,
+                "Calinski-Harabasz": 200.63,
+                "Davies-Bouldin": 1.3036
+            },
+            "3": {
+                "Inertia": 34.769,
+                "Silhouette": 0.2579,
+                "Calinski-Harabasz": 156.9285,
+                "Davies-Bouldin": 1.3298
+            },
+            "4": {
+                "Inertia": 30.6699,
+                "Silhouette": 0.2016,
+                "Calinski-Harabasz": 137.7548,
+                "Davies-Bouldin": 1.5341
+            },
+            "5": {
+                "Inertia": 27.8821,
+                "Silhouette": 0.2024,
+                "Calinski-Harabasz": 124.2584,
+                "Davies-Bouldin": 1.4881
+            },
+            "6": {
+                "Inertia": 25.847,
+                "Silhouette": 0.2026,
+                "Calinski-Harabasz": 113.8216,
+                "Davies-Bouldin": 1.411
+            },
+            "7": {
+                "Inertia": 24.0941,
+                "Silhouette": 0.2006,
+                "Calinski-Harabasz": 106.7683,
+                "Davies-Bouldin": 1.4378
+            },
+            "8": {
+                "Inertia": 22.6854,
+                "Silhouette": 0.1966,
+                "Calinski-Harabasz": 100.8057,
+                "Davies-Bouldin": 1.4014
+            },
+            "9": {
+                "Inertia": 21.5803,
+                "Silhouette": 0.1959,
+                "Calinski-Harabasz": 95.2665,
+                "Davies-Bouldin": 1.4144
+            },
+            "10": {
+                "Inertia": 20.5578,
+                "Silhouette": 0.177,
+                "Calinski-Harabasz": 91.063,
+                "Davies-Bouldin": 1.4436
+            }
+        },
+        "combined_ranking": {
+            "2": {
+                "Silhouette": 1.0,
+                "Calinski-Harabasz": 1.0,
+                "Davies-Bouldin": 1.0,
+                "MeanRank": 1.0
+            },
+            "3": {
+                "Silhouette": 2.0,
+                "Calinski-Harabasz": 2.0,
+                "Davies-Bouldin": 2.0,
+                "MeanRank": 2.0
+            },
+            "4": {
+                "Silhouette": 5.0,
+                "Calinski-Harabasz": 3.0,
+                "Davies-Bouldin": 9.0,
+                "MeanRank": 5.67
+            },
+            "5": {
+                "Silhouette": 4.0,
+                "Calinski-Harabasz": 4.0,
+                "Davies-Bouldin": 8.0,
+                "MeanRank": 5.33
+            },
+            "6": {
+                "Silhouette": 3.0,
+                "Calinski-Harabasz": 5.0,
+                "Davies-Bouldin": 4.0,
+                "MeanRank": 4.0
+            },
+            "7": {
+                "Silhouette": 6.0,
+                "Calinski-Harabasz": 6.0,
+                "Davies-Bouldin": 6.0,
+                "MeanRank": 6.0
+            },
+            "8": {
+                "Silhouette": 7.0,
+                "Calinski-Harabasz": 7.0,
+                "Davies-Bouldin": 3.0,
+                "MeanRank": 5.67
+            },
+            "9": {
+                "Silhouette": 8.0,
+                "Calinski-Harabasz": 8.0,
+                "Davies-Bouldin": 5.0,
+                "MeanRank": 7.0
+            },
+            "10": {
+                "Silhouette": 9.0,
+                "Calinski-Harabasz": 9.0,
+                "Davies-Bouldin": 7.0,
+                "MeanRank": 8.33
+            }
+        }
+    },
+    "clustering": {
+        "algorithm": "KMeans",
+        "n_clusters": 2,
+        "random_state": 42,
+        "n_init": 10,
+        "scaler": "MinMaxScaler",
+        "transformation": "Log1p",
+        "input_features": [
+            "Fresh",
+            "Milk",
+            "Grocery",
+            "Frozen",
+            "Detergents_Paper",
+            "Delicassen"
+        ],
+        "cluster_label_column": "ClusterLabel",
+        "cluster_sizes": {
+            "0": 260,
+            "1": 180
+        },
+        "cluster_percentages": {
+            "0": 59.09,
+            "1": 40.91
+        },
+        "cluster_profiles": {
+            "0": {
+                "Fresh": 14163.21,
+                "Milk": 2822.69,
+                "Grocery": 3200.19,
+                "Frozen": 4120.0,
+                "Detergents_Paper": 482.32,
+                "Delicassen": 1343.67
+            },
+            "1": {
+                "Fresh": 8876.09,
+                "Milk": 10091.43,
+                "Grocery": 14813.96,
+                "Frozen": 1558.06,
+                "Detergents_Paper": 6346.97,
+                "Delicassen": 1786.61
+            }
+        },
+        "channel_distribution": {
+            "1": {
+                "0": 254,
+                "1": 44
+            },
+            "2": {
+                "0": 6,
+                "1": 136
+            }
+        },
+        "region_distribution": {
+            "1": {
+                "0": 50,
+                "1": 27
+            },
+            "2": {
+                "0": 28,
+                "1": 19
+            },
+            "3": {
+                "0": 182,
+                "1": 134
+            }
+        },
+        "inertia": 40.97256293020613,
+        "silhouette_score": 0.3004,
+        "ssd": {
+            "total_ssd": 40.9726,
+            "total_sum_squares": 59.7404,
+            "between_cluster_ss": 18.7679,
+            "explained_variance_pct": 31.42,
+            "per_cluster_ssd": {
+                "0": 24.2287,
+                "1": 16.7439
+            },
+            "matches_kmeans_inertia": true
+        }
+    },
+    "model_verification": true,
+    "correlation_matrix": {
+        "Fresh": {
+            "Fresh": 1.0,
+            "Milk": 0.1005,
+            "Grocery": -0.0119,
+            "Frozen": 0.3459,
+            "Detergents_Paper": -0.102,
+            "Delicassen": 0.2447
+        },
+        "Milk": {
+            "Fresh": 0.1005,
+            "Milk": 1.0,
+            "Grocery": 0.7283,
+            "Frozen": 0.124,
+            "Detergents_Paper": 0.6618,
+            "Delicassen": 0.4064
+        },
+        "Grocery": {
+            "Fresh": -0.0119,
+            "Milk": 0.7283,
+            "Grocery": 1.0,
+            "Frozen": -0.0402,
+            "Detergents_Paper": 0.9246,
+            "Delicassen": 0.2055
+        },
+        "Frozen": {
+            "Fresh": 0.3459,
+            "Milk": 0.124,
+            "Grocery": -0.0402,
+            "Frozen": 1.0,
+            "Detergents_Paper": -0.1315,
+            "Delicassen": 0.3909
+        },
+        "Detergents_Paper": {
+            "Fresh": -0.102,
+            "Milk": 0.6618,
+            "Grocery": 0.9246,
+            "Frozen": -0.1315,
+            "Detergents_Paper": 1.0,
+            "Delicassen": 0.0693
+        },
+        "Delicassen": {
+            "Fresh": 0.2447,
+            "Milk": 0.4064,
+            "Grocery": 0.2055,
+            "Frozen": 0.3909,
+            "Detergents_Paper": 0.0693,
+            "Delicassen": 1.0
+        }
+    },
+    "output_files": {
+        "original_dataset": "Datasets/Wholesale customers data.csv",
+        "processed_dataset": "Datasets/Processed/wholesale_customers_clustered.csv",
+        "trained_model": "ModelsOutcome/wholesale_customers_kmeans.joblib",
+        "scaler": "ModelsOutcome/wholesale_customers_scaler.joblib",
+        "feature_columns": "ModelsOutcome/wholesale_customers_feature_columns.joblib"
+    }
+}
