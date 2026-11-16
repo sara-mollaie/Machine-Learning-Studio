@@ -1,88 +1,82 @@
 """
-DatasetsModule.py  -  Datasets page of ML Studio (pure tkinter, no extra packages).
+DatasetsModule.py  -  صفحهٔ Datasets (هم‌اندازه و هم‌سبک صفحهٔ Home)
 
-How the page fills itself
--------------------------
-Every dataset script already writes a metadata file:
+* همان کانواس، همان فونت (Theme.FONT) و همان تم Home (روشن/تیره)
+* کارت‌ها خودکار از فایل‌های متادیتا ساخته می‌شوند:
+      <ریشهٔ پروژه>/<پوشهٔ نوع>/Metadata/*.json      مثلاً Clustering/Metadata/D21_travel_reviews.json
+  هر چند ثانیه پوشه دوباره بررسی می‌شود؛ دیتاست تازه = کارت تازه، بدون تغییر کد.
+* پایین-چپ: دستهٔ موضوعی (Topics) که از فیلد domain خودکار ساخته می‌شود.
 
-    <ProjectRoot>/<Task folder>/Metadata/<anything>.json
-    e.g. Clustering/Metadata/D21_travel_reviews.json
-
-The page scans   <ProjectRoot>/*/Metadata/*.json   and builds one card per file.
-It re-checks the folder every couple of seconds, so a new (or edited / deleted)
-metadata file shows up on the page by itself, with no change to this module.
-
-Fields read from each JSON (missing ones fall back to a default):
+فیلدهای خوانده‌شده از هر JSON:
     id, name, level, domain, task, description, source,
     dataset_statistics.rows, dataset_statistics.columns
-
-Usage
------
-    from UserInterfaceLayer.DatasetsModule import DatasetsPage
-
-    page = DatasetsPage(parent, on_open=lambda ds: print(ds.name))
-    page.pack(fill="both", expand=True)
-
-    ds.raw  ->  the full metadata dict, handy for the Dataset Info dialog.
 """
-
-from __future__ import annotations
 
 import json
 import math
 import random
 import re
 import tkinter as tk
+import tkinter.font as tkfont
 from dataclasses import dataclass, field
 from pathlib import Path
-from tkinter import font as tkfont
-from typing import Callable, Optional
 
-# region Constants
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageTk
+
+from UserInterfaceLayer.HomeModule import HomeModule, BASE, _rgb, HDR_TOP, HDR_H, HDR_CY
+from UserInterfaceLayer.Theme import theme, FONT
+
+BG_LIGHT = BASE / "assets" / "page_images" / "datasets_background.png"
+BG_DARK = BASE / "assets" / "page_images" / "datasets_background_dark.png"
+
+# ---- چیدمان (واحد: پیکسل طراحی ۱۶۷۲×۹۴۱، مثل HomeModule) ----
+MX = 64                       # حاشیهٔ چپ محتوا
+CONTENT_W = 1544              # عرض محتوا (۶۴ تا ۱۶۰۸)
+COLS, ROWS = 4, 2
+GAP_X, GAP_Y = 24, 22
+CARD_W = (CONTENT_W - GAP_X * (COLS - 1)) // COLS
+CARD_H = 226
+FILTER_Y = 266
+GRID_Y = 332
+BOTTOM_CY = 854               # مرکز ردیف پایین (دستهٔ موضوعی + صفحه‌بندی)
+PER_PAGE = COLS * ROWS
 
 LEVELS = ["Beginner", "Intermediate", "Advanced"]
 TASKS = ["Regression", "Classification", "Clustering"]
 
-SOURCE_LABEL = "Data Science Dojo"
-PAGE_ROWS = 2          # rows of cards per page
-MAX_COLS = 4           # columns of cards (fewer on narrow windows)
-MIN_CARD_W = 240
-CARD_H = 198
-GAP = 18
+LEVEL_DOT = {"Beginner": "#2fb57a", "Intermediate": "#f0a23b", "Advanced": "#e5546b"}
 
-# Colors (same family as the chart theme)
-INK = "#2B1744"
-INK_SOFT = "#3B2159"
-MUTED = "#6F6585"
-BG_TOP = "#F8F3FC"
-BG_BOTTOM = "#EEE2F8"
-NAV_BG = "#32195A"
-NAV_BTN = "#43266F"
-ACTIVE_PILL = "#C8B3F2"
-DARK_BTN = "#3B1F66"
-CARD_BORDER = "#E8DCF6"
-CHIP_BG = "#EFE8F8"
-WHITE = "#FFFFFF"
+TASK_ACCENT = {
+    "Regression": ("#6c4cd6", "#9a74f0"),
+    "Classification": ("#ee5c9f", "#f58bbe"),
+    "Clustering": ("#1fb8a8", "#4bd6c6"),
+}
+TASK_DEFAULT = ("#7a6f8e", "#a396b8")
 
-LEVEL_DOT = {
-    "Beginner": "#2FB57A",
-    "Intermediate": "#F0A23B",
-    "Advanced": "#E5546B",
+PALETTE = {
+    "light": {
+        "tint": {"Regression": "#efe9fa", "Classification": "#fbe9ef", "Clustering": "#e3f5f2"},
+        "tint_default": "#f1ebfa",
+        "search_bg": "#ffffff", "search_border": ("#e1d3f4", 255),
+        "pill_off": "#ffffff", "pill_off_a": 205,
+        "popup_a": 255,
+    },
+    "dark": {
+        "tint": {"Regression": "#2a1a47", "Classification": "#3a1b42", "Clustering": "#16363a"},
+        "tint_default": "#271a45",
+        "search_bg": "#2a1a47", "search_border": ("#4a3566", 255),
+        "pill_off": "#2a1a47", "pill_off_a": 235,
+        "popup_a": 255,
+    },
 }
 
-TASK_STYLE = {
-    "Regression": {"icon": "#8B5CC7", "tint": "#F5EFFC", "line": "#CDB9EF"},
-    "Classification": {"icon": "#D65B91", "tint": "#FDF1F7", "line": "#F0B9D3"},
-    "Clustering": {"icon": "#2BB3A6", "tint": "#EFF8F7", "line": "#9CD8D2"},
-}
-DEFAULT_STYLE = {"icon": "#7A6F8E", "tint": "#F6F3FA", "line": "#D5CDE2"}
-
-FONT_CANDIDATES = ("Poppins", "Segoe UI", "Helvetica Neue", "Arial", "DejaVu Sans")
-
-# endregion
+BTN_DARK = "#5a1f4b"          # گرادیان دکمه‌ها: مثل دکمهٔ Get Started
+BTN_LIGHT = "#a3305f"
 
 
-# region Data layer
+# =====================================================
+# DATA LAYER
+# =====================================================
 
 @dataclass
 class DatasetInfo:
@@ -99,6 +93,12 @@ class DatasetInfo:
     raw: dict = field(default_factory=dict)
 
     @property
+    def topics(self):
+        """«Business / Retail» → ['Business', 'Retail']"""
+        parts = [p.strip() for p in str(self.domain).split("/") if p.strip()]
+        return parts or ["General"]
+
+    @property
     def sort_key(self):
         level_rank = LEVELS.index(self.level) if self.level in LEVELS else len(LEVELS)
         match = re.search(r"\d+", self.id or "")
@@ -106,8 +106,7 @@ class DatasetInfo:
         return (level_rank, number, self.name.lower())
 
 
-def _match_case(value, allowed, default):
-    """Return the canonical spelling from `allowed` (case-insensitive), else a tidy value."""
+def _canonical(value, allowed, default):
     text = str(value or "").strip()
     for item in allowed:
         if item.lower() == text.lower():
@@ -123,49 +122,40 @@ def _to_int(value):
 
 
 class DatasetCatalog:
-    """Finds and parses dataset metadata files under the project root."""
+    """متادیتای دیتاست‌ها را از <root>/*/Metadata/*.json پیدا و بارگذاری می‌کند."""
 
     PATTERNS = ("*/Metadata/*.json", "Metadata/*.json")
 
-    def __init__(self, root: Optional[Path] = None):
-        self.root = Path(root) if root else Path(__file__).resolve().parents[1]
+    def __init__(self, root=None):
+        self.root = Path(root) if root else BASE
 
     def _files(self):
         seen = set()
-
         for pattern in self.PATTERNS:
             for path in self.root.glob(pattern):
-                relative_parts = path.relative_to(self.root).parts
-
-                if any(part.startswith(".") for part in relative_parts):
-                    continue  # .venv, .idea ...
-
+                if any(part.startswith(".") for part in path.relative_to(self.root).parts):
+                    continue                                   # .venv و .idea
                 if path not in seen:
                     seen.add(path)
                     yield path
 
     def signature(self):
-        """Cheap fingerprint of the metadata folder (paths + modification times)."""
         items = []
-
         for path in self._files():
             try:
                 items.append((str(path), path.stat().st_mtime_ns))
             except OSError:
                 pass
-
         return tuple(sorted(items))
 
     def load(self):
         datasets = []
-
         for path in self._files():
             try:
                 data = json.loads(path.read_text(encoding="utf-8"))
                 datasets.append(self._parse(path, data))
             except (OSError, ValueError, TypeError) as error:
                 print(f"[Datasets] Skipped {path.name}: {error}")
-
         datasets.sort(key=lambda d: d.sort_key)
         return datasets
 
@@ -173,737 +163,734 @@ class DatasetCatalog:
     def _parse(path, data):
         if not isinstance(data, dict):
             raise ValueError("metadata root must be an object")
-
         stats = data.get("dataset_statistics") or {}
-
         return DatasetInfo(
             id=str(data.get("id") or path.stem),
             name=str(data.get("name") or path.stem.replace("_", " ")),
-            level=_match_case(data.get("level"), LEVELS, "Beginner"),
+            level=_canonical(data.get("level"), LEVELS, "Beginner"),
             domain=str(data.get("domain") or "General"),
-            task=_match_case(data.get("task"), TASKS, "Other"),
+            task=_canonical(data.get("task"), TASKS, "Other"),
             rows=_to_int(stats.get("rows", data.get("rows"))),
             columns=_to_int(stats.get("columns", data.get("columns"))),
             description=str(data.get("description") or ""),
-            source=str(data.get("source") or SOURCE_LABEL),
+            source=str(data.get("source") or "Data Science Dojo"),
             path=path,
             raw=data,
         )
 
-# endregion
 
+# =====================================================
+# PAGE
+# =====================================================
 
-# region Small helpers
+class DatasetsModule(HomeModule):
+    """صفحهٔ Datasets؛ از HomeModule ابزارهای رسم (panel, text, pic, nav_hover ...) را به ارث می‌برد."""
 
-def _lerp_color(c1, c2, t):
-    a = [int(c1[i:i + 2], 16) for i in (1, 3, 5)]
-    b = [int(c2[i:i + 2], 16) for i in (1, 3, 5)]
-    return "#%02x%02x%02x" % tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
+    def __init__(self, master, scale=1.0, on_navigate=None, on_open=None, catalog=None, poll_ms=2500):
+        # نکته: عمداً HomeModule.__init__ صدا زده نمی‌شود (پس‌زمینهٔ Home را بارگذاری می‌کند)
+        self._light = self._load_background(BG_LIGHT)
+        self.k = scale
+        self.W, self.H = int(self._light.width * scale), int(self._light.height * scale)
+        tk.Canvas.__init__(self, master, width=self.W, height=self.H, highlightthickness=0, bd=0)
 
-
-def _fit(text, font, max_w):
-    """Shorten text with an ellipsis so it fits max_w pixels."""
-    if font.measure(text) <= max_w:
-        return text
-
-    while text and font.measure(text + "…") > max_w:
-        text = text[:-1]
-
-    return text.rstrip() + "…"
-
-
-def _wrap(text, font, max_w, max_lines=2):
-    words = text.split()
-    lines, current = [], ""
-
-    for word in words:
-        trial = f"{current} {word}".strip()
-
-        if font.measure(trial) <= max_w or not current:
-            current = trial
-        else:
-            lines.append(current)
-            current = word
-
-    if current:
-        lines.append(current)
-
-    if len(lines) > max_lines:
-        lines = lines[:max_lines]
-        lines[-1] = _fit(lines[-1] + "…", font, max_w)
-
-    return [_fit(line, font, max_w) for line in lines] or [""]
-
-
-def _page_tokens(pages, current):
-    """1 2 3 ... 9 10 style list of page numbers."""
-    if pages <= 7:
-        return list(range(1, pages + 1))
-
-    wanted = {1, pages, current - 1, current, current + 1}
-    numbers = sorted(n for n in wanted if 1 <= n <= pages)
-
-    tokens = []
-    for n in numbers:
-        if tokens and n - tokens[-1] > 1:
-            tokens.append("…")
-        tokens.append(n)
-
-    return tokens
-
-# endregion
-
-
-# region Datasets page
-
-class DatasetsPage(tk.Frame):
-    """The Datasets page: title, search, filters, card grid, pagination."""
-
-    NAV_ITEMS = ("Home", "Datasets", "Visualization", "Algorithms")
-
-    def __init__(
-        self,
-        parent,
-        catalog: Optional[DatasetCatalog] = None,
-        on_open: Optional[Callable[[DatasetInfo], None]] = None,
-        on_navigate: Optional[Callable[[str], None]] = None,
-        show_navbar: bool = False,
-        poll_ms: int = 2500,
-        **kwargs,
-    ):
-        super().__init__(parent, bg=BG_TOP, **kwargs)
-
+        self.on_navigate = on_navigate or (lambda page: print("goto", page))
+        self.on_open = on_open or (lambda ds: print("open dataset:", ds.name))
         self.catalog = catalog or DatasetCatalog()
-        self.on_open = on_open or (lambda ds: print("Open dataset:", ds.name))
-        self.on_navigate = on_navigate
-        self.show_navbar = show_navbar
         self.poll_ms = poll_ms
 
-        self.all: list[DatasetInfo] = []
-        self.filtered: list[DatasetInfo] = []
-        self.level_filter: Optional[str] = None
-        self.task_filter: Optional[str] = None
+        self._refs, self._bgs, self._cache = {}, {}, {}
+        self.all, self.filtered = [], []
+        self.level_filter = self.task_filter = self.topic_filter = None
         self.page = 1
-
-        self._sig = None
-        self._size = (0, 0)
-        self._render_job = None
-        self._poll_job = None
+        self._popup = False
         self._placeholder_on = True
+        self._sig = None
+        self._poll_job = None
 
-        self._make_fonts()
+        self._make_entry()
+        self._load_data()
 
-        self.cv = tk.Canvas(self, bg=BG_TOP, highlightthickness=0, bd=0)
-        self.cv.pack(fill="both", expand=True)
-
-        self._make_search_entry()
-
-        self.cv.bind("<Configure>", self._on_configure)
-        self.cv.bind("<MouseWheel>", self._on_wheel)
-        self.cv.bind("<Button-4>", lambda e: self._scroll(-1))
-        self.cv.bind("<Button-5>", lambda e: self._scroll(1))
-
-        self.reload()
+        theme.subscribe(self._build)
+        self._build()
         self._poll_job = self.after(self.poll_ms, self._poll)
 
-    # ------------------------------------------------------------ setup
+    # ---------- پس‌زمینه ----------
+    @staticmethod
+    def _load_background(path):
+        if path.exists():
+            return Image.open(path).convert("RGBA")
+        # بدون فایل عکس هم صفحه کار می‌کند (گرادیان ساده با اندازهٔ طراحی)
+        img = Image.new("RGBA", (1672, 941))
+        d = ImageDraw.Draw(img)
+        for y in range(941):
+            t = y / 940
+            d.line([(0, y), (1672, y)], fill=(int(249 - 22 * t), int(243 - 30 * t), int(254 - 8 * t), 255))
+        return img
 
-    def _make_fonts(self):
-        families = set(tkfont.families(self))
-        family = next((f for f in FONT_CANDIDATES if f in families), "TkDefaultFont")
+    def _bg_photo(self):
+        name = theme.name
+        if name not in self._bgs:
+            img = self._load_background(BG_DARK) if name == "dark" and BG_DARK.exists() else self._light
+            self._bgs[name] = ImageTk.PhotoImage(img.resize((self.W, self.H), Image.LANCZOS))
+        return self._bgs[name]
 
-        def make(px, bold=False):
-            return tkfont.Font(
-                root=self, family=family, size=-px, weight="bold" if bold else "normal"
-            )
+    def _pal(self):
+        return PALETTE[theme.name]
 
-        self.f_title = make(44, True)
-        self.f_sub = make(15)
-        self.f_pill = make(14, True)
-        self.f_search = make(14)
-        self.f_card_title = make(18, True)
-        self.f_card_sub = make(13)
-        self.f_chip = make(12, True)
-        self.f_badge = make(12, True)
-        self.f_footer = make(15)
-        self.f_page = make(13, True)
-        self.f_nav = make(15, True)
-        self.f_logo = make(28, True)
-        self.f_empty = make(20, True)
-
-    def _make_search_entry(self):
-        self.entry = tk.Entry(
-            self.cv,
-            font=self.f_search,
-            bd=0,
-            relief="flat",
-            highlightthickness=0,
-            bg=WHITE,
-            fg=MUTED,
-            insertbackground=INK,
-        )
-        self.entry.insert(0, "Search datasets")
-
-        self.entry.bind("<FocusIn>", self._entry_focus_in)
-        self.entry.bind("<FocusOut>", self._entry_focus_out)
-        self.entry.bind("<KeyRelease>", self._entry_changed)
-
-        self._search_win = self.cv.create_window(
-            0, 0, window=self.entry, anchor="w", tags="keep"
-        )
-
-    def _entry_focus_in(self, _event):
-        if self._placeholder_on:
-            self.entry.delete(0, "end")
-            self.entry.config(fg=INK)
-            self._placeholder_on = False
-
-    def _entry_focus_out(self, _event):
-        if not self.entry.get().strip():
-            self.entry.delete(0, "end")
-            self.entry.insert(0, "Search datasets")
-            self.entry.config(fg=MUTED)
-            self._placeholder_on = True
-
-    def _entry_changed(self, _event):
-        self.page = 1
-        self._apply_filters()
-        self._schedule_render(60)
-
-    def _query(self):
-        return "" if self._placeholder_on else self.entry.get().strip().lower()
-
-    # ------------------------------------------------------------ data
-
-    def reload(self):
-        """Re-read the metadata files and redraw."""
+    # ---------- داده ----------
+    def _load_data(self):
         self.all = self.catalog.load()
         self._sig = self.catalog.signature()
         self._apply_filters()
-        self._schedule_render(0)
-
-    refresh = reload
 
     def _poll(self):
         try:
             if self.catalog.signature() != self._sig:
-                self.reload()
-        except Exception as error:  # never let polling kill the UI
+                self._load_data()
+                self._draw_dynamic()
+        except Exception as error:
             print("[Datasets] refresh check failed:", error)
-
         self._poll_job = self.after(self.poll_ms, self._poll)
 
+    def on_show(self):
+        """هنگام باز شدن صفحه صدا زده می‌شود تا دیتاست‌های تازه بلافاصله دیده شوند."""
+        self._popup = False
+        if self.catalog.signature() != self._sig:
+            self._load_data()
+        self._draw_dynamic()
+
     def destroy(self):
-        for job in (self._poll_job, self._render_job):
-            if job:
-                try:
-                    self.after_cancel(job)
-                except Exception:
-                    pass
+        if self._poll_job:
+            try:
+                self.after_cancel(self._poll_job)
+            except Exception:
+                pass
+        theme.unsubscribe(self._build)
         super().destroy()
+
+    def _query(self):
+        return "" if self._placeholder_on else self.entry.get().strip().lower()
 
     def _apply_filters(self):
         query = self._query()
 
-        def matches(ds):
+        def ok(ds):
             if self.level_filter and ds.level != self.level_filter:
                 return False
             if self.task_filter and ds.task != self.task_filter:
                 return False
+            if self.topic_filter and self.topic_filter not in ds.topics:
+                return False
             if query:
-                haystack = " ".join(
-                    (ds.name, ds.domain, ds.task, ds.level, ds.description)
-                ).lower()
-                return query in haystack
+                hay = " ".join((ds.name, ds.domain, ds.task, ds.level, ds.description)).lower()
+                return query in hay
             return True
 
-        self.filtered = [ds for ds in self.all if matches(ds)]
+        self.filtered = [d for d in self.all if ok(d)]
 
-    # ------------------------------------------------------------ events
+    def _topics(self):
+        counts = {}
+        for ds in self.all:
+            for t in ds.topics:
+                counts[t] = counts.get(t, 0) + 1
+        return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0].lower()))
 
-    def _on_configure(self, event):
-        if (event.width, event.height) != self._size:
-            self._size = (event.width, event.height)
-            self._schedule_render(40)
+    # ---------- ساخت تصویرهای PIL (با کش) ----------
+    def _shape(self, w, h, r, c1, c2=None, alpha=255, border=None):
+        key = ("shape", self.k, w, h, r, c1, c2, alpha, border)
+        if key in self._cache:
+            return self._cache[key]
+        W, H, R, ss = self.s(w), self.s(h), self.s(r), 3
+        a, b = _rgb(c1), _rgb(c2 or c1)
+        body = Image.new("RGBA", (W, H))
+        d = ImageDraw.Draw(body)
+        for x in range(W):
+            t = x / max(W - 1, 1)
+            d.line([(x, 0), (x, H)], fill=tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3)) + (255,))
+        mask = Image.new("L", (W * ss, H * ss), 0)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, W * ss - 1, H * ss - 1), R * ss, fill=alpha)
+        body.putalpha(mask.resize((W, H), Image.LANCZOS))
+        if border:
+            ring = Image.new("L", (W * ss, H * ss), 0)
+            ImageDraw.Draw(ring).rounded_rectangle((0, 0, W * ss - 1, H * ss - 1), R * ss, outline=255,
+                                                   width=max(2, self.s(2)) * ss // 2)
+            ring = ring.resize((W, H), Image.LANCZOS)
+            edge = Image.new("RGBA", (W, H), _rgb(border[0]) + (0,))
+            edge.putalpha(ring.point(lambda v: v * border[1] // 255))
+            body.alpha_composite(edge)
+        photo = ImageTk.PhotoImage(body)
+        self._cache[key] = photo
+        return photo
 
-    def _schedule_render(self, delay):
-        if self._render_job:
-            self.after_cancel(self._render_job)
-        self._render_job = self.after(delay, self._render)
+    def _glass(self, w, h, r, c1, c2, alpha, shadow, shadow_rgb, border):
+        key = ("glass", self.k, w, h, r, c1, c2, alpha, shadow, tuple(shadow_rgb), border)
+        if key in self._cache:
+            return self._cache[key]
+        W, H, R, ss = self.s(w), self.s(h), self.s(r), 3
+        pad = self.s(34) if shadow else 0
+        canvas = Image.new("RGBA", (W + 2 * pad, H + 2 * pad), (0, 0, 0, 0))
+        if shadow:
+            sh = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+            off = self.s(10)
+            ImageDraw.Draw(sh).rounded_rectangle((pad, pad + off, pad + W, pad + off + H), R,
+                                                 fill=tuple(shadow_rgb) + (shadow,))
+            canvas = Image.alpha_composite(canvas, sh.filter(ImageFilter.GaussianBlur(self.s(14))))
+        a, b = _rgb(c1), _rgb(c2 or c1)
+        body = Image.new("RGBA", (W, H))
+        d = ImageDraw.Draw(body)
+        for x in range(W):
+            t = x / max(W - 1, 1)
+            d.line([(x, 0), (x, H)], fill=tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3)) + (255,))
+        mask = Image.new("L", (W * ss, H * ss), 0)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, W * ss - 1, H * ss - 1), R * ss, fill=alpha)
+        body.putalpha(mask.resize((W, H), Image.LANCZOS))
+        canvas.alpha_composite(body, (pad, pad))
+        if border:
+            ring = Image.new("L", (W * ss, H * ss), 0)
+            ImageDraw.Draw(ring).rounded_rectangle((0, 0, W * ss - 1, H * ss - 1), R * ss, outline=255,
+                                                   width=max(2, self.s(2)) * ss // 2)
+            ring = ring.resize((W, H), Image.LANCZOS)
+            edge = Image.new("RGBA", (W, H), _rgb(border[0]) + (0,))
+            edge.putalpha(ring.point(lambda v: v * border[1] // 255))
+            canvas.alpha_composite(edge, (pad, pad))
+        result = (ImageTk.PhotoImage(canvas), pad)
+        self._cache[key] = result
+        return result
 
-    def _on_wheel(self, event):
-        self._scroll(-1 if event.delta > 0 else 1)
+    def _task_icon(self, task, size):
+        key = ("icon", self.k, task, size)
+        if key in self._cache:
+            return self._cache[key]
+        S, ss = self.s(size), 4
+        c1, c2 = (_rgb(c) for c in TASK_ACCENT.get(task, TASK_DEFAULT))
+        tile = Image.new("RGBA", (S, S))
+        d = ImageDraw.Draw(tile)
+        for i in range(S * 2):                                 # گرادیان مورب
+            t = i / (S * 2 - 1)
+            d.line([(i, 0), (0, i)], fill=tuple(int(c1[k] + (c2[k] - c1[k]) * t) for k in range(3)) + (255,))
+        tile.putalpha(self._round_mask(S, S, int(S * 0.28)))
 
-    def _scroll(self, direction):
-        region = self.cv.cget("scrollregion").split()
-        if len(region) == 4 and float(region[3]) > self.cv.winfo_height() + 1:
-            self.cv.yview_scroll(direction * 3, "units")
+        g = Image.new("RGBA", (S * ss, S * ss), (0, 0, 0, 0))
+        gd = ImageDraw.Draw(g)
+        u, w = S * ss, max(3, int(S * ss * 0.06))
+        white = (255, 255, 255, 255)
 
-    def _set_level(self, level):
-        self.level_filter = level
+        def ring(cx, cy, r):
+            gd.ellipse((cx * u - r * u, cy * u - r * u, cx * u + r * u, cy * u + r * u), outline=white, width=w)
+
+        if task == "Regression":
+            gd.line([(0.28 * u, 0.26 * u), (0.28 * u, 0.72 * u), (0.74 * u, 0.72 * u)], fill=white, width=w, joint="curve")
+            pts = [(0.36, 0.62), (0.47, 0.50), (0.57, 0.57), (0.70, 0.36)]
+            gd.line([(x * u, y * u) for x, y in pts], fill=white, width=w, joint="curve")
+            for x, y in pts[1:]:
+                ring(x, y, 0.045)
+        elif task == "Classification":
+            for x, y in ((0.34, 0.34), (0.66, 0.34), (0.34, 0.66), (0.66, 0.66)):
+                ring(x, y, 0.10)
+        elif task == "Clustering":
+            for x, y in ((0.5, 0.33), (0.33, 0.65), (0.67, 0.65)):
+                ring(x, y, 0.11)
+        else:
+            for x, y in ((0.35, 0.35), (0.65, 0.35), (0.35, 0.65), (0.65, 0.65)):
+                gd.ellipse((x * u - w, y * u - w, x * u + w, y * u + w), fill=white)
+        tile.alpha_composite(g.resize((S, S), Image.LANCZOS))
+        photo = ImageTk.PhotoImage(tile)
+        self._cache[key] = photo
+        return photo
+
+    @staticmethod
+    def _round_mask(w, h, r, ss=4):
+        m = Image.new("L", (w * ss, h * ss), 0)
+        ImageDraw.Draw(m).rounded_rectangle((0, 0, w * ss - 1, h * ss - 1), r * ss, fill=255)
+        return m.resize((w, h), Image.LANCZOS)
+
+    def _decor(self, task, w, h):
+        """موج و نقطه‌های تزئینی پشت آیکون کارت (مثل کارت‌های صفحهٔ Algorithms)."""
+        key = ("decor", self.k, task, w, h)
+        if key in self._cache:
+            return self._cache[key]
+        W, H, ss = self.s(w), self.s(h), 3
+        col = _rgb(TASK_ACCENT.get(task, TASK_DEFAULT)[0])
+        light = _rgb(TASK_ACCENT.get(task, TASK_DEFAULT)[1])
+        big = (W * ss, H * ss)
+
+        def wave_y(t):
+            return H * ss * (0.70 - 0.34 * t - 0.10 * math.sin(t * 7.5))
+
+        poly = [(i, wave_y(i / big[0])) for i in range(0, big[0] + 1, ss * 3)] + [(big[0], big[1]), (0, big[1])]
+        mask = Image.new("L", big, 0)
+        ImageDraw.Draw(mask).polygon(poly, fill=255)
+        fade_x = Image.linear_gradient("L").rotate(90).resize(big)          # چپ شفاف ← راست پررنگ
+        fade_y = Image.linear_gradient("L").rotate(180).resize(big)         # پایین شفاف
+        # لبهٔ راست هم نرم می‌شود تا مستطیل تیز دیده نشود
+        edge_r = Image.linear_gradient("L").rotate(-90).resize(big).point(lambda v: min(255, v * 5))
+        mask = ImageChops.multiply(ImageChops.multiply(mask, fade_x), ImageChops.multiply(fade_y, edge_r))
+        mask = mask.point(lambda v: min(255, v * 130 // 255))
+        layer = Image.new("RGBA", big, col + (0,))
+        layer.putalpha(mask)
+
+        d = ImageDraw.Draw(layer)
+        rng = random.Random(task)
+
+        def dot(x, y, r, color, a=235):
+            d.ellipse((x - r, y - r, x + r, y + r), fill=color + (a,))
+
+        if task == "Regression":
+            pts = [(0.22 + 0.15 * i, wave_y(0.22 + 0.15 * i) / big[1] - 0.04) for i in range(5)]
+            xy = [(x * big[0], y * big[1]) for x, y in pts]
+            d.line(xy, fill=col + (230,), width=ss * 2, joint="curve")
+            for x, y in xy:
+                dot(x, y, ss * 4.2, (255, 255, 255), 255)
+                dot(x, y, ss * 2.6, col, 255)
+        elif task == "Classification":
+            for i in range(14):
+                t = 0.30 + 0.66 * (i / 13) ** 0.8
+                dot(t * big[0] + rng.uniform(-14, 14) * ss, wave_y(t) - rng.uniform(4, 30) * ss,
+                    ss * rng.uniform(2.0, 4.6), col)
+        elif task == "Clustering":
+            for cx, cy, color in ((0.62, 0.34, col), (0.90, 0.24, (139, 92, 199))):
+                for _ in range(6):
+                    dot(cx * big[0] + rng.uniform(-12, 12) * ss, cy * big[1] + rng.uniform(-9, 9) * ss,
+                        ss * 2.6, color)
+        else:
+            for i in range(10):
+                t = 0.4 + 0.55 * i / 9
+                dot(t * big[0], wave_y(t) - 8 * ss, ss * 3, light)
+
+        photo = ImageTk.PhotoImage(layer.resize((W, H), Image.LANCZOS))
+        self._cache[key] = photo
+        return photo
+
+    # ---------- جزئیات رسم ----------
+    def _d(self, *extra):
+        return ("dyn",) + extra
+
+    def _guard(self, fn):
+        """اگر پنجرهٔ Topics باز باشد، اولین کلیک فقط آن را می‌بندد."""
+        def handler(_event=None):
+            if self._popup:
+                self._close_popup()
+            else:
+                fn()
+        return handler
+
+    def _clickable(self, tag, fn):
+        self.hover(tag)
+        self.tag_bind(tag, "<Button-1>", self._guard(fn))
+
+    def _wrap(self, text, size, bold, max_w, max_lines=2):
+        words, lines, cur = text.split(), [], ""
+        for word in words:
+            trial = f"{cur} {word}".strip()
+            if self.text_width(trial, size, bold) <= max_w or not cur:
+                cur = trial
+            else:
+                lines.append(cur)
+                cur = word
+        if cur:
+            lines.append(cur)
+        if len(lines) > max_lines:
+            lines = lines[:max_lines]
+            lines[-1] = lines[-1] + "…"
+        return [self._fit(l, size, bold, max_w) for l in lines] or [""]
+
+    def _fit(self, text, size, bold, max_w):
+        if self.text_width(text, size, bold) <= max_w:
+            return text
+        while text and self.text_width(text + "…", size, bold) > max_w:
+            text = text[:-1]
+        return text.rstrip() + "…"
+
+    # ---------- ساخت کامل صفحه (لایهٔ ثابت) ----------
+    def _build(self):
+        self.delete("all")
+        self.config(cursor="")
+        self._popup = False
+
+        bg = self.create_image(0, 0, image=self._bg_photo(), anchor="nw", tags=("bgimg",))
+        self.tag_bind("bgimg", "<Button-1>", lambda e: self._close_popup())
+        self._navbar()
+        self._search_box()
+        self._draw_dynamic()
+
+    def _navbar(self):
+        """هدر دقیقاً مثل Home؛ فقط آیتم فعال «Datasets» است."""
+        c, cy = theme.c, HDR_CY
+        self.panel(23, HDR_TOP, 1626, HDR_H, 41, *c("hdr"), alpha=255)
+
+        self.pic(88, cy, "ml_studio_logo", 56, crop=True)
+        self.text(130, cy, "Machine Learning Prediction Studio", 25, "#ffffff", True)
+
+        items = [("Home", "nav_home", 34, 748, 775, "home"),
+                 ("Datasets", "nav_datasets", 38, 934, 964, "datasets"),
+                 ("Algorithms", "nav_algorithms", 42, 1140, 1173, "algorithms")]
+        for label, ic, isz, ix, tx, page in items:
+            active = page == "datasets"
+            tag = f"nav_{page}"
+            left = ix - isz / 2 - 16
+            right = tx + self.text_width(label, 22, True) + 18
+            if active:
+                self._pill = self.rounded(right - left + 12, 50, 25, c("pill"))
+                self.create_image(self.s((left + right) / 2), self.s(cy), image=self._pill)
+                self.hover(tag)
+                self.tag_bind(tag, "<Button-1>", lambda e, p=page: self.on_navigate(p))
+            else:
+                self.nav_hover(tag, (left + right) / 2, cy, right - left, 50, page)
+            self.pic(ix, cy, ic, isz, (tag,), crop=True)
+            self.text(tx, cy, label, 22, c("pill_text") if active else "white", True, tags=(tag,))
+
+        for ic, x, page in [("nav_info", 1495, "info"), ("nav_settings", 1590, "settings")]:
+            tag = f"nav_{page}"
+            self.nav_hover(tag, x, cy, 54, 54, page)
+            self.pic(x, cy, ic, 40, (tag,), crop=True)
+
+    def _make_entry(self):
+        self.entry = tk.Entry(self, bd=0, relief="flat", highlightthickness=0)
+        self.entry.insert(0, "Search datasets")
+        self.entry.bind("<FocusIn>", self._entry_focus_in)
+        self.entry.bind("<FocusOut>", self._entry_focus_out)
+        self.entry.bind("<KeyRelease>", self._entry_changed)
+
+    def _entry_focus_in(self, _e):
+        if self._placeholder_on:
+            self.entry.delete(0, "end")
+            self.entry.config(fg=theme.c("title"))
+            self._placeholder_on = False
+
+    def _entry_focus_out(self, _e):
+        if not self.entry.get().strip():
+            self.entry.delete(0, "end")
+            self.entry.insert(0, "Search datasets")
+            self.entry.config(fg=theme.c("body"))
+            self._placeholder_on = True
+
+    def _entry_changed(self, _e):
         self.page = 1
         self._apply_filters()
-        self._render()
+        self._draw_dynamic()
+
+    def _search_box(self):
+        pal, c = self._pal(), theme.c
+        x, y, w, h = MX, FILTER_Y, 330, 46
+        cy = y + h / 2
+
+        self._search_bg = self._shape(w, h, h / 2, pal["search_bg"], border=pal["search_border"])
+        self.create_image(self.s(x), self.s(y), image=self._search_bg, anchor="nw")
+
+        mx, lw = x + 28, max(2, self.s(2.6))
+        self.create_oval(self.s(mx - 9), self.s(cy - 11), self.s(mx + 5), self.s(cy + 3),
+                         outline=c("body"), width=lw)
+        self.create_line(self.s(mx + 4), self.s(cy + 2), self.s(mx + 12), self.s(cy + 10),
+                         fill=c("body"), width=lw, capstyle="round")
+
+        placeholder_fg = c("body") if self._placeholder_on else c("title")
+        self.entry.config(font=(FONT, -self.s(20)), bg=pal["search_bg"], fg=placeholder_fg,
+                          insertbackground=c("title"))
+        self.create_window(self.s(x + 54), self.s(cy), window=self.entry, anchor="w",
+                           width=self.s(w - 76), height=self.s(h - 14))
+
+    # ---------- لایهٔ پویا (فیلترها، کارت‌ها، پایین صفحه) ----------
+    def _draw_dynamic(self):
+        self.delete("dyn")
+        self._draw_filters()
+
+        pages = max(1, math.ceil(len(self.filtered) / PER_PAGE))
+        self.page = max(1, min(self.page, pages))
+        visible = self.filtered[(self.page - 1) * PER_PAGE: self.page * PER_PAGE]
+
+        if not visible:
+            self._draw_empty()
+        for i, ds in enumerate(visible):
+            row, col = divmod(i, COLS)
+            self._draw_card(ds, MX + col * (CARD_W + GAP_X), GRID_Y + row * (CARD_H + GAP_Y), i)
+
+        self._draw_bottom(len(visible), pages)
+        if self._popup:
+            self._draw_popup()
+
+    # ---- فیلترها ----
+    def _draw_filters(self):
+        c, pal = theme.c, self._pal()
+        x, h, y = MX + 330 + 26, 46, FILTER_Y
+        groups = [(["All levels"] + LEVELS, 0), (TASKS, 1)]
+
+        n = 0
+        for labels, group in groups:
+            for label in labels:
+                w = self.text_width(label, 20, True) + 50
+                if group == 0:
+                    selected = (label == "All levels" and not self.level_filter) or label == self.level_filter
+                    command = (lambda: self._set_level(None)) if label == "All levels" else (lambda lv=label: self._set_level(lv))
+                else:
+                    selected = label == self.task_filter
+                    command = lambda t=label: self._toggle_task(t)
+
+                tag = f"pill{n}"
+                if selected:
+                    img = self._shape(w, h, h / 2, BTN_DARK, BTN_LIGHT)
+                else:
+                    img = self._shape(w, h, h / 2, pal["pill_off"], alpha=pal["pill_off_a"], border=c("card_border"))
+                self.create_image(self.s(x), self.s(y), image=img, anchor="nw", tags=self._d(tag))
+                self.text(x + w / 2, y + h / 2, label, 20, "white" if selected else c("title"), True,
+                          anchor="center", tags=self._d(tag))
+                self._clickable(tag, command)
+                x += w + 10
+                n += 1
+            x += 20
+
+    def _set_level(self, level):
+        self.level_filter, self.page = level, 1
+        self._apply_filters()
+        self._draw_dynamic()
 
     def _toggle_task(self, task):
         self.task_filter = None if self.task_filter == task else task
         self.page = 1
         self._apply_filters()
-        self._render()
+        self._draw_dynamic()
+
+    def _set_topic(self, topic):
+        self.topic_filter, self.page, self._popup = topic, 1, False
+        self._apply_filters()
+        self._draw_dynamic()
 
     def _go_page(self, number):
         self.page = number
-        self._render()
-
-    def _clickable(self, tag, command):
-        self.cv.tag_bind(tag, "<Button-1>", lambda e: command())
-        self.cv.tag_bind(tag, "<Enter>", lambda e: self.cv.config(cursor="hand2"))
-        self.cv.tag_bind(tag, "<Leave>", lambda e: self.cv.config(cursor=""))
-
-    # ------------------------------------------------------------ drawing primitives
-
-    def _rr(self, x1, y1, x2, y2, r, **kw):
-        """Rounded rectangle."""
-        r = max(0, min(r, (x2 - x1) / 2, (y2 - y1) / 2))
-        pts = [
-            x1 + r, y1, x1 + r, y1, x2 - r, y1, x2 - r, y1, x2, y1,
-            x2, y1 + r, x2, y1 + r, x2, y2 - r, x2, y2 - r, x2, y2,
-            x2 - r, y2, x2 - r, y2, x1 + r, y2, x1 + r, y2, x1, y2,
-            x1, y2 - r, x1, y2 - r, x1, y1 + r, x1, y1 + r, x1, y1,
-        ]
-        return self.cv.create_polygon(pts, smooth=True, **kw)
-
-    def _text(self, x, y, text, font, fill, anchor="nw", tags=("ui",)):
-        return self.cv.create_text(
-            x, y, text=text, font=font, fill=fill, anchor=anchor, tags=tags
-        )
-
-    def _draw_background(self, width, height):
-        self.cv.delete("bg")
-        step = 8
-
-        for y in range(0, int(height) + step, step):
-            color = _lerp_color(BG_TOP, BG_BOTTOM, min(1.0, y / max(height, 1)))
-            self.cv.create_rectangle(
-                0, y, width, y + step + 1, fill=color, outline="", tags="bg"
-            )
-
-        self.cv.tag_lower("bg")
-
-    # ------------------------------------------------------------ render
-
-    def _render(self):
-        self._render_job = None
-
-        width = max(self.cv.winfo_width(), 640)
-        view_h = max(self.cv.winfo_height(), 300)
-
-        self.cv.delete("ui")
-
-        margin = 48 if width >= 1100 else 28
-        content_w = width - 2 * margin
-
-        y = 8
-        if self.show_navbar:
-            self._draw_navbar(width)
-            y = 76
-        else:
-            y = 20
-
-        # ---- title + subtitle
-        self._text(margin, y, "Datasets", self.f_title, INK)
-        y += 64
-
-        subtitle = (
-            f"{len(self.all)} datasets from {SOURCE_LABEL}, sorted Beginner to Advanced"
-        )
-        self._text(margin, y, subtitle, self.f_sub, MUTED)
-        y += 38
-
-        # ---- search + filters
-        search_w = int(min(300, max(220, content_w * 0.24)))
-        layout = self._pill_layout()
-        search_h = 42
-
-        row_y = y
-        beside_x = margin + search_w + 26
-
-        placed, n_rows = self._pill_rows(layout, width - margin - beside_x)
-
-        if n_rows == 1:                              # pills sit to the right of the search box
-            pills_x, pills_y = beside_x, row_y + search_h / 2 - 18
-            y = row_y + search_h + 24
-        else:                                        # not enough room: pills go below the search box
-            placed, n_rows = self._pill_rows(layout, content_w)
-            pills_x, pills_y = margin, row_y + search_h + 12
-            y = pills_y + n_rows * 36 + (n_rows - 1) * 10 + 22
-
-        self._draw_search(margin, row_y, search_w, search_h)
-        self._draw_pills(placed, pills_x, pills_y)
-
-        # ---- grid geometry
-        cols = max(1, min(MAX_COLS, int((content_w + GAP) // (MIN_CARD_W + GAP))))
-        card_w = (content_w - GAP * (cols - 1)) / cols
-        per_page = cols * PAGE_ROWS
-
-        pages = max(1, math.ceil(len(self.filtered) / per_page))
-        self.page = max(1, min(self.page, pages))
-
-        start = (self.page - 1) * per_page
-        visible = self.filtered[start:start + per_page]
-
-        grid_top = y
-
-        if not visible:
-            self._draw_empty(margin, grid_top, content_w)
-        else:
-            for index, ds in enumerate(visible):
-                row, col = divmod(index, cols)
-                x = margin + col * (card_w + GAP)
-                cy = grid_top + row * (CARD_H + GAP)
-                self._draw_card(ds, x, cy, card_w, CARD_H, index)
-
-        grid_bottom = grid_top + PAGE_ROWS * CARD_H + (PAGE_ROWS - 1) * GAP
-
-        # ---- footer
-        footer_y = max(grid_bottom + 30, view_h - 34)
-
-        self._text(
-            margin,
-            footer_y,
-            f"Showing {len(visible)} of {len(self.filtered)} datasets",
-            self.f_footer,
-            MUTED,
-            anchor="w",
-        )
-
-        if pages > 1:
-            self._draw_pagination(width - margin, footer_y, pages)
-
-        total_h = footer_y + 34
-        self.cv.configure(scrollregion=(0, 0, width, max(view_h, total_h)))
-
-        if total_h <= view_h:
-            self.cv.yview_moveto(0)
-
-        self._draw_background(width, max(view_h, total_h))
-
-    # ------------------------------------------------------------ navbar
-
-    def _draw_navbar(self, width):
-        x1, y1, x2, y2 = 18, 8, width - 18, 70
-        cy = (y1 + y2) / 2
-
-        self._rr(x1, y1, x2, y2, 31, fill=NAV_BG, outline="", tags="ui")
-
-        # logo (layers icon + wordmark)
-        lx = x1 + 40
-        white = {"fill": "", "outline": WHITE, "width": 2, "tags": "ui"}
-        self.cv.create_polygon(
-            lx, cy - 13, lx + 14, cy - 6, lx, cy + 1, lx - 14, cy - 6, **white
-        )
-        for dy in (6, 12):
-            self.cv.create_line(
-                lx - 14, cy - 6 + dy, lx, cy + 1 + dy, lx + 14, cy - 6 + dy,
-                fill=WHITE, width=2, tags="ui",
-            )
-
-        self._text(lx + 28, cy, "ML", self.f_logo, WHITE, anchor="w")
-        ml_w = self.f_logo.measure("ML ")
-        self._text(lx + 28 + ml_w, cy, "Studio", self.f_logo, "#E879B9", anchor="w")
-
-        # round icon buttons (info, settings)
-        for i, kind in enumerate(("settings", "info")):
-            bx = x2 - 38 - i * 48
-            self.cv.create_oval(
-                bx - 19, cy - 19, bx + 19, cy + 19, fill=NAV_BTN, outline="", tags="ui"
-            )
-            self.cv.create_oval(
-                bx - 8, cy - 8, bx + 8, cy + 8, outline=WHITE, width=2, tags="ui"
-            )
-            if kind == "info":
-                self._text(bx, cy, "i", self.f_badge, WHITE, anchor="center")
-            else:
-                self.cv.create_oval(
-                    bx - 3, cy - 3, bx + 3, cy + 3, outline=WHITE, width=2, tags="ui"
-                )
-
-        # menu items (right to left)
-        right = x2 - 38 - 48 - 19 - 22
-
-        for n, label in enumerate(reversed(self.NAV_ITEMS)):
-            w = self.f_nav.measure(label) + 40
-            left = right - w
-            tag = f"nav{n}"
-            active = label == "Datasets"
-
-            if active:
-                self._rr(left, cy - 21, right, cy + 21, 21, fill=ACTIVE_PILL,
-                         outline="", tags=("ui", tag))
-
-            self._text(
-                (left + right) / 2, cy, label, self.f_nav,
-                INK if active else WHITE, anchor="center", tags=("ui", tag),
-            )
-
-            if self.on_navigate:
-                self._clickable(tag, lambda name=label: self.on_navigate(name))
-
-            right = left - 4
-
-    # ------------------------------------------------------------ search + filter pills
-
-    def _draw_search(self, x, y, w, h):
-        cy = y + h / 2
-
-        self._rr(x, y, x + w, y + h, h / 2, fill=WHITE, outline="#EFE6F8", tags="ui")
-
-        # magnifier
-        mx = x + 24
-        self.cv.create_oval(mx - 7, cy - 8, mx + 5, cy + 4, outline=MUTED, width=2, tags="ui")
-        self.cv.create_line(mx + 4, cy + 3, mx + 10, cy + 9, fill=MUTED, width=2,
-                            capstyle="round", tags="ui")
-
-        self.cv.coords(self._search_win, x + 46, cy)
-        self.cv.itemconfigure(self._search_win, width=w - 64, height=h - 14)
-
-    def _pill_layout(self):
-        """[(label, x_offset, width, group)] for the level and task pills."""
-        layout, x = [], 0
-
-        groups = (["All levels"] + LEVELS, TASKS)
-        for g, labels in enumerate(groups):
-            for label in labels:
-                w = self.f_pill.measure(label) + 40
-                layout.append((label, x, w, g))
-                x += w + 8
-            x += 18  # extra gap between the two groups
-
-        return layout
-
-    def _pill_rows(self, layout, available_w):
-        """Place pills in one row if they fit, else one row per group. Returns (placed, n_rows)."""
-        total = layout[-1][1] + layout[-1][2]
-
-        if total <= available_w:
-            return [(label, dx, w, g, 0) for label, dx, w, g in layout], 1
-
-        placed, offset = [], {0: 0, 1: 0}
-        first_of_group = {}
-
-        for label, dx, w, g in layout:
-            first_of_group.setdefault(g, dx)
-            placed.append((label, dx - first_of_group[g], w, g, g))
-
-        return placed, 2
-
-    def _draw_pills(self, layout, x0, y):
-        h = 36
-
-        for n, (label, dx, w, group, row) in enumerate(layout):
-            top = y + row * (h + 10)
-
-            if group == 0:
-                selected = (label == "All levels" and self.level_filter is None) or (
-                    label == self.level_filter
-                )
-            else:
-                selected = label == self.task_filter
-
-            tag = f"pill{n}"
-            left = x0 + dx
-
-            self._rr(
-                left, top, left + w, top + h, h / 2,
-                fill=DARK_BTN if selected else "#FBF8FE",
-                outline=DARK_BTN if selected else "#EFE6F8",
-                tags=("ui", tag),
-            )
-            self._text(
-                left + w / 2, top + h / 2, label, self.f_pill,
-                WHITE if selected else INK_SOFT, anchor="center", tags=("ui", tag),
-            )
-
-            if group == 0:
-                command = (lambda: self._set_level(None)) if label == "All levels" \
-                    else (lambda lv=label: self._set_level(lv))
-            else:
-                command = lambda t=label: self._toggle_task(t)
-
-            self._clickable(tag, command)
-
-    # ------------------------------------------------------------ cards
-
-    def _draw_card(self, ds, x, y, w, h, index):
-        style = TASK_STYLE.get(ds.task, DEFAULT_STYLE)
+        self._draw_dynamic()
+
+    # ---- کارت ----
+    def _draw_card(self, ds, x, y, index):
+        c, pal = theme.c, self._pal()
         tag = f"card{index}"
-        tags = ("ui", tag)
-        pad = 18
+        tags = self._d(tag)
+        pad = 24
+        tint = pal["tint"].get(ds.task, pal["tint_default"])
+        accent = TASK_ACCENT.get(ds.task, TASK_DEFAULT)[0]
 
-        # soft shadow
-        for spread, color in ((6, "#F1EAF9"), (4, "#EDE4F7"), (2, "#E9DFF5")):
-            self._rr(x - spread, y - spread + 5, x + w + spread, y + h + spread + 5,
-                     24, fill=color, outline="", tags=tags)
+        def glass(border):
+            return self._glass(CARD_W, CARD_H, 30, tint, c("card_end"), c("card_alpha"),
+                               c("shadow_a"), c("shadow_rgb"), border)
 
-        body = self._rr(x, y, x + w, y + h, 22, fill=style["tint"],
-                        outline=CARD_BORDER, width=1, tags=tags)
+        normal, pad_px = glass(c("card_border"))
+        hover, _ = glass((accent, 255))
+        body = self.create_image(self.s(x) - pad_px, self.s(y) - pad_px, image=normal, anchor="nw", tags=tags)
 
-        # decorative sparkline (deterministic per dataset)
-        rng = random.Random(ds.name)
-        n_pts = 9
-        sx0 = x + w * 0.55
-        pts = []
-        for i in range(n_pts):
-            px = sx0 + (x + w - sx0) * i / (n_pts - 1)
-            py = y + 64 + rng.uniform(-10, 10)
-            pts += [px, py]
-        self.cv.create_line(*pts, smooth=True, fill=style["line"], width=2, tags=tags)
+        # نشان سطح (عرضش برای جای تزئین لازم است)
+        bw = self.text_width(ds.level, 17, True) + 56
 
-        # icon
-        ix, iy, isz = x + pad, y + pad, 38
-        self._rr(ix, iy, ix + isz, iy + isz, 11, fill=style["icon"], outline="", tags=tags)
-        self._draw_glyph(ds.task, ix + isz / 2, iy + isz / 2, tags)
+        # تزئین: فقط در فاصلهٔ آزاد بین آیکون و نشان سطح
+        gap_w = int(CARD_W - pad - bw - 14 - (pad + 54 + 14))
+        if gap_w >= 56:
+            self.create_image(self.s(x + pad + 54 + 14), self.s(y + 18), image=self._decor(ds.task, gap_w, 58),
+                              anchor="nw", tags=tags)
+        self.create_image(self.s(x + pad), self.s(y + 20), image=self._task_icon(ds.task, 54), anchor="nw", tags=tags)
 
-        # level badge
-        bw = self.f_badge.measure(ds.level) + 38
-        bx2 = x + w - pad
-        by = iy + isz / 2
-        self._rr(bx2 - bw, by - 13, bx2, by + 13, 13, fill="#EEE6F8", outline="", tags=tags)
-        dot = LEVEL_DOT.get(ds.level, MUTED)
-        self.cv.create_oval(bx2 - bw + 11, by - 4, bx2 - bw + 19, by + 4,
-                            fill=dot, outline="", tags=tags)
-        self._text(bx2 - bw + 26, by, ds.level, self.f_badge, INK_SOFT,
-                   anchor="w", tags=tags)
+        # نشان سطح
+        bx2, by = x + CARD_W - pad, y + 47
+        self.create_image(self.s(bx2 - bw), self.s(by - 18),
+                          image=self._shape(bw, 36, 18, c("row_bg"), alpha=240), anchor="nw", tags=tags)
+        self.create_oval(self.s(bx2 - bw + 14), self.s(by - 6), self.s(bx2 - bw + 26), self.s(by + 6),
+                         fill=LEVEL_DOT.get(ds.level, "#7a6f8e"), outline="", tags=tags)
+        self.text(bx2 - bw + 34, by, ds.level, 17, c("title"), True, tags=tags)
 
-        # title (max two lines) and subtitle
-        text_w = w - 2 * pad
-        lines = _wrap(ds.name, self.f_card_title, text_w, 2)
-        line_h = 23
-        ty = y + 66
-
+        # عنوان (حداکثر دو خط) و زیرعنوان
+        lines = self._wrap(ds.name, 24, True, CARD_W - 2 * pad)
+        top = y + 84
         for i, line in enumerate(lines):
-            self._text(x + pad, ty + i * line_h, line, self.f_card_title, INK, tags=tags)
+            self.text(x + pad, top + i * 29 + 14, line, 24, c("title"), True, tags=tags)
+        sub = self._fit(f"{ds.domain} · {ds.task}", 18, False, CARD_W - 2 * pad)
+        self.text(x + pad, top + len(lines) * 29 + 16, sub, 18, c("body"), tags=tags)
 
-        sub = _fit(f"{ds.domain} · {ds.task}", self.f_card_sub, text_w)
-        self._text(x + pad, ty + len(lines) * line_h + 2, sub, self.f_card_sub, MUTED, tags=tags)
-
-        # chips
-        chip_cy = y + h - 34
+        # چیپ‌ها و دکمهٔ فلش
+        cy = y + CARD_H - 30
         cx = x + pad
-
         for label in (f"{ds.rows:,} rows", f"{ds.columns:,} cols"):
-            cw = self.f_chip.measure(label) + 26
-            self._rr(cx, chip_cy - 14, cx + cw, chip_cy + 14, 14, fill=CHIP_BG,
-                     outline="", tags=tags)
-            self._text(cx + cw / 2, chip_cy, label, self.f_chip, INK_SOFT,
-                       anchor="center", tags=tags)
-            cx += cw + 8
+            w = self.text_width(label, 17, True) + 34
+            self.create_image(self.s(cx), self.s(cy - 18), image=self._shape(w, 36, 18, c("row_bg")),
+                              anchor="nw", tags=tags)
+            self.text(cx + w / 2, cy, label, 17, c("title"), True, anchor="center", tags=tags)
+            cx += w + 10
 
-        # arrow button
-        ax, ay, ar = x + w - pad - 16, chip_cy, 16
-        self.cv.create_oval(ax - ar, ay - ar, ax + ar, ay + ar, fill=DARK_BTN,
-                            outline="", tags=tags)
-        self.cv.create_line(ax - 6, ay, ax + 6, ay, fill=WHITE, width=2,
-                            capstyle="round", tags=tags)
-        self.cv.create_line(ax + 1, ay - 5, ax + 6, ay, ax + 1, ay + 5, fill=WHITE,
-                            width=2, capstyle="round", joinstyle="round", tags=tags)
+        ax = x + CARD_W - pad - 24
+        self.create_image(self.s(ax), self.s(cy), image=self._shape(48, 48, 24, BTN_DARK, BTN_LIGHT),
+                          anchor="center", tags=tags)
+        arrow = dict(fill="white", width=max(2, self.s(3)), capstyle="round", joinstyle="round", tags=tags)
+        self.create_line(self.s(ax - 10), self.s(cy), self.s(ax + 10), self.s(cy), **arrow)
+        self.create_line(self.s(ax + 3), self.s(cy - 8), self.s(ax + 10), self.s(cy), self.s(ax + 3), self.s(cy + 8), **arrow)
 
-        # interaction
-        def enter(_e, item=body, color=style["icon"]):
-            self.cv.itemconfigure(item, outline=color, width=2)
-            self.cv.config(cursor="hand2")
+        # تعامل
+        self.hover(tag,
+                   enter=lambda: self.itemconfig(body, image=hover),
+                   leave=lambda: self.itemconfig(body, image=normal))
+        self.tag_bind(tag, "<Button-1>", self._guard(lambda d=ds: self.on_open(d)))
 
-        def leave(_e, item=body):
-            self.cv.itemconfigure(item, outline=CARD_BORDER, width=1)
-            self.cv.config(cursor="")
-
-        self.cv.tag_bind(tag, "<Enter>", enter)
-        self.cv.tag_bind(tag, "<Leave>", leave)
-        self.cv.tag_bind(tag, "<Button-1>", lambda e, d=ds: self.on_open(d))
-
-    def _draw_glyph(self, task, cx, cy, tags):
-        kw = {"fill": WHITE, "width": 2, "capstyle": "round", "joinstyle": "round", "tags": tags}
-
-        if task == "Regression":
-            pts = [(-9, 6), (-3, -1), (2, 3), (9, -6)]
-            self.cv.create_line(*[c for p in pts for c in (cx + p[0], cy + p[1])], **kw)
-            for px, py in pts:
-                self.cv.create_oval(cx + px - 2, cy + py - 2, cx + px + 2, cy + py + 2,
-                                    fill=WHITE, outline="", tags=tags)
-        elif task == "Classification":
-            for dy in (-6, 6):
-                self.cv.create_oval(cx - 11, cy + dy - 3.5, cx - 4, cy + dy + 3.5,
-                                    outline=WHITE, width=2, tags=tags)
-                self.cv.create_line(cx + 1, cy + dy, cx + 10, cy + dy, **kw)
-        elif task == "Clustering":
-            for dx, dy in ((0, -7), (-8, 5), (8, 5)):
-                self.cv.create_oval(cx + dx - 3.5, cy + dy - 3.5, cx + dx + 3.5, cy + dy + 3.5,
-                                    outline=WHITE, width=2, tags=tags)
-        else:
-            for dx in (-6, 6):
-                for dy in (-6, 6):
-                    self.cv.create_oval(cx + dx - 2.5, cy + dy - 2.5, cx + dx + 2.5, cy + dy + 2.5,
-                                        fill=WHITE, outline="", tags=tags)
-
-    # ------------------------------------------------------------ empty state + pagination
-
-    def _draw_empty(self, x, y, w):
-        h = PAGE_ROWS * CARD_H + (PAGE_ROWS - 1) * GAP
-        self._rr(x, y, x + w, y + h, 24, fill="#FBF8FE", outline=CARD_BORDER, tags="ui")
-
+    def _draw_empty(self):
+        c = theme.c
+        w, h = CONTENT_W, ROWS * CARD_H + GAP_Y
+        img, pad = self._glass(w, h, 34, c("card_cols")[0], c("card_end"), c("card_alpha"),
+                               c("shadow_a"), c("shadow_rgb"), c("card_border"))
+        self.create_image(self.s(MX) - pad, self.s(GRID_Y) - pad, image=img, anchor="nw", tags=self._d())
         if self.all:
-            title, hint = "No datasets match your filters", "Try a different search or clear a filter."
+            title, hint = "No datasets match your filters", "Try another search, or clear a filter."
         else:
-            title = "No datasets yet"
-            hint = "Add a dataset script that writes <Task>/Metadata/<name>.json and it will appear here."
+            title, hint = "No datasets yet", "Add a dataset script that writes <Task>/Metadata/<name>.json - it appears here automatically."
+        cx, cy = MX + w / 2, GRID_Y + h / 2
+        self.text(cx, cy - 22, title, 32, c("title"), True, anchor="center", tags=self._d())
+        self.text(cx, cy + 24, hint, 20, c("body"), anchor="center", tags=self._d())
 
-        self._text(x + w / 2, y + h / 2 - 14, title, self.f_empty, INK, anchor="center")
-        self._text(x + w / 2, y + h / 2 + 20, hint, self.f_sub, MUTED, anchor="center")
+    # ---- ردیف پایین: دستهٔ موضوعی + شمارنده + صفحه‌بندی ----
+    def _draw_bottom(self, shown, pages):
+        c = theme.c
+        self._draw_dock()
 
-    def _draw_pagination(self, right, cy, pages):
-        size, gap = 32, 8
-        tokens = _page_tokens(pages, self.page)
-        x = right - len(tokens) * size - (len(tokens) - 1) * gap
+        # صفحه‌بندی (راست)
+        right, size, gap = MX + CONTENT_W, 46, 10
+        tokens = self._page_tokens(pages)
+        x = right - (len(tokens) * size + (len(tokens) - 1) * gap) if pages > 1 else right
+        pal = self._pal()
+        if pages > 1:
+            for n, token in enumerate(tokens):
+                cy = BOTTOM_CY
+                if token == "…":
+                    self.text(x + size / 2, cy, "…", 22, c("body"), True, anchor="center", tags=self._d())
+                else:
+                    active, tag = token == self.page, f"pg{n}"
+                    img = (self._shape(size, size, size / 2, BTN_DARK, BTN_LIGHT) if active else
+                           self._shape(size, size, size / 2, pal["pill_off"], alpha=pal["pill_off_a"],
+                                       border=c("card_border")))
+                    self.create_image(self.s(x), self.s(cy - size / 2), image=img, anchor="nw", tags=self._d(tag))
+                    self.text(x + size / 2, cy, str(token), 19, "white" if active else c("title"), True,
+                              anchor="center", tags=self._d(tag))
+                    self._clickable(tag, lambda t=token: self._go_page(t))
+                x += size + gap
 
-        for n, token in enumerate(tokens):
-            tag = f"pg{n}"
-            cx = x + size / 2
+        # شمارنده
+        counter_right = (right - (len(tokens) * size + (len(tokens) - 1) * gap) - 28) if pages > 1 else right
+        self.text(counter_right, BOTTOM_CY, f"Showing {shown} of {len(self.filtered)} datasets", 20, c("title"),
+                  anchor="e", tags=self._d())
 
-            if token == "…":
-                self._text(cx, cy, "…", self.f_page, MUTED, anchor="center")
-            else:
-                active = token == self.page
-                self.cv.create_oval(
-                    x, cy - size / 2, x + size, cy + size / 2,
-                    fill=DARK_BTN if active else WHITE,
-                    outline=DARK_BTN if active else "#EFE6F8",
-                    tags=("ui", tag),
-                )
-                self._text(cx, cy, str(token), self.f_page, WHITE if active else INK_SOFT,
-                           anchor="center", tags=("ui", tag))
-                self._clickable(tag, lambda t=token: self._go_page(t))
+    def _page_tokens(self, pages):
+        if pages <= 7:
+            return list(range(1, pages + 1))
+        wanted = sorted(n for n in {1, pages, self.page - 1, self.page, self.page + 1} if 1 <= n <= pages)
+        tokens = []
+        for n in wanted:
+            if tokens and n - tokens[-1] > 1:
+                tokens.append("…")
+            tokens.append(n)
+        return tokens
 
-            x += size + gap
+    # ---- دستهٔ موضوعی (پایین-چپ) ----
+    def _draw_dock(self):
+        c = theme.c
+        value = self.topic_filter or "All topics"
+        if self.topic_filter:
+            value += f" · {sum(1 for d in self.all if self.topic_filter in d.topics)}"
+        else:
+            value += f" · {len(self._topics())}"
 
-# endregion
+        tw = max(self.text_width("Topics", 22, True), self.text_width(value, 17, False))
+        clear_w = 50 if self.topic_filter else 0
+        w, h = 24 + 46 + 16 + tw + 22 + 22 + clear_w + 16, 66
+        x, y, cy = MX, BOTTOM_CY - h / 2, BOTTOM_CY
 
+        tag = "dock"
+        self.create_image(self.s(x), self.s(y), image=self._shape(w, h, h / 2, BTN_DARK, BTN_LIGHT,
+                                                                   border=("#ffffff", 70)),
+                          anchor="nw", tags=self._d(tag))
 
-# region Standalone preview
+        # آیکون شبکهٔ ۲×۲
+        ix, iy = x + 24 + 23, cy
+        self.create_oval(self.s(ix - 23), self.s(iy - 23), self.s(ix + 23), self.s(iy + 23),
+                         fill="#ffffff", outline="", tags=self._d(tag))
+        for dx in (-6.5, 6.5):
+            for dy in (-6.5, 6.5):
+                self.create_oval(self.s(ix + dx - 4.2), self.s(iy + dy - 4.2), self.s(ix + dx + 4.2),
+                                 self.s(iy + dy + 4.2), fill=BTN_LIGHT, outline="", tags=self._d(tag))
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.title("ML Studio - Datasets")
-    root.geometry("1280x760")
-    root.configure(bg=BG_TOP)
+        tx = x + 24 + 46 + 16
+        self.text(tx, cy - 12, "Topics", 22, "white", True, tags=self._d(tag))
+        self.text(tx, cy + 15, value, 17, "#f1e4f7", tags=self._d(tag))
 
-    page = DatasetsPage(
-        root,
-        show_navbar=True,
-        on_open=lambda ds: print("Open:", ds.name, ds.path),
-        on_navigate=lambda name: print("Navigate:", name),
-    )
-    page.pack(fill="both", expand=True)
+        # فلش کوچک
+        ax = x + w - 28 - clear_w
+        up = -1 if not self._popup else 1
+        self.create_polygon(self.s(ax - 8), self.s(cy + 4 * up), self.s(ax + 8), self.s(cy + 4 * up),
+                            self.s(ax), self.s(cy - 5 * up), fill="white", outline="", tags=self._d(tag))
+        self._clickable(tag, self._toggle_popup)
 
-    root.mainloop()
+        if self.topic_filter:
+            kx = x + w - 34
+            self.create_oval(self.s(kx - 16), self.s(cy - 16), self.s(kx + 16), self.s(cy + 16),
+                             fill="#ffffff", outline="", tags=self._d("dockclear"))
+            k = 6
+            for a, b in (((-k, -k), (k, k)), ((-k, k), (k, -k))):
+                self.create_line(self.s(kx + a[0]), self.s(cy + a[1]), self.s(kx + b[0]), self.s(cy + b[1]),
+                                 fill=BTN_LIGHT, width=max(2, self.s(2.6)), capstyle="round",
+                                 tags=self._d("dockclear"))
+            self._clickable("dockclear", lambda: self._set_topic(None))
 
-# endregion
+        self._dock_top = y
+
+    def _toggle_popup(self):
+        self._popup = not self._popup
+        self._draw_dynamic()
+
+    def _close_popup(self):
+        if self._popup:
+            self._popup = False
+            self._draw_dynamic()
+
+    def _draw_popup(self):
+        c, pal = theme.c, self._pal()
+        topics = [("All topics", len(self.all))] + self._topics()
+        inner_w = 880
+        pad, chip_h, gap = 26, 48, 12
+
+        # چیدمان چیپ‌ها
+        rows, row, rx = [], [], 0
+        for label, count in topics:
+            w = self.text_width(label, 19, True) + self.text_width(str(count), 16, True) + 66
+            if rx + w > inner_w and row:
+                rows.append(row)
+                row, rx = [], 0
+            row.append((label, count, w, rx))
+            rx += w + gap
+        rows.append(row)
+        hidden = 0
+        if len(rows) > 6:
+            hidden = sum(len(r) for r in rows[6:])
+            rows = rows[:6]
+
+        ph = 74 + len(rows) * (chip_h + gap) + (24 if hidden else 0) + 10
+        pw = inner_w + 2 * pad
+        px, py = MX, self._dock_top - 16 - ph
+
+        img, gpad = self._glass(pw, ph, 36, c("card_cols")[0], c("card_end"), pal["popup_a"],
+                                c("shadow_a") + 30, c("shadow_rgb"), c("card_border"))
+        self.create_image(self.s(px) - gpad, self.s(py) - gpad, image=img, anchor="nw", tags=self._d("popup"))
+        self.text(px + pad, py + 36, "Browse by topic", 26, c("title"), True, anchor="w", tags=self._d("popup"))
+        self.text(px + pw - pad, py + 36, "Click a topic to show its datasets", 17, c("body"), anchor="e",
+                  tags=self._d("popup"))
+
+        for r_i, row in enumerate(rows):
+            for label, count, w, rx in row:
+                x, y = px + pad + rx, py + 70 + r_i * (chip_h + gap)
+                selected = (label == "All topics" and not self.topic_filter) or label == self.topic_filter
+                tag = f"topic_{r_i}_{int(rx)}"
+                chip = (self._shape(w, chip_h, chip_h / 2, BTN_DARK, BTN_LIGHT) if selected else
+                        self._shape(w, chip_h, chip_h / 2, c("row_bg"), border=c("card_border")))
+                self.create_image(self.s(x), self.s(y), image=chip, anchor="nw", tags=self._d("popup", tag))
+                self.create_oval(self.s(x + 16), self.s(y + chip_h / 2 - 5), self.s(x + 26), self.s(y + chip_h / 2 + 5),
+                                 fill="white" if selected else c("accent"), outline="", tags=self._d("popup", tag))
+                self.text(x + 36, y + chip_h / 2, label, 19, "white" if selected else c("title"), True,
+                          tags=self._d("popup", tag))
+                self.text(x + w - 16, y + chip_h / 2, str(count), 16, "#f1e4f7" if selected else c("accent"), True,
+                          anchor="e", tags=self._d("popup", tag))
+                self.hover(tag)
+                self.tag_bind(tag, "<Button-1>",
+                              lambda e, t=(None if label == "All topics" else label): self._set_topic(t))
+
+        if hidden:
+            self.text(px + pad, py + ph - 26, f"+ {hidden} more topics", 16, c("body"), anchor="w",
+                      tags=self._d("popup"))
