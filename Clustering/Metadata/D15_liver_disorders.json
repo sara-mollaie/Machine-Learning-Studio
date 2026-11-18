@@ -6,7 +6,6 @@
     "task": "Clustering",
     "description": "Discover patterns in liver blood test measurements and analyze their relationship with alcohol consumption.",
     "source": "Data Science Dojo",
-    "source_url": "https://code.datasciencedojo.com/datasciencedojo/datasets/tree/master/Liver%20Disorders",
     "dataset_statistics": {
         "rows": 345,
         "columns": 7,
@@ -147,79 +146,74 @@
         "best_k_calinski_harabasz": 2,
         "best_k_davies_bouldin": 2,
         "best_k_combined": 2,
-        "candidate_ks": [
-            2,
-            3
-        ],
+        "elbow_metric_support": {
+            "Silhouette": false,
+            "Calinski-Harabasz": false,
+            "Davies-Bouldin": false
+        },
+        "elbow_support_count": 0,
+        "elbow_supported_by_validation": false,
         "final_k": 2,
-        "manual_override": true,
+        "selection_method": "Elbow + internal validation consensus",
+        "selection_reason": "Elbow K was not supported by at least two validation metrics; combined ranking selected K.",
+        "manual_override": false,
         "metrics_per_k": {
             "1": {
                 "Inertia": 31.3079,
-                "Explained Variance": 0.0,
                 "Silhouette": null,
                 "Calinski-Harabasz": null,
                 "Davies-Bouldin": null
             },
             "2": {
                 "Inertia": 22.3721,
-                "Explained Variance": 28.5418,
                 "Silhouette": 0.472,
                 "Calinski-Harabasz": 137.0011,
                 "Davies-Bouldin": 1.1346
             },
             "3": {
                 "Inertia": 17.4163,
-                "Explained Variance": 44.371,
                 "Silhouette": 0.284,
                 "Calinski-Harabasz": 136.3934,
                 "Davies-Bouldin": 1.2346
             },
             "4": {
                 "Inertia": 15.5523,
-                "Explained Variance": 50.3248,
                 "Silhouette": 0.2785,
                 "Calinski-Harabasz": 115.1532,
                 "Davies-Bouldin": 1.3488
             },
             "5": {
                 "Inertia": 13.8254,
-                "Explained Variance": 55.8406,
                 "Silhouette": 0.1983,
                 "Calinski-Harabasz": 107.4843,
                 "Davies-Bouldin": 1.369
             },
             "6": {
                 "Inertia": 12.2187,
-                "Explained Variance": 60.9726,
                 "Silhouette": 0.2161,
                 "Calinski-Harabasz": 105.924,
                 "Davies-Bouldin": 1.2609
             },
             "7": {
                 "Inertia": 11.0997,
-                "Explained Variance": 64.5467,
                 "Silhouette": 0.1981,
                 "Calinski-Harabasz": 102.561,
                 "Davies-Bouldin": 1.2407
             },
             "8": {
                 "Inertia": 10.343,
-                "Explained Variance": 66.9635,
                 "Silhouette": 0.2004,
                 "Calinski-Harabasz": 97.5836,
                 "Davies-Bouldin": 1.2595
             },
             "9": {
                 "Inertia": 9.8296,
-                "Explained Variance": 68.6036,
                 "Silhouette": 0.1851,
                 "Calinski-Harabasz": 91.7733,
                 "Davies-Bouldin": 1.2882
             },
             "10": {
                 "Inertia": 9.2928,
-                "Explained Variance": 70.3182,
                 "Silhouette": 0.1822,
                 "Calinski-Harabasz": 88.1818,
                 "Davies-Bouldin": 1.3135

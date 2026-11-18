@@ -1,6 +1,8 @@
 import tkinter as tk
+from tkinter import messagebox
 
 from UserInterfaceLayer.HomeModule import HomeModule
+from UserInterfaceLayer.Datasets import DatasetsModule
 from UserInterfaceLayer.Dialogs import InfoDialog, SettingsDialog
 from UserInterfaceLayer.Theme import theme, FONT
 
@@ -39,8 +41,10 @@ class MainView(tk.Frame):
         self.size = (home.W, home.H)
         self.register("home", home)
 
-        for name in ("datasets", "algorithms"):
-            self.register(name, ComingSoon(self, name, self.size, lambda: self.navigate("home")))
+        self.register("datasets", DatasetsModule(self, scale=scale, on_navigate=self.navigate,
+                                                 on_open=self.open_dataset))
+
+        self.register("algorithms", ComingSoon(self, "algorithms", self.size, lambda: self.navigate("home")))
 
         self.navigate("home")
 
@@ -63,3 +67,16 @@ class MainView(tk.Frame):
             self.current.pack_forget()
         page.pack()
         self.current = page
+
+        # صفحه‌هایی که داده دارند (مثل Datasets) هنگام نمایش، خودشان را به‌روز می‌کنند
+        if hasattr(page, "on_show"):
+            page.on_show()
+
+    def open_dataset(self, ds):
+        """با کلیک روی کارت دیتاست. فعلاً خلاصهٔ دیتاست؛ بعداً صفحهٔ Dataset Info جایگزین می‌شود."""
+        messagebox.showinfo(
+            ds.name,
+            f"{ds.description}\n\nLevel: {ds.level}\nDomain: {ds.domain}\nTask: {ds.task}\n"
+            f"Rows: {ds.rows:,}   Columns: {ds.columns:,}",
+            parent=self.winfo_toplevel(),
+        )

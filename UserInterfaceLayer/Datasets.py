@@ -18,6 +18,7 @@ import random
 import re
 import tkinter as tk
 import tkinter.font as tkfont
+from tkinter import messagebox
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -26,10 +27,11 @@ from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageTk
 from UserInterfaceLayer.HomeModule import HomeModule, BASE, _rgb, HDR_TOP, HDR_H, HDR_CY
 from UserInterfaceLayer.Theme import theme, FONT
 
-BG_LIGHT = BASE / "assets" / "page_images" / "datasets_background.png"
+BG_LIGHT = BASE / "assets" / "page_images" / "datasets_background_light.png"
 BG_DARK = BASE / "assets" / "page_images" / "datasets_background_dark.png"
 
 # ---- چیدمان (واحد: پیکسل طراحی ۱۶۷۲×۹۴۱، مثل HomeModule) ----
+DESIGN_W, DESIGN_H = 1672, 941      # اندازهٔ صفحه؛ مستقل از رزولوشن فایل پس‌زمینه
 MX = 64                       # حاشیهٔ چپ محتوا
 CONTENT_W = 1544              # عرض محتوا (۶۴ تا ۱۶۰۸)
 COLS, ROWS = 4, 2
@@ -38,8 +40,12 @@ CARD_W = (CONTENT_W - GAP_X * (COLS - 1)) // COLS
 CARD_H = 226
 FILTER_Y = 266
 GRID_Y = 332
-BOTTOM_CY = 854               # مرکز ردیف پایین (دستهٔ موضوعی + صفحه‌بندی)
+BOTTOM_CY = 874               # مرکز ردیف پایین (دستهٔ موضوعی + صفحه‌بندی)
 PER_PAGE = COLS * ROWS
+
+# پنجرهٔ اطلاعات دیتاست (روی خود صفحه، وسط)
+INFO_W, INFO_H = 900, 790
+INFO_X, INFO_Y = (1672 - INFO_W) // 2, 100
 
 LEVELS = ["Beginner", "Intermediate", "Advanced"]
 TASKS = ["Regression", "Classification", "Clustering"]
@@ -59,6 +65,8 @@ PALETTE = {
         "tint_default": "#f1ebfa",
         "search_bg": "#ffffff", "search_border": ("#e1d3f4", 255),
         "pill_off": "#ffffff", "pill_off_a": 205,
+        "badge_bg": "#ffffff",
+        "tile_bg": "#f8f4fd", "step_circle": "#e2d5f6", "sep": "#e7ddf4",
         "popup_a": 255,
     },
     "dark": {
@@ -66,9 +74,20 @@ PALETTE = {
         "tint_default": "#271a45",
         "search_bg": "#2a1a47", "search_border": ("#4a3566", 255),
         "pill_off": "#2a1a47", "pill_off_a": 235,
+        "badge_bg": "#3a2866",
+        "tile_bg": "#241540", "step_circle": "#3d2a68", "sep": "#3b2a5e",
         "popup_a": 255,
     },
 }
+
+# سایهٔ رنگی و ملایم زیر کارت‌ها در تم روشن (سبز برای Clustering)
+CARD_SHADOW = {
+    "Regression": (108, 76, 214),
+    "Classification": (238, 92, 159),
+    "Clustering": (40, 214, 168),
+}
+CARD_SHADOW_DEFAULT = (120, 100, 170)
+LIGHT_SHADOW_ALPHA = 140
 
 BTN_DARK = "#5a1f4b"          # گرادیان دکمه‌ها: مثل دکمهٔ Get Started
 BTN_LIGHT = "#a3305f"
@@ -186,15 +205,17 @@ class DatasetCatalog:
 class DatasetsModule(HomeModule):
     """صفحهٔ Datasets؛ از HomeModule ابزارهای رسم (panel, text, pic, nav_hover ...) را به ارث می‌برد."""
 
-    def __init__(self, master, scale=1.0, on_navigate=None, on_open=None, catalog=None, poll_ms=2500):
+    def __init__(self, master, scale=1.0, on_navigate=None, on_open=None, on_predict=None, catalog=None,
+                 poll_ms=2500):
         # نکته: عمداً HomeModule.__init__ صدا زده نمی‌شود (پس‌زمینهٔ Home را بارگذاری می‌کند)
         self._light = self._load_background(BG_LIGHT)
         self.k = scale
-        self.W, self.H = int(self._light.width * scale), int(self._light.height * scale)
+        self.W, self.H = int(DESIGN_W * scale), int(DESIGN_H * scale)
         tk.Canvas.__init__(self, master, width=self.W, height=self.H, highlightthickness=0, bd=0)
 
         self.on_navigate = on_navigate or (lambda page: print("goto", page))
-        self.on_open = on_open or (lambda ds: print("open dataset:", ds.name))
+        self.on_open = on_open            # برای سازگاری با MainView قدیمی؛ دیگر لازم نیست
+        self.on_predict = on_predict or self._predictor_soon
         self.catalog = catalog or DatasetCatalog()
         self.poll_ms = poll_ms
 
@@ -203,12 +224,16 @@ class DatasetsModule(HomeModule):
         self.level_filter = self.task_filter = self.topic_filter = None
         self.page = 1
         self._popup = False
+        self._info = None                 # اطلاعات پنجرهٔ باز (None = بسته)
+        self._entry_item = None
         self._placeholder_on = True
         self._sig = None
         self._poll_job = None
 
         self._make_entry()
         self._load_data()
+
+        self.bind_all("<Escape>", self._on_escape, add="+")
 
         theme.subscribe(self._build)
         self._build()
@@ -322,19 +347,19 @@ class DatasetsModule(HomeModule):
         self._cache[key] = photo
         return photo
 
-    def _glass(self, w, h, r, c1, c2, alpha, shadow, shadow_rgb, border):
-        key = ("glass", self.k, w, h, r, c1, c2, alpha, shadow, tuple(shadow_rgb), border)
+    def _glass(self, w, h, r, c1, c2, alpha, shadow, shadow_rgb, border, blur=14, off=10):
+        key = ("glass", self.k, w, h, r, c1, c2, alpha, shadow, tuple(shadow_rgb), border, blur, off)
         if key in self._cache:
             return self._cache[key]
         W, H, R, ss = self.s(w), self.s(h), self.s(r), 3
-        pad = self.s(34) if shadow else 0
+        pad = self.s(max(34, off + 2 * blur)) if shadow else 0
         canvas = Image.new("RGBA", (W + 2 * pad, H + 2 * pad), (0, 0, 0, 0))
         if shadow:
             sh = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
-            off = self.s(10)
-            ImageDraw.Draw(sh).rounded_rectangle((pad, pad + off, pad + W, pad + off + H), R,
+            dy = self.s(off)
+            ImageDraw.Draw(sh).rounded_rectangle((pad, pad + dy, pad + W, pad + dy + H), R,
                                                  fill=tuple(shadow_rgb) + (shadow,))
-            canvas = Image.alpha_composite(canvas, sh.filter(ImageFilter.GaussianBlur(self.s(14))))
+            canvas = Image.alpha_composite(canvas, sh.filter(ImageFilter.GaussianBlur(self.s(blur))))
         a, b = _rgb(c1), _rgb(c2 or c1)
         body = Image.new("RGBA", (W, H))
         d = ImageDraw.Draw(body)
@@ -395,6 +420,399 @@ class DatasetsModule(HomeModule):
                 gd.ellipse((x * u - w, y * u - w, x * u + w, y * u + w), fill=white)
         tile.alpha_composite(g.resize((S, S), Image.LANCZOS))
         photo = ImageTk.PhotoImage(tile)
+        self._cache[key] = photo
+        return photo
+
+
+    # =====================================================
+    # پنجرهٔ اطلاعات دیتاست (روی همین صفحه)
+    # =====================================================
+    def _predictor_soon(self, ds):
+        messagebox.showinfo("Predictor", f"The predictor for “{ds.name}” will be available soon.",
+                            parent=self.winfo_toplevel())
+
+    def _on_escape(self, _event=None):
+        if self._info:
+            self._close_info()
+
+    def _open_info(self, ds):
+        """متادیتای همان دیتاست را از فایل JSON می‌خواند و پنجره را نشان می‌دهد."""
+        try:
+            meta = json.loads(ds.path.read_text(encoding="utf-8"))      # همیشه نسخهٔ تازهٔ فایل
+        except (OSError, ValueError):
+            meta = ds.raw
+        self._popup = False
+        self._info = self._parse_info(ds, meta if isinstance(meta, dict) else {})
+        self._draw_dynamic()
+        self._draw_info()
+
+    def _close_info(self):
+        self._info = None
+        self.delete("overlay")
+        if self._entry_item is not None:
+            self.itemconfigure(self._entry_item, state="normal")
+        self.config(cursor="")
+
+    @staticmethod
+    def _as_list(value):
+        if isinstance(value, (list, tuple)):
+            return [str(v) for v in value]
+        return [str(value)] if value else []
+
+    @staticmethod
+    def _find_metric(meta, *names):
+        """مقدار یک معیار را از چند جای رایج متادیتا (evaluation / metrics / ...) پیدا می‌کند."""
+        pools = [meta]
+        for key in ("evaluation", "metrics", "model_evaluation", "results", "supervised"):
+            if isinstance(meta.get(key), dict):
+                pools.append(meta[key])
+        for pool in pools:
+            for name in names:
+                value = pool.get(name)
+                if isinstance(value, (int, float)):
+                    return float(value)
+        return None
+
+    def _parse_info(self, ds, meta):
+        """
+        متادیتا را برای هر سه نوع الگوریتم به ساختار ثابت پنجره تبدیل می‌کند:
+
+            Clustering     → Preparation, X (features), Algorithm (+K), Quality
+            Classification → Preparation, X (features), Y (target), Algorithm, Quality
+            Regression     → Preparation, X (features), Y (target), Algorithm, Quality
+
+        فیلدِ نبود = ردیفِ نبود. (ردیف Analysis variable حذف شده است.)
+        """
+        stats = meta.get("dataset_statistics") or {}
+        fs = meta.get("feature_selection") or {}
+        pre = meta.get("preprocessing") or {}
+        clu = meta.get("clustering") or {}
+        task = ds.task
+
+        rows = _to_int(stats.get("rows", ds.rows))
+        cols = _to_int(stats.get("columns", ds.columns))
+        target = meta.get("target") or meta.get("target_column") or fs.get("target") or meta.get("y")
+
+        features = (self._as_list(fs.get("selected_features")) or self._as_list(clu.get("input_features"))
+                    or self._as_list(pre.get("input_features")) or self._as_list(meta.get("features")))
+        if not features and target and stats.get("column_names"):
+            features = [col for col in self._as_list(stats["column_names"]) if col != str(target)]
+
+        # ---- کاشی سوم: بسته به نوع الگوریتم
+        classes = meta.get("n_classes") or meta.get("classes")
+        if task == "Clustering" and clu.get("n_clusters"):
+            third = (str(clu["n_clusters"]), "Clusters", "clusters")
+        elif task == "Classification" and classes:
+            n = len(classes) if isinstance(classes, (list, tuple)) else classes
+            third = (str(n), "Classes", "classes")
+        else:
+            third = (str(len(features)), "Features", "features")
+
+        # ---- جدول
+        table = []
+        prep = pre.get("method") or meta.get("preparation")
+        if prep:
+            missing = pre.get("missing_value_method")
+            table.append(("Preparation", f"{prep} · {missing}" if missing else str(prep)))
+
+        if features:
+            shown = ", ".join(features[:8]) + (f" +{len(features) - 8} more" if len(features) > 8 else "")
+            table.append(("X (features)", shown))
+
+        if task in ("Classification", "Regression") and target:        # Clustering هدف ندارد
+            table.append(("Y (target)", str(target)))
+
+        algo = clu.get("algorithm") or meta.get("algorithm")
+        algo_text = f"{task} ({algo})" if algo else task
+        if task == "Clustering" and clu.get("n_clusters"):
+            algo_text += f" · K = {clu['n_clusters']}"
+        table.append(("Algorithm", algo_text))
+
+        quality = []
+        if task == "Clustering":
+            sil = clu.get("silhouette_score")
+            if sil is not None:
+                quality.append(f"Silhouette {float(sil):.3f}")
+            ev = (clu.get("ssd") or {}).get("explained_variance_pct")
+            if ev is not None:
+                quality.append(f"{float(ev):.1f}% variance explained")
+        elif task == "Classification":
+            acc = self._find_metric(meta, "accuracy", "test_accuracy")
+            f1 = self._find_metric(meta, "f1", "f1_score", "f1_macro")
+            best_k = self._find_metric(meta, "best_k")
+            if acc is not None:
+                quality.append(f"Accuracy {acc * 100:.1f}%" if acc <= 1 else f"Accuracy {acc:.1f}%")
+            if f1 is not None:
+                quality.append(f"F1 {f1:.3f}")
+            if best_k is not None:
+                quality.append(f"best k = {int(best_k)}")
+        elif task == "Regression":
+            r2 = self._find_metric(meta, "r2", "r2_score", "r_squared")
+            mae = self._find_metric(meta, "mae", "mean_absolute_error")
+            rmse = self._find_metric(meta, "rmse")
+            if r2 is not None:
+                quality.append(f"R² {r2:.3f}")
+            if mae is not None:
+                quality.append(f"MAE {mae:,.2f}")
+            if rmse is not None:
+                quality.append(f"RMSE {rmse:,.2f}")
+        if quality:
+            table.append(("Quality", " · ".join(quality)))
+
+        return {
+            "ds": ds,
+            "title": str(meta.get("name") or ds.name),
+            "task": str(meta.get("task") or ds.task),
+            "level": ds.level,
+            "domain": str(meta.get("domain") or ds.domain),
+            "description": str(meta.get("description") or "No description available."),
+            "stats": [(f"{rows:,}", "Rows", "rows"), (f"{cols:,}", "Columns", "columns"), third],
+            "table": table[:5],
+        }
+
+    # ---- تصویرهای PIL پنجره ----
+    def _scrim(self):
+        """پس‌زمینهٔ محو و تیره پشت پنجره (مثل طرح: صفحه با هدرِ محو)."""
+        key = ("scrim", self.k, theme.name)
+        if key in self._cache:
+            return self._cache[key]
+        dark = theme.name == "dark"
+        base = self._load_background(BG_DARK) if dark and BG_DARK.exists() else self._light
+        img = base.resize((self.W, self.H), Image.LANCZOS).convert("RGBA")
+        d = ImageDraw.Draw(img)
+        d.rounded_rectangle((self.s(23), self.s(HDR_TOP), self.s(1649), self.s(HDR_TOP + HDR_H)), self.s(41),
+                            fill=_rgb(theme.c("hdr")[0]) + (255,))
+        img = img.filter(ImageFilter.GaussianBlur(self.s(16)))
+        img.alpha_composite(Image.new("RGBA", img.size, (20, 8, 45, 130) if dark else (75, 45, 120, 150)))
+        photo = ImageTk.PhotoImage(img.convert("RGB"))
+        self._cache[key] = photo
+        return photo
+
+    def _info_card(self, height):
+        """بدنهٔ پنجره: سایه + کارت + هدر گرادیانی با درخششِ صورتی گوشهٔ بالا-راست."""
+        key = ("info_card", self.k, theme.name, height)
+        if key in self._cache:
+            return self._cache[key]
+        S, c = self.s, theme.c
+        W, H, pad, R, ss = S(INFO_W), S(height), S(64), S(36), 3
+        canvas = Image.new("RGBA", (W + 2 * pad, H + 2 * pad), (0, 0, 0, 0))
+
+        sh = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+        ImageDraw.Draw(sh).rounded_rectangle((pad, pad + S(20), pad + W, pad + S(20) + H), R, fill=(25, 8, 55, 150))
+        canvas.alpha_composite(sh.filter(ImageFilter.GaussianBlur(S(26))))
+
+        card = Image.new("RGBA", (W, H), _rgb(c("dlg_bg")) + (255,))
+        hh = S(151)
+        head = Image.new("RGBA", (W, hh))
+        hd = ImageDraw.Draw(head)
+        a, b = _rgb("#2a1250"), _rgb("#5b2352")
+        for x in range(W):
+            t = x / max(W - 1, 1)
+            hd.line([(x, 0), (x, hh)], fill=tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3)) + (255,))
+        glow = Image.new("RGBA", (W, hh), (0, 0, 0, 0))
+        ImageDraw.Draw(glow).ellipse((int(W * 0.60), -int(hh * 0.95), int(W * 1.10), int(hh * 0.75)),
+                                     fill=(196, 96, 156, 170))
+        head.alpha_composite(glow.filter(ImageFilter.GaussianBlur(S(42))))
+        card.paste(head, (0, 0))
+
+        mask = Image.new("L", (W * ss, H * ss), 0)
+        ImageDraw.Draw(mask).rounded_rectangle((0, 0, W * ss - 1, H * ss - 1), R * ss, fill=255)
+        card.putalpha(mask.resize((W, H), Image.LANCZOS))
+        canvas.alpha_composite(card, (pad, pad))
+
+        photo = ImageTk.PhotoImage(canvas)
+        self._cache[key] = (photo, pad)
+        return photo, pad
+
+    def _info_icon(self, kind, size):
+        """کاشی بنفش با نماد سفید (Rows / Columns / Clusters / Classes / Features)."""
+        key = ("info_icon", self.k, kind, size)
+        if key in self._cache:
+            return self._cache[key]
+        S, ss = self.s(size), 6
+        big = S * ss
+        c1, c2 = _rgb("#4b2a8a"), _rgb("#7a4fd0")
+        tile = Image.new("RGBA", (big, big))
+        d = ImageDraw.Draw(tile)
+        for i in range(big * 2):
+            t = i / (big * 2 - 1)
+            d.line([(i, 0), (0, i)], fill=tuple(int(c1[k] + (c2[k] - c1[k]) * t) for k in range(3)) + (255,))
+        m = Image.new("L", (big, big), 0)
+        ImageDraw.Draw(m).rounded_rectangle((0, 0, big - 1, big - 1), int(big * 0.30), fill=255)
+        tile.putalpha(m)
+
+        g = ImageDraw.Draw(tile)
+        w, white = max(4, int(big * 0.07)), (255, 255, 255, 255)
+
+        def line(x1, y1, x2, y2):
+            g.line([(x1 * big, y1 * big), (x2 * big, y2 * big)], fill=white, width=w)
+            for x, y in ((x1, y1), (x2, y2)):
+                g.ellipse((x * big - w / 2, y * big - w / 2, x * big + w / 2, y * big + w / 2), fill=white)
+
+        def ring(x, y, r):
+            g.ellipse(((x - r) * big, (y - r) * big, (x + r) * big, (y + r) * big), outline=white, width=w)
+
+        if kind == "rows":
+            for y in (0.35, 0.5, 0.65):
+                line(0.3, y, 0.7, y)
+        elif kind == "columns":
+            for x in (0.36, 0.5, 0.64):
+                line(x, 0.30, x, 0.70)
+        elif kind == "clusters":
+            for x, y in ((0.5, 0.34), (0.34, 0.64), (0.66, 0.64)):
+                ring(x, y, 0.10)
+        elif kind == "classes":
+            g.rounded_rectangle((0.32 * big, 0.32 * big, 0.68 * big, 0.68 * big), int(big * 0.09),
+                                outline=white, width=w)
+        else:
+            for x, y in ((0.36, 0.36), (0.64, 0.36), (0.36, 0.64), (0.64, 0.64)):
+                g.rounded_rectangle(((x - 0.07) * big, (y - 0.07) * big, (x + 0.07) * big, (y + 0.07) * big),
+                                    int(big * 0.03), fill=white)
+
+        photo = ImageTk.PhotoImage(tile.resize((S, S), Image.LANCZOS))
+        self._cache[key] = photo
+        return photo
+
+    # ---- رسم پنجره ----
+    def _draw_info(self):
+        info = self._info
+        if not info:
+            return
+        c, pal, S = theme.c, self._pal(), self.s
+        ov = ("overlay",)
+        rows = info["table"]
+        height = 362 + len(rows) * 49 + 22 + 80 + 54 + 26         # پنجره به تعداد ردیف‌ها بسته است
+        x0, y0 = INFO_X, (DESIGN_H - height) // 2
+        left, right = x0 + 46, x0 + INFO_W - 46
+        inner_w = right - left
+
+        self.delete("overlay")
+        if self._entry_item is not None:
+            self.itemconfigure(self._entry_item, state="hidden")      # ویجت Entry همیشه روی بوم می‌ماند
+
+        # پس‌زمینهٔ محو: کلیک روی آن پنجره را می‌بندد
+        self.create_image(0, 0, image=self._scrim(), anchor="nw", tags=ov + ("ov_scrim",))
+        self.tag_bind("ov_scrim", "<Button-1>", lambda e: self._close_info())
+
+        card, pad = self._info_card(height)
+        self.create_image(S(x0) - pad, S(y0) - pad, image=card, anchor="nw", tags=ov + ("ov_card",))
+        self.tag_bind("ov_card", "<Button-1>", lambda e: None)
+
+        # --- هدر: چیپ‌ها + عنوان
+        cx = left
+        for kind, label in (("task", info["task"]), ("level", info["level"]), ("domain", info["domain"])):
+            w = self.text_width(label, 17, True) + 40 + (20 if kind == "level" else 0)
+            self.create_image(S(cx), S(y0 + 34), image=self._shape(w, 38, 19, "#ffffff", alpha=46),
+                              anchor="nw", tags=ov)
+            tx = cx + 20
+            if kind == "level":
+                self.create_image(S(cx + 24), S(y0 + 53), image=self._level_dot(LEVEL_DOT.get(info["level"], "#a99bc0"), 22),
+                                  anchor="center", tags=ov)
+                tx = cx + 40
+            self.text(tx, y0 + 53, label, 17, "white", True, tags=ov)
+            cx += w + 14
+
+        self.text(left, y0 + 108, self._fit(info["title"], 40, True, inner_w), 40, "white", True, tags=ov)
+
+        # --- توضیح (ایتالیک، حداکثر دو خط)
+        for i, line in enumerate(self._wrap(info["description"], 22, False, inner_w, 2)):
+            self.create_text(S(left), S(y0 + 180 + i * 29), text=line, anchor="w", fill=c("body"),
+                             font=(FONT, -S(22), "italic"), tags=ov)
+
+        # --- سه کاشی آماری
+        tw, gap, ty = (inner_w - 2 * 14) / 3, 14, y0 + 248
+        for i, (value, label, kind) in enumerate(info["stats"]):
+            tx = left + i * (tw + gap)
+            self.create_image(S(tx), S(ty), image=self._shape(tw, 90, 24, pal["tile_bg"], border=pal["search_border"]),
+                              anchor="nw", tags=ov)
+            self.create_image(S(tx + 22), S(ty + 22), image=self._info_icon(kind, 46), anchor="nw", tags=ov)
+            self.text(tx + 84, ty + 33, value, 32, c("title"), True, tags=ov)
+            self.text(tx + 84, ty + 65, label, 18, c("body"), tags=ov)
+
+        # --- جدول مشخصات
+        top = y0 + 362
+        for i in range(len(rows) + 1):
+            self.create_line(S(left), S(top + i * 49), S(right), S(top + i * 49), fill=pal["sep"],
+                             width=max(1, S(1)), tags=ov)
+        for i, (label, value) in enumerate(rows):
+            cy = top + i * 49 + 25
+            self.text(left, cy, label, 20, c("body"), tags=ov)
+            self.text(left + 200, cy, self._fit(value, 20, True, inner_w - 200), 20, c("title"), True, tags=ov)
+
+        # --- مراحل: Load / Prepare / Train / Predict
+        sy = top + len(rows) * 49 + 22
+        self.create_image(S(left), S(sy), image=self._shape(inner_w, 56, 28, c("row_bg")), anchor="nw", tags=ov)
+        sx = left + 22
+        for n, step in enumerate(("Load", "Prepare", "Train", "Predict"), start=1):
+            active = n == 1
+            circle = (self._shape(32, 32, 16, BTN_LIGHT, BTN_DARK) if active else
+                      self._shape(32, 32, 16, pal["step_circle"]))
+            self.create_image(S(sx), S(sy + 12), image=circle, anchor="nw", tags=ov)
+            self.text(sx + 16, sy + 28, str(n), 16, "white" if active else c("title"), True, anchor="center", tags=ov)
+            self.text(sx + 44, sy + 28, step, 20, c("title"), True, tags=ov)
+            sx += 44 + self.text_width(step, 20, True) + 34
+
+        # --- دکمه‌ها
+        by, bh = sy + 80, 54
+        pw = self.text_width("Open predictor", 21, True) + 70
+        px = right - pw
+        shadow_img, spad = self._glass(pw, bh, 27, "#b4376e", "#5a1f4b", 255, 110, (163, 48, 95), None, 10, 8)
+        self.create_image(S(px) - spad, S(by) - spad, image=shadow_img, anchor="nw", tags=ov + ("ov_predict",))
+        self.text(px + pw / 2, by + bh / 2, "Open predictor", 21, "white", True, anchor="center",
+                  tags=ov + ("ov_predict",))
+        self.hover("ov_predict")
+        self.tag_bind("ov_predict", "<Button-1>", lambda e, d=info["ds"]: self.on_predict(d))
+
+        cw = 140
+        cx0 = px - 20 - cw
+        self.create_image(S(cx0), S(by), image=self._shape(cw, bh, 27, c("dlg_bg"), border=pal["search_border"]),
+                          anchor="nw", tags=ov + ("ov_close",))
+        self.text(cx0 + cw / 2, by + bh / 2, "Close", 21, c("title"), True, anchor="center",
+                  tags=ov + ("ov_close",))
+        self.hover("ov_close")
+        self.tag_bind("ov_close", "<Button-1>", lambda e: self._close_info())
+
+        self.tag_raise("overlay")
+
+    def _level_dot(self, color, size):
+        """نقطهٔ رنگی سطح؛ کاملاً تیز (ابَرنمونه‌گیری) با حلقهٔ هالهٔ نرم دورش تا واضح دیده شود."""
+        key = ("level_dot", self.k, color, size)
+        if key in self._cache:
+            return self._cache[key]
+        S, ss = self.s(size), 8
+        big = S * ss
+        img = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        r, g, b = _rgb(color)
+        c0 = big / 2
+        d.ellipse((0, 0, big - 1, big - 1), fill=(r, g, b, 70))                      # هاله
+        core = big * 0.30
+        d.ellipse((c0 - core, c0 - core, c0 + core, c0 + core), fill=(r, g, b, 255))  # نقطه
+        hl = core * 0.38
+        d.ellipse((c0 - core * 0.55, c0 - core * 0.6, c0 - core * 0.55 + hl, c0 - core * 0.6 + hl),
+                  fill=(255, 255, 255, 150))                                          # برق کوچک
+        photo = ImageTk.PhotoImage(img.resize((S, S), Image.LANCZOS))
+        self._cache[key] = photo
+        return photo
+
+    def _topics_icon(self, size):
+        """دیسک سفید + چهار مربع گردگوشه (با رنگ تم)؛ با ابَرنمونه‌گیری رسم می‌شود تا کاملاً تیز باشد."""
+        key = ("topics_icon", self.k, size)
+        if key in self._cache:
+            return self._cache[key]
+        S, ss = self.s(size), 6
+        big = S * ss
+        img = Image.new("RGBA", (big, big), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.ellipse((0, 0, big - 1, big - 1), fill=(255, 255, 255, 255))
+
+        cell, gap = big * 0.235, big * 0.075
+        start = (big - (2 * cell + gap)) / 2
+        colors = ((90, 31, 75), (163, 48, 95), (163, 48, 95), (240, 161, 197))   # مربع‌ها: تیره، صورتی، صورتی، روشن
+        for i, (row, col) in enumerate(((0, 0), (0, 1), (1, 0), (1, 1))):
+            x0, y0 = start + col * (cell + gap), start + row * (cell + gap)
+            d.rounded_rectangle((x0, y0, x0 + cell, y0 + cell), cell * 0.30, fill=colors[i] + (255,))
+        photo = ImageTk.PhotoImage(img.resize((S, S), Image.LANCZOS))
         self._cache[key] = photo
         return photo
 
@@ -506,6 +924,7 @@ class DatasetsModule(HomeModule):
         self.delete("all")
         self.config(cursor="")
         self._popup = False
+        self._info = None
 
         bg = self.create_image(0, 0, image=self._bg_photo(), anchor="nw", tags=("bgimg",))
         self.tag_bind("bgimg", "<Button-1>", lambda e: self._close_popup())
@@ -514,30 +933,41 @@ class DatasetsModule(HomeModule):
         self._draw_dynamic()
 
     def _navbar(self):
-        """هدر دقیقاً مثل Home؛ فقط آیتم فعال «Datasets» است."""
+        """هدر مثل Home؛ آیتم Home حذف شده و «Datasets» فعال است."""
         c, cy = theme.c, HDR_CY
         self.panel(23, HDR_TOP, 1626, HDR_H, 41, *c("hdr"), alpha=255)
 
         self.pic(88, cy, "ml_studio_logo", 56, crop=True)
         self.text(130, cy, "Machine Learning Prediction Studio", 25, "#ffffff", True)
 
-        items = [("Home", "nav_home", 34, 748, 775, "home"),
-                 ("Datasets", "nav_datasets", 38, 934, 964, "datasets"),
-                 ("Algorithms", "nav_algorithms", 42, 1140, 1173, "algorithms")]
-        for label, ic, isz, ix, tx, page in items:
+        # آیتم‌ها دقیقاً وسطِ فاصلهٔ «عنوان ↔ آیکون info» چیده می‌شوند
+        items = [("Datasets", "nav_datasets", 38, "datasets"),
+                 ("Algorithms", "nav_algorithms", 42, "algorithms")]
+        PAD, ICON_GAP, ITEM_GAP = 26, 12, 28           # فاصلهٔ داخلی، آیکون تا متن، بین آیتم‌ها
+        widths = [PAD + isz + ICON_GAP + self.text_width(label, 22, True) + PAD for label, _, isz, _ in items]
+        group_w = sum(widths) + ITEM_GAP * (len(items) - 1)
+
+        title_end = 130 + self.text_width("Machine Learning Prediction Studio", 25, True)   # انتهای عنوان
+        info_left = 1495 - 27                                                               # ابتدای دکمهٔ info
+        gap_center = (title_end + info_left) / 2
+        # حاشیهٔ خالیِ سمت راست آخرین آیتم دیده نمی‌شود؛ پس مرکز را روی بخش دیدنی می‌گذاریم
+        left = max(gap_center - (group_w - PAD) / 2, title_end + 20)
+
+        for (label, ic, isz, page), w in zip(items, widths):
             active = page == "datasets"
             tag = f"nav_{page}"
-            left = ix - isz / 2 - 16
-            right = tx + self.text_width(label, 22, True) + 18
+            cx = left + w / 2
             if active:
-                self._pill = self.rounded(right - left + 12, 50, 25, c("pill"))
-                self.create_image(self.s((left + right) / 2), self.s(cy), image=self._pill)
+                self._pill = self.rounded(w, 50, 25, c("pill"))
+                self.create_image(self.s(cx), self.s(cy), image=self._pill)
                 self.hover(tag)
                 self.tag_bind(tag, "<Button-1>", lambda e, p=page: self.on_navigate(p))
             else:
-                self.nav_hover(tag, (left + right) / 2, cy, right - left, 50, page)
-            self.pic(ix, cy, ic, isz, (tag,), crop=True)
-            self.text(tx, cy, label, 22, c("pill_text") if active else "white", True, tags=(tag,))
+                self.nav_hover(tag, cx, cy, w, 50, page)
+            self.pic(left + PAD + isz / 2, cy, ic, isz, (tag,), crop=True)
+            self.text(left + PAD + isz + ICON_GAP, cy, label, 22, c("pill_text") if active else "white", True,
+                      tags=(tag,))
+            left += w + ITEM_GAP
 
         for ic, x, page in [("nav_info", 1495, "info"), ("nav_settings", 1590, "settings")]:
             tag = f"nav_{page}"
@@ -586,7 +1016,7 @@ class DatasetsModule(HomeModule):
         placeholder_fg = c("body") if self._placeholder_on else c("title")
         self.entry.config(font=(FONT, -self.s(20)), bg=pal["search_bg"], fg=placeholder_fg,
                           insertbackground=c("title"))
-        self.create_window(self.s(x + 54), self.s(cy), window=self.entry, anchor="w",
+        self._entry_item = self.create_window(self.s(x + 54), self.s(cy), window=self.entry, anchor="w",
                            width=self.s(w - 76), height=self.s(h - 14))
 
     # ---------- لایهٔ پویا (فیلترها، کارت‌ها، پایین صفحه) ----------
@@ -607,6 +1037,8 @@ class DatasetsModule(HomeModule):
         self._draw_bottom(len(visible), pages)
         if self._popup:
             self._draw_popup()
+        if self._info:
+            self.tag_raise("overlay")
 
     # ---- فیلترها ----
     def _draw_filters(self):
@@ -667,16 +1099,20 @@ class DatasetsModule(HomeModule):
         tint = pal["tint"].get(ds.task, pal["tint_default"])
         accent = TASK_ACCENT.get(ds.task, TASK_DEFAULT)[0]
 
+        if theme.name == "light":      # سایهٔ رنگی و ملایم (برای Clustering سبز)
+            sh_rgb, sh_a, sh_blur, sh_off = CARD_SHADOW.get(ds.task, CARD_SHADOW_DEFAULT), LIGHT_SHADOW_ALPHA, 16, 8
+        else:
+            sh_rgb, sh_a, sh_blur, sh_off = c("shadow_rgb"), c("shadow_a"), 14, 10
+
         def glass(border):
             return self._glass(CARD_W, CARD_H, 30, tint, c("card_end"), c("card_alpha"),
-                               c("shadow_a"), c("shadow_rgb"), border)
+                               sh_a, sh_rgb, border, sh_blur, sh_off)
 
         normal, pad_px = glass(c("card_border"))
-        hover, _ = glass((accent, 255))
-        body = self.create_image(self.s(x) - pad_px, self.s(y) - pad_px, image=normal, anchor="nw", tags=tags)
+        self.create_image(self.s(x) - pad_px, self.s(y) - pad_px, image=normal, anchor="nw", tags=tags)
 
         # نشان سطح (عرضش برای جای تزئین لازم است)
-        bw = self.text_width(ds.level, 17, True) + 56
+        bw = self.text_width(ds.level, 17, True) + 62
 
         # تزئین: فقط در فاصلهٔ آزاد بین آیکون و نشان سطح
         gap_w = int(CARD_W - pad - bw - 14 - (pad + 54 + 14))
@@ -687,11 +1123,14 @@ class DatasetsModule(HomeModule):
 
         # نشان سطح
         bx2, by = x + CARD_W - pad, y + 47
-        self.create_image(self.s(bx2 - bw), self.s(by - 18),
-                          image=self._shape(bw, 36, 18, c("row_bg"), alpha=240), anchor="nw", tags=tags)
-        self.create_oval(self.s(bx2 - bw + 14), self.s(by - 6), self.s(bx2 - bw + 26), self.s(by + 6),
-                         fill=LEVEL_DOT.get(ds.level, "#7a6f8e"), outline="", tags=tags)
-        self.text(bx2 - bw + 34, by, ds.level, 17, c("title"), True, tags=tags)
+        level_color = LEVEL_DOT.get(ds.level, "#7a6f8e")
+        badge_fill = pal["badge_bg"]
+        self.create_image(self.s(bx2 - bw), self.s(by - 19),
+                          image=self._shape(bw, 38, 19, badge_fill, alpha=255, border=(level_color, 150)),
+                          anchor="nw", tags=tags)
+        self.create_image(self.s(bx2 - bw + 21), self.s(by), image=self._level_dot(level_color, 22),
+                          anchor="center", tags=tags)
+        self.text(bx2 - bw + 38, by, ds.level, 17, c("title"), True, tags=tags)
 
         # عنوان (حداکثر دو خط) و زیرعنوان
         lines = self._wrap(ds.name, 24, True, CARD_W - 2 * pad)
@@ -711,18 +1150,21 @@ class DatasetsModule(HomeModule):
             self.text(cx + w / 2, cy, label, 17, c("title"), True, anchor="center", tags=tags)
             cx += w + 10
 
+        # دکمهٔ فلش: فقط همین دکمه پنجرهٔ اطلاعات را باز می‌کند (بقیهٔ کارت کلیک‌پذیر نیست)
         ax = x + CARD_W - pad - 24
-        self.create_image(self.s(ax), self.s(cy), image=self._shape(48, 48, 24, BTN_DARK, BTN_LIGHT),
-                          anchor="center", tags=tags)
-        arrow = dict(fill="white", width=max(2, self.s(3)), capstyle="round", joinstyle="round", tags=tags)
+        atag = f"arrow{index}"
+        atags = self._d(tag, atag)
+        normal_btn = self._shape(48, 48, 24, BTN_DARK, BTN_LIGHT)
+        hover_btn = self._shape(48, 48, 24, "#c23f78", "#8a2a62", border=("#ffffff", 120))
+        btn = self.create_image(self.s(ax), self.s(cy), image=normal_btn, anchor="center", tags=atags)
+        arrow = dict(fill="white", width=max(2, self.s(3)), capstyle="round", joinstyle="round", tags=atags)
         self.create_line(self.s(ax - 10), self.s(cy), self.s(ax + 10), self.s(cy), **arrow)
         self.create_line(self.s(ax + 3), self.s(cy - 8), self.s(ax + 10), self.s(cy), self.s(ax + 3), self.s(cy + 8), **arrow)
 
-        # تعامل
-        self.hover(tag,
-                   enter=lambda: self.itemconfig(body, image=hover),
-                   leave=lambda: self.itemconfig(body, image=normal))
-        self.tag_bind(tag, "<Button-1>", self._guard(lambda d=ds: self.on_open(d)))
+        self.hover(atag,
+                   enter=lambda: self.itemconfig(btn, image=hover_btn),
+                   leave=lambda: self.itemconfig(btn, image=normal_btn))
+        self.tag_bind(atag, "<Button-1>", self._guard(lambda d=ds: self._open_info(d)))
 
     def _draw_empty(self):
         c = theme.c
@@ -799,14 +1241,9 @@ class DatasetsModule(HomeModule):
                                                                    border=("#ffffff", 70)),
                           anchor="nw", tags=self._d(tag))
 
-        # آیکون شبکهٔ ۲×۲
+        # آیکون دسته‌بندی (واضح و تیز)
         ix, iy = x + 24 + 23, cy
-        self.create_oval(self.s(ix - 23), self.s(iy - 23), self.s(ix + 23), self.s(iy + 23),
-                         fill="#ffffff", outline="", tags=self._d(tag))
-        for dx in (-6.5, 6.5):
-            for dy in (-6.5, 6.5):
-                self.create_oval(self.s(ix + dx - 4.2), self.s(iy + dy - 4.2), self.s(ix + dx + 4.2),
-                                 self.s(iy + dy + 4.2), fill=BTN_LIGHT, outline="", tags=self._d(tag))
+        self.create_image(self.s(ix), self.s(iy), image=self._topics_icon(46), anchor="center", tags=self._d(tag))
 
         tx = x + 24 + 46 + 16
         self.text(tx, cy - 12, "Topics", 22, "white", True, tags=self._d(tag))

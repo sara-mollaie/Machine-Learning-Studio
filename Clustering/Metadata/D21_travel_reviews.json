@@ -12,46 +12,46 @@
         "columns": 11,
         "column_names": [
             "User ID",
-            "Category 1",
-            "Category 2",
-            "Category 3",
-            "Category 4",
-            "Category 5",
-            "Category 6",
-            "Category 7",
-            "Category 8",
-            "Category 9",
-            "Category 10"
+            "Art Galleries",
+            "Dance Clubs",
+            "Juice Bars",
+            "Restaurants",
+            "Museums",
+            "Resorts",
+            "Parks & Picnic Spots",
+            "Beaches",
+            "Theaters",
+            "Religious Institutions"
         ],
         "data_types": {
             "User ID": "str",
-            "Category 1": "float64",
-            "Category 2": "float64",
-            "Category 3": "float64",
-            "Category 4": "float64",
-            "Category 5": "float64",
-            "Category 6": "float64",
-            "Category 7": "float64",
-            "Category 8": "float64",
-            "Category 9": "float64",
-            "Category 10": "float64"
+            "Art Galleries": "float64",
+            "Dance Clubs": "float64",
+            "Juice Bars": "float64",
+            "Restaurants": "float64",
+            "Museums": "float64",
+            "Resorts": "float64",
+            "Parks & Picnic Spots": "float64",
+            "Beaches": "float64",
+            "Theaters": "float64",
+            "Religious Institutions": "float64"
         },
         "missing_values": {
             "User ID": 0,
-            "Category 1": 0,
-            "Category 2": 0,
-            "Category 3": 0,
-            "Category 4": 0,
-            "Category 5": 0,
-            "Category 6": 0,
-            "Category 7": 0,
-            "Category 8": 0,
-            "Category 9": 0,
-            "Category 10": 0
+            "Art Galleries": 0,
+            "Dance Clubs": 0,
+            "Juice Bars": 0,
+            "Restaurants": 0,
+            "Museums": 0,
+            "Resorts": 0,
+            "Parks & Picnic Spots": 0,
+            "Beaches": 0,
+            "Theaters": 0,
+            "Religious Institutions": 0
         },
         "total_missing_values": 0,
         "descriptive_statistics": {
-            "Category 1": {
+            "Art Galleries": {
                 "count": 980.0,
                 "mean": 0.893,
                 "std": 0.327,
@@ -61,7 +61,7 @@
                 "75%": 1.02,
                 "max": 3.22
             },
-            "Category 2": {
+            "Dance Clubs": {
                 "count": 980.0,
                 "mean": 1.353,
                 "std": 0.478,
@@ -71,7 +71,7 @@
                 "75%": 1.56,
                 "max": 3.64
             },
-            "Category 3": {
+            "Juice Bars": {
                 "count": 980.0,
                 "mean": 1.013,
                 "std": 0.789,
@@ -81,7 +81,7 @@
                 "75%": 1.572,
                 "max": 3.62
             },
-            "Category 4": {
+            "Restaurants": {
                 "count": 980.0,
                 "mean": 0.532,
                 "std": 0.28,
@@ -91,7 +91,7 @@
                 "75%": 0.58,
                 "max": 3.44
             },
-            "Category 5": {
+            "Museums": {
                 "count": 980.0,
                 "mean": 0.94,
                 "std": 0.437,
@@ -101,7 +101,7 @@
                 "75%": 1.2,
                 "max": 3.3
             },
-            "Category 6": {
+            "Resorts": {
                 "count": 980.0,
                 "mean": 1.843,
                 "std": 0.54,
@@ -111,7 +111,7 @@
                 "75%": 2.2,
                 "max": 3.76
             },
-            "Category 8": {
+            "Beaches": {
                 "count": 980.0,
                 "mean": 2.835,
                 "std": 0.138,
@@ -121,7 +121,7 @@
                 "75%": 2.91,
                 "max": 3.39
             },
-            "Category 9": {
+            "Theaters": {
                 "count": 980.0,
                 "mean": 1.569,
                 "std": 0.365,
@@ -131,7 +131,7 @@
                 "75%": 1.76,
                 "max": 3.17
             },
-            "Category 10": {
+            "Religious Institutions": {
                 "count": 980.0,
                 "mean": 2.799,
                 "std": 0.321,
@@ -143,22 +143,50 @@
             }
         }
     },
-    "preprocessing": {
-        "method": "StandardScaler",
-        "input_features": [
-            "Category 1",
-            "Category 2",
-            "Category 3",
-            "Category 4",
-            "Category 5",
-            "Category 6",
-            "Category 8",
-            "Category 9",
-            "Category 10"
+    "feature_selection": {
+        "selected_features": [
+            "Art Galleries",
+            "Dance Clubs",
+            "Juice Bars",
+            "Restaurants",
+            "Museums",
+            "Resorts",
+            "Beaches",
+            "Theaters",
+            "Religious Institutions"
+        ],
+        "analysis_columns": [
+            "Art Galleries",
+            "Dance Clubs",
+            "Juice Bars",
+            "Restaurants",
+            "Museums",
+            "Resorts",
+            "Beaches",
+            "Theaters",
+            "Religious Institutions"
         ],
         "excluded_columns": [
             "User ID",
-            "Category 7"
+            "Parks & Picnic Spots"
+        ],
+        "excluded_feature_reasons": {
+            "User ID": "Identifier column, not a travel preference feature.",
+            "Parks & Picnic Spots": "Near-constant feature with very low variance."
+        }
+    },
+    "preprocessing": {
+        "method": "StandardScaler",
+        "input_features": [
+            "Art Galleries",
+            "Dance Clubs",
+            "Juice Bars",
+            "Restaurants",
+            "Museums",
+            "Resorts",
+            "Beaches",
+            "Theaters",
+            "Religious Institutions"
         ],
         "missing_value_method": "Median Imputation",
         "rating_range": {
@@ -166,199 +194,369 @@
             "maximum": 4
         }
     },
+    "dimensionality_reduction": {
+        "method": "PCA",
+        "n_components": 3,
+        "explained_variance_ratio": {
+            "PC1": 0.2619,
+            "PC2": 0.1388,
+            "PC3": 0.1356
+        },
+        "total_explained_variance_pct": 53.63
+    },
     "clustering": {
         "algorithm": "KMeans",
         "n_clusters": 3,
         "random_state": 42,
+        "n_init": 10,
+        "input_space": "PCA (3 components)",
         "input_features": [
-            "Category 1",
-            "Category 2",
-            "Category 3",
-            "Category 4",
-            "Category 5",
-            "Category 6",
-            "Category 8",
-            "Category 9",
-            "Category 10"
+            "Art Galleries",
+            "Dance Clubs",
+            "Juice Bars",
+            "Restaurants",
+            "Museums",
+            "Resorts",
+            "Beaches",
+            "Theaters",
+            "Religious Institutions"
         ],
         "cluster_label_column": "Cluster",
         "cluster_sizes": {
-            "0": 563,
-            "1": 21,
-            "2": 396
+            "0": 384,
+            "1": 343,
+            "2": 253
         },
         "cluster_percentages": {
-            "0": 57.45,
-            "1": 2.14,
-            "2": 40.41
+            "0": 39.18,
+            "1": 35.0,
+            "2": 25.82
         },
         "cluster_profiles": {
             "0": {
-                "Category 1": 0.894,
-                "Category 2": 1.265,
-                "Category 3": 0.594,
-                "Category 4": 0.453,
-                "Category 5": 0.728,
-                "Category 6": 1.547,
-                "Category 8": 2.851,
-                "Category 9": 1.555,
-                "Category 10": 2.971
+                "Art Galleries": 0.949,
+                "Dance Clubs": 1.208,
+                "Juice Bars": 0.654,
+                "Restaurants": 0.445,
+                "Museums": 0.662,
+                "Resorts": 1.438,
+                "Beaches": 2.808,
+                "Theaters": 1.415,
+                "Religious Institutions": 2.996
             },
             "1": {
-                "Category 1": 1.022,
-                "Category 2": 1.92,
-                "Category 3": 0.559,
-                "Category 4": 2.086,
-                "Category 5": 1.07,
-                "Category 6": 1.947,
-                "Category 8": 2.724,
-                "Category 9": 1.509,
-                "Category 10": 2.515
+                "Art Galleries": 0.916,
+                "Dance Clubs": 1.48,
+                "Juice Bars": 1.708,
+                "Restaurants": 0.655,
+                "Museums": 1.221,
+                "Resorts": 2.254,
+                "Beaches": 2.785,
+                "Theaters": 1.507,
+                "Religious Institutions": 2.533
             },
             "2": {
-                "Category 1": 0.885,
-                "Category 2": 1.447,
-                "Category 3": 1.633,
-                "Category 4": 0.563,
-                "Category 5": 1.234,
-                "Category 6": 2.258,
-                "Category 8": 2.818,
-                "Category 9": 1.593,
-                "Category 10": 2.57
+                "Art Galleries": 0.777,
+                "Dance Clubs": 1.4,
+                "Juice Bars": 0.617,
+                "Restaurants": 0.5,
+                "Museums": 0.98,
+                "Resorts": 1.901,
+                "Beaches": 2.944,
+                "Theaters": 1.888,
+                "Religious Institutions": 2.862
             }
         },
-        "silhouette_score": 0.199
+        "silhouette_score": 0.2781
     },
     "model_evaluation": {
-        "SSD": 6513.0273,
-        "SSD_description": "Sum of Squared Distances from each sample to its assigned cluster center.",
-        "inertia": 6513.0273,
-        "silhouette_score": 0.199,
-        "elbow_ssd": {
-            "1": 8820.0,
-            "2": 7176.3411,
-            "3": 6513.0273,
-            "4": 5924.0345,
-            "5": 5449.1169,
-            "6": 5138.8586,
-            "7": 4871.0082,
-            "8": 4661.7721,
-            "9": 4471.4036,
-            "10": 4307.5811
+        "SSD": 2526.3159,
+        "SSD_space": "PCA (3 components)",
+        "SSD_description": "Sum of Squared Distances from each PCA-transformed sample to its assigned cluster center.",
+        "inertia": 2526.3159,
+        "ssd_verification": true,
+        "silhouette_score": 0.2781,
+        "inertia_per_k": {
+            "1": 4730.474,
+            "2": 3094.5984,
+            "3": 2526.3159,
+            "4": 2108.2914,
+            "5": 1896.7166,
+            "6": 1694.289,
+            "7": 1537.2059,
+            "8": 1412.2814,
+            "9": 1317.0863,
+            "10": 1231.8289
         },
         "silhouette_scores": {
-            "2": 0.1937,
-            "3": 0.199,
-            "4": 0.1592,
-            "5": 0.1698,
-            "6": 0.1483,
-            "7": 0.1307,
-            "8": 0.1284,
-            "9": 0.1285,
-            "10": 0.1258
+            "2": 0.323,
+            "3": 0.2781,
+            "4": 0.2903,
+            "5": 0.2473,
+            "6": 0.2317,
+            "7": 0.2349,
+            "8": 0.2391,
+            "9": 0.2384,
+            "10": 0.2361
         },
-        "best_k": 3,
-        "best_silhouette_score": 0.199
+        "calinski_harabasz_scores": {
+            "2": 516.9932,
+            "3": 426.2145,
+            "4": 404.6326,
+            "5": 364.1706,
+            "6": 349.0889,
+            "7": 336.872,
+            "8": 326.2485,
+            "9": 314.5579,
+            "10": 306.1109
+        },
+        "davies_bouldin_scores": {
+            "2": 1.2206,
+            "3": 1.2902,
+            "4": 1.1541,
+            "5": 1.2654,
+            "6": 1.2672,
+            "7": 1.183,
+            "8": 1.1445,
+            "9": 1.1199,
+            "10": 1.1371
+        },
+        "metrics_per_k": {
+            "1": {
+                "Inertia": 4730.474,
+                "Silhouette": null,
+                "Calinski-Harabasz": null,
+                "Davies-Bouldin": null
+            },
+            "2": {
+                "Inertia": 3094.5984,
+                "Silhouette": 0.323,
+                "Calinski-Harabasz": 516.9932,
+                "Davies-Bouldin": 1.2206
+            },
+            "3": {
+                "Inertia": 2526.3159,
+                "Silhouette": 0.2781,
+                "Calinski-Harabasz": 426.2145,
+                "Davies-Bouldin": 1.2902
+            },
+            "4": {
+                "Inertia": 2108.2914,
+                "Silhouette": 0.2903,
+                "Calinski-Harabasz": 404.6326,
+                "Davies-Bouldin": 1.1541
+            },
+            "5": {
+                "Inertia": 1896.7166,
+                "Silhouette": 0.2473,
+                "Calinski-Harabasz": 364.1706,
+                "Davies-Bouldin": 1.2654
+            },
+            "6": {
+                "Inertia": 1694.289,
+                "Silhouette": 0.2317,
+                "Calinski-Harabasz": 349.0889,
+                "Davies-Bouldin": 1.2672
+            },
+            "7": {
+                "Inertia": 1537.2059,
+                "Silhouette": 0.2349,
+                "Calinski-Harabasz": 336.872,
+                "Davies-Bouldin": 1.183
+            },
+            "8": {
+                "Inertia": 1412.2814,
+                "Silhouette": 0.2391,
+                "Calinski-Harabasz": 326.2485,
+                "Davies-Bouldin": 1.1445
+            },
+            "9": {
+                "Inertia": 1317.0863,
+                "Silhouette": 0.2384,
+                "Calinski-Harabasz": 314.5579,
+                "Davies-Bouldin": 1.1199
+            },
+            "10": {
+                "Inertia": 1231.8289,
+                "Silhouette": 0.2361,
+                "Calinski-Harabasz": 306.1109,
+                "Davies-Bouldin": 1.1371
+            }
+        },
+        "combined_ranking": {
+            "2": {
+                "Silhouette": 1.0,
+                "Calinski-Harabasz": 1.0,
+                "Davies-Bouldin": 6.0,
+                "MeanRank": 2.67
+            },
+            "3": {
+                "Silhouette": 3.0,
+                "Calinski-Harabasz": 2.0,
+                "Davies-Bouldin": 9.0,
+                "MeanRank": 4.67
+            },
+            "4": {
+                "Silhouette": 2.0,
+                "Calinski-Harabasz": 3.0,
+                "Davies-Bouldin": 4.0,
+                "MeanRank": 3.0
+            },
+            "5": {
+                "Silhouette": 4.0,
+                "Calinski-Harabasz": 4.0,
+                "Davies-Bouldin": 7.0,
+                "MeanRank": 5.0
+            },
+            "6": {
+                "Silhouette": 9.0,
+                "Calinski-Harabasz": 5.0,
+                "Davies-Bouldin": 8.0,
+                "MeanRank": 7.33
+            },
+            "7": {
+                "Silhouette": 8.0,
+                "Calinski-Harabasz": 6.0,
+                "Davies-Bouldin": 5.0,
+                "MeanRank": 6.33
+            },
+            "8": {
+                "Silhouette": 5.0,
+                "Calinski-Harabasz": 7.0,
+                "Davies-Bouldin": 3.0,
+                "MeanRank": 5.0
+            },
+            "9": {
+                "Silhouette": 6.0,
+                "Calinski-Harabasz": 8.0,
+                "Davies-Bouldin": 1.0,
+                "MeanRank": 5.0
+            },
+            "10": {
+                "Silhouette": 7.0,
+                "Calinski-Harabasz": 9.0,
+                "Davies-Bouldin": 2.0,
+                "MeanRank": 6.0
+            }
+        },
+        "elbow_k": 4,
+        "best_k_by_silhouette": 2,
+        "best_k_by_calinski_harabasz": 2,
+        "best_k_by_davies_bouldin": 9,
+        "best_k_combined": 2,
+        "elbow_metric_support": {
+            "Silhouette": false,
+            "Calinski-Harabasz": false,
+            "Davies-Bouldin": false
+        },
+        "elbow_support_count": 0,
+        "elbow_supported_by_validation": false,
+        "final_k": 3,
+        "selection_method": "User-selected K (3); Elbow and internal validation retained for reference",
+        "selection_reason": "K=3 explicitly selected by the user; Elbow and validation metrics are retained for reference.",
+        "manual_k_selection": true,
+        "best_silhouette_score": 0.323
     },
+    "model_verification": true,
     "correlation_matrix": {
-        "Category 1": {
-            "Category 1": 1.0,
-            "Category 2": -0.1877,
-            "Category 3": 0.0086,
-            "Category 4": 0.0735,
-            "Category 5": -0.1005,
-            "Category 6": 0.0941,
-            "Category 8": 0.02,
-            "Category 9": -0.0473,
-            "Category 10": 0.0507
+        "Art Galleries": {
+            "Art Galleries": 1.0,
+            "Dance Clubs": -0.1877,
+            "Juice Bars": 0.0086,
+            "Restaurants": 0.0735,
+            "Museums": -0.1005,
+            "Resorts": 0.0941,
+            "Beaches": 0.02,
+            "Theaters": -0.0473,
+            "Religious Institutions": 0.0507
         },
-        "Category 2": {
-            "Category 1": -0.1877,
-            "Category 2": 1.0,
-            "Category 3": 0.0436,
-            "Category 4": 0.1316,
-            "Category 5": 0.1196,
-            "Category 6": 0.1484,
-            "Category 8": -0.1586,
-            "Category 9": 0.0733,
-            "Category 10": -0.0658
+        "Dance Clubs": {
+            "Art Galleries": -0.1877,
+            "Dance Clubs": 1.0,
+            "Juice Bars": 0.0436,
+            "Restaurants": 0.1316,
+            "Museums": 0.1196,
+            "Resorts": 0.1484,
+            "Beaches": -0.1586,
+            "Theaters": 0.0733,
+            "Religious Institutions": -0.0658
         },
-        "Category 3": {
-            "Category 1": 0.0086,
-            "Category 2": 0.0436,
-            "Category 3": 1.0,
-            "Category 4": 0.0611,
-            "Category 5": 0.2817,
-            "Category 6": 0.3564,
-            "Category 8": -0.173,
-            "Category 9": -0.0854,
-            "Category 10": -0.4405
+        "Juice Bars": {
+            "Art Galleries": 0.0086,
+            "Dance Clubs": 0.0436,
+            "Juice Bars": 1.0,
+            "Restaurants": 0.0611,
+            "Museums": 0.2817,
+            "Resorts": 0.3564,
+            "Beaches": -0.173,
+            "Theaters": -0.0854,
+            "Religious Institutions": -0.4405
         },
-        "Category 4": {
-            "Category 1": 0.0735,
-            "Category 2": 0.1316,
-            "Category 3": 0.0611,
-            "Category 4": 1.0,
-            "Category 5": 0.1019,
-            "Category 6": 0.2159,
-            "Category 8": -0.1036,
-            "Category 9": 0.0267,
-            "Category 10": -0.3529
+        "Restaurants": {
+            "Art Galleries": 0.0735,
+            "Dance Clubs": 0.1316,
+            "Juice Bars": 0.0611,
+            "Restaurants": 1.0,
+            "Museums": 0.1019,
+            "Resorts": 0.2159,
+            "Beaches": -0.1036,
+            "Theaters": 0.0267,
+            "Religious Institutions": -0.3529
         },
-        "Category 5": {
-            "Category 1": -0.1005,
-            "Category 2": 0.1196,
-            "Category 3": 0.2817,
-            "Category 4": 0.1019,
-            "Category 5": 1.0,
-            "Category 6": 0.5813,
-            "Category 8": -0.021,
-            "Category 9": 0.0417,
-            "Category 10": -0.2475
+        "Museums": {
+            "Art Galleries": -0.1005,
+            "Dance Clubs": 0.1196,
+            "Juice Bars": 0.2817,
+            "Restaurants": 0.1019,
+            "Museums": 1.0,
+            "Resorts": 0.5813,
+            "Beaches": -0.021,
+            "Theaters": 0.0417,
+            "Religious Institutions": -0.2475
         },
-        "Category 6": {
-            "Category 1": 0.0941,
-            "Category 2": 0.1484,
-            "Category 3": 0.3564,
-            "Category 4": 0.2159,
-            "Category 5": 0.5813,
-            "Category 6": 1.0,
-            "Category 8": 0.0001,
-            "Category 9": 0.0964,
-            "Category 10": -0.4381
+        "Resorts": {
+            "Art Galleries": 0.0941,
+            "Dance Clubs": 0.1484,
+            "Juice Bars": 0.3564,
+            "Restaurants": 0.2159,
+            "Museums": 0.5813,
+            "Resorts": 1.0,
+            "Beaches": 0.0001,
+            "Theaters": 0.0964,
+            "Religious Institutions": -0.4381
         },
-        "Category 8": {
-            "Category 1": 0.02,
-            "Category 2": -0.1586,
-            "Category 3": -0.173,
-            "Category 4": -0.1036,
-            "Category 5": -0.021,
-            "Category 6": 0.0001,
-            "Category 8": 1.0,
-            "Category 9": 0.1697,
-            "Category 10": 0.1147
+        "Beaches": {
+            "Art Galleries": 0.02,
+            "Dance Clubs": -0.1586,
+            "Juice Bars": -0.173,
+            "Restaurants": -0.1036,
+            "Museums": -0.021,
+            "Resorts": 0.0001,
+            "Beaches": 1.0,
+            "Theaters": 0.1697,
+            "Religious Institutions": 0.1147
         },
-        "Category 9": {
-            "Category 1": -0.0473,
-            "Category 2": 0.0733,
-            "Category 3": -0.0854,
-            "Category 4": 0.0267,
-            "Category 5": 0.0417,
-            "Category 6": 0.0964,
-            "Category 8": 0.1697,
-            "Category 9": 1.0,
-            "Category 10": -0.0457
+        "Theaters": {
+            "Art Galleries": -0.0473,
+            "Dance Clubs": 0.0733,
+            "Juice Bars": -0.0854,
+            "Restaurants": 0.0267,
+            "Museums": 0.0417,
+            "Resorts": 0.0964,
+            "Beaches": 0.1697,
+            "Theaters": 1.0,
+            "Religious Institutions": -0.0457
         },
-        "Category 10": {
-            "Category 1": 0.0507,
-            "Category 2": -0.0658,
-            "Category 3": -0.4405,
-            "Category 4": -0.3529,
-            "Category 5": -0.2475,
-            "Category 6": -0.4381,
-            "Category 8": 0.1147,
-            "Category 9": -0.0457,
-            "Category 10": 1.0
+        "Religious Institutions": {
+            "Art Galleries": 0.0507,
+            "Dance Clubs": -0.0658,
+            "Juice Bars": -0.4405,
+            "Restaurants": -0.3529,
+            "Museums": -0.2475,
+            "Resorts": -0.4381,
+            "Beaches": 0.1147,
+            "Theaters": -0.0457,
+            "Religious Institutions": 1.0
         }
     },
     "output_files": {

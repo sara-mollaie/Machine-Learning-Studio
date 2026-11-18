@@ -165,12 +165,18 @@
         "best_k_calinski_harabasz": 2,
         "best_k_davies_bouldin": 2,
         "best_k_combined": 2,
-        "candidate_ks": [
-            2,
-            3
-        ],
+        "elbow_k": 3,
+        "elbow_metric_support": {
+            "Silhouette": false,
+            "Calinski-Harabasz": false,
+            "Davies-Bouldin": false
+        },
+        "elbow_support_count": 0,
+        "elbow_supported_by_validation": false,
+        "selection_method": "Elbow + internal validation consensus",
+        "selection_reason": "Elbow K was not supported by at least two validation metrics; combined ranking selected K.",
         "final_k": 2,
-        "manual_override": true,
+        "manual_override": false,
         "metrics_per_k": {
             "1": {
                 "Inertia": 59.7404,

@@ -213,25 +213,6 @@ class HomeModule(tk.Canvas):
         self.pic(88, cy, "ml_studio_logo", 56, crop=True)
         self.text(130, cy, "Machine Learning Prediction Studio", 25, "#ffffff", True)
 
-        self._pill = self.rounded(156, 50, 25, theme.c("pill"))
-        self.create_image(self.s(790), self.s(cy), image=self._pill)
-
-        items = [("Home", "nav_home", 34, 748, 775, "home"),
-                 ("Datasets", "nav_datasets", 38, 934, 964, "datasets"),
-                 ("Algorithms", "nav_algorithms", 42, 1140, 1173, "algorithms")]
-        for label, ic, isz, ix, tx, page in items:
-            active = page == "home"
-            tag = f"nav_{page}"
-            if active:
-                self.hover(tag)
-                self.tag_bind(tag, "<Button-1>", lambda e, p=page: self.on_navigate(p))
-            else:
-                left = ix - isz / 2 - 16
-                right = tx + self.text_width(label, 22, True) + 18
-                self.nav_hover(tag, (left + right) / 2, cy, right - left, 50, page)
-            self.pic(ix, cy, ic, isz, (tag,), crop=True)
-            self.text(tx, cy, label, 22, theme.c("pill_text") if active else "white", True, tags=(tag,))
-
         for ic, x, page in [("nav_info", 1495, "info"), ("nav_settings", 1590, "settings")]:
             tag = f"nav_{page}"
             self.nav_hover(tag, x, cy, 54, 54, page)
