@@ -250,16 +250,9 @@ print("-" * 60)
 
 # region Data Normalization
 
-# Log Transformation
-X_log = np.log1p(X)
-
-print("\nLog Transformed Data:")
-print(X_log.head())
-print("-" * 60)
-
-# MinMaxScaler
+# Keep original spending values and normalize them with MinMaxScaler.
 scaler = MinMaxScaler()
-X_scaled = scaler.fit_transform(X_log)
+X_scaled = scaler.fit_transform(X)
 
 df_scaled = pd.DataFrame(
     X_scaled,
@@ -393,12 +386,13 @@ elbow_metric_support = {
 elbow_support_count = sum(elbow_metric_support.values())
 elbow_supported_by_validation = elbow_support_count >= 2
 
-if elbow_supported_by_validation:
-    final_k = elbow_k
-    selection_reason = "Elbow K supported by at least two of three validation metrics."
-else:
-    final_k = best_k_combined
-    selection_reason = "Elbow K was not supported by at least two validation metrics; combined ranking selected K."
+# K=4 is selected after comparing K=3 and K=4.
+# The selection prioritizes lower SSD while retaining acceptable cluster quality.
+final_k = 2
+selection_reason = (
+    "K=2 selected because it provides the strongest Silhouette score, "
+    "a meaningful customer segment, and the best overall validation balance."
+)
 
 print("\nElbow Point K:", elbow_k)
 print("Best K - Silhouette:", best_k_silhouette)
@@ -488,12 +482,8 @@ center_point_scaled = pd.DataFrame(
     columns=FEATURES
 )
 
-center_point_log = scaler.inverse_transform(
-    kmeans_final.cluster_centers_
-)
-
 center_point_original = pd.DataFrame(
-    np.expm1(center_point_log),
+    scaler.inverse_transform(kmeans_final.cluster_centers_),
     columns=FEATURES
 )
 
@@ -977,8 +967,7 @@ loaded_features = joblib.load(features_path)
 print("\nModels Loaded Successfully!")
 
 X_new = wholesale_df[loaded_features].copy()
-X_new_log = np.log1p(X_new)
-X_new_scaled = loaded_scaler.transform(X_new_log)
+X_new_scaled = loaded_scaler.transform(X_new)
 
 X_new_scaled = pd.DataFrame(
     X_new_scaled,
@@ -1101,8 +1090,8 @@ metadata = {
         "excluded_columns": ["Channel", "Region"]
     },
     "preprocessing": {
-        "transformation": "Log Transformation",
-        "transformation_method": "numpy.log1p",
+        "transformation": "No additional transformation",
+        "transformation_method": "identity",
         "normalization": "MinMaxScaler",
         "input_features": FEATURES,
         "missing_value_method": "Median Imputation"
@@ -1117,20 +1106,20 @@ metadata = {
         "elbow_metric_support": elbow_metric_support,
         "elbow_support_count": int(elbow_support_count),
         "elbow_supported_by_validation": bool(elbow_supported_by_validation),
-        "selection_method": "Elbow + internal validation consensus",
+        "selection_method": "K=2 selected after Silhouette and validation comparison",
         "selection_reason": selection_reason,
         "final_k": int(final_k),
-        "manual_override": False,
+        "manual_override": True,
         "metrics_per_k": k_selection_metrics,
         "combined_ranking": combined_ranking
     },
-    "clustering": {
+    "Clustering": {
         "algorithm": "KMeans",
         "n_clusters": int(kmeans_final.n_clusters),
         "random_state": RANDOM_STATE,
         "n_init": N_INIT,
         "scaler": "MinMaxScaler",
-        "transformation": "Log1p",
+        "transformation": "None (raw spending values)",
         "input_features": FEATURES,
         "cluster_label_column": "ClusterLabel",
         "cluster_sizes": cluster_sizes_dict,
@@ -1186,17 +1175,18 @@ print("Metadata Verification:")
 print("Dataset Name:", saved_metadata["name"])
 print("Total Rows:", saved_metadata["dataset_statistics"]["rows"])
 print("Total Columns:", saved_metadata["dataset_statistics"]["columns"])
-print("Algorithm:", saved_metadata["clustering"]["algorithm"])
+print("Algorithm:", saved_metadata["Clustering"]["algorithm"])
 print("Final K:", saved_metadata["k_selection"]["final_k"])
-print("Total Clusters:", saved_metadata["clustering"]["n_clusters"])
-print("Cluster Sizes:", saved_metadata["clustering"]["cluster_sizes"])
-print("Silhouette Score:", saved_metadata["clustering"]["silhouette_score"])
-print("Total SSD:", saved_metadata["clustering"]["ssd"]["total_ssd"])
+print("Total Clusters:", saved_metadata["Clustering"]["n_clusters"])
+print("Cluster Sizes:", saved_metadata["Clustering"]["cluster_sizes"])
+print("Silhouette Score:", saved_metadata["Clustering"]["silhouette_score"])
+print("Total SSD:", saved_metadata["Clustering"]["ssd"]["total_ssd"])
 print(
     "SSD Verification:",
-    saved_metadata["clustering"]["ssd"]["matches_kmeans_inertia"]
+    saved_metadata["Clustering"]["ssd"]["matches_kmeans_inertia"]
 )
 print("Model Verification:", saved_metadata["model_verification"])
 print("\nMetadata Process Completed Successfully!")
 
 # endregion
+

@@ -1,17 +1,3 @@
-"""
-DatasetsModule.py  -  صفحهٔ Datasets (هم‌اندازه و هم‌سبک صفحهٔ Home)
-
-* همان کانواس، همان فونت (Theme.FONT) و همان تم Home (روشن/تیره)
-* کارت‌ها خودکار از فایل‌های متادیتا ساخته می‌شوند:
-      <ریشهٔ پروژه>/<پوشهٔ نوع>/Metadata/*.json      مثلاً Clustering/Metadata/D21_travel_reviews.json
-  هر چند ثانیه پوشه دوباره بررسی می‌شود؛ دیتاست تازه = کارت تازه، بدون تغییر کد.
-* پایین-چپ: دستهٔ موضوعی (Topics) که از فیلد domain خودکار ساخته می‌شود.
-
-فیلدهای خوانده‌شده از هر JSON:
-    id, name, level, domain, task, description, source,
-    dataset_statistics.rows, dataset_statistics.columns
-"""
-
 import json
 import math
 import random
@@ -22,10 +8,10 @@ from tkinter import messagebox
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageTk
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageOps, ImageTk
 
-from UserInterfaceLayer.HomeModule import HomeModule, BASE, _rgb, HDR_TOP, HDR_H, HDR_CY
-from UserInterfaceLayer.Theme import theme, FONT
+from UserInterface.HomeModule import HomeModule, BASE, _rgb, HDR_TOP, HDR_H, HDR_CY
+from UserInterface.Theme import theme, FONT
 
 BG_LIGHT = BASE / "assets" / "page_images" / "datasets_background_light.png"
 BG_DARK = BASE / "assets" / "page_images" / "datasets_background_dark.png"
@@ -508,34 +494,112 @@ class DatasetsModule(HomeModule):
         else:
             third = (str(len(features)), "Features", "features")
 
-        # ---- جدول
+        # ---- جدول مشخصات: فیلدهای موجود در Metadata هر دیتاست
         table = []
-        prep = pre.get("method") or meta.get("preparation")
-        if prep:
-            missing = pre.get("missing_value_method")
-            table.append(("Preparation", f"{prep} · {missing}" if missing else str(prep)))
+
+        # Preparation: فقط روش نرمال‌سازی نمایش داده می‌شود.
+        normalization = (
+            pre.get("normalization")
+            or pre.get("normalization_method")
+            or pre.get("scaler")
+            or pre.get("scaling_method")
+            or pre.get("method")
+        )
+
+        # سازگاری با Metadataهای قدیمی
+        if not normalization:
+            legacy_prep = meta.get("preparation")
+            if isinstance(legacy_prep, dict):
+                normalization = (
+                    legacy_prep.get("normalization")
+                    or legacy_prep.get("normalization_method")
+                    or legacy_prep.get("scaler")
+                    or legacy_prep.get("scaling_method")
+                    or legacy_prep.get("method")
+                )
+            elif isinstance(legacy_prep, str):
+                legacy_text = legacy_prep.strip()
+                if "scaler" in legacy_text.lower() or "normalizer" in legacy_text.lower():
+                    normalization = legacy_text
+
+        if isinstance(normalization, (list, tuple)):
+            normalization = " · ".join(str(value).strip() for value in normalization if value)
+
+        # نمایش نام تکنیک نرمال‌سازی به‌جای نام کلاس کتابخانه scikit-learn.
+        normalization_labels = {
+            "minmaxscaler": "Min-Max Normalization",
+            "min-maxscaler": "Min-Max Normalization",
+            "min-max scaler": "Min-Max Normalization",
+            "standardscaler": "Z-Score Standardization",
+            "standard scaler": "Z-Score Standardization",
+            "robustscaler": "Robust Scaling (Median/IQR)",
+            "robust scaler": "Robust Scaling (Median/IQR)",
+            "maxabsscaler": "Max-Abs Scaling",
+            "max abs scaler": "Max-Abs Scaling",
+            "normalizer": "Unit-Norm Normalization",
+            "quantiletransformer": "Quantile Transformation",
+            "powertransformer": "Power Transformation"
+        }
+
+        if normalization:
+            normalization_key = str(normalization).strip().casefold()
+            normalization = normalization_labels.get(normalization_key, str(normalization).strip())
+            table.append(("Preparation", normalization))
 
         if features:
             shown = ", ".join(features[:8]) + (f" +{len(features) - 8} more" if len(features) > 8 else "")
             table.append(("X (features)", shown))
 
-        if task in ("Classification", "Regression") and target:        # Clustering هدف ندارد
+        if task in ("Classification", "Regression") and target:  # Clustering هدف ندارد
             table.append(("Y (target)", str(target)))
 
         algo = clu.get("algorithm") or meta.get("algorithm")
         algo_text = f"{task} ({algo})" if algo else task
-        if task == "Clustering" and clu.get("n_clusters"):
-            algo_text += f" · K = {clu['n_clusters']}"
+        n_clusters = clu.get("n_clusters") or (meta.get("k_selection") or {}).get("final_k")
+        if task == "Clustering" and n_clusters is not None:
+            algo_text += f" · K = {n_clusters}"
         table.append(("Algorithm", algo_text))
 
         quality = []
         if task == "Clustering":
+            model_eval = meta.get("model_evaluation") or meta.get("evaluation") or {}
             sil = clu.get("silhouette_score")
+            if sil is None:
+                sil = model_eval.get("silhouette_score")
             if sil is not None:
                 quality.append(f"Silhouette {float(sil):.3f}")
-            ev = (clu.get("ssd") or {}).get("explained_variance_pct")
-            if ev is not None:
-                quality.append(f"{float(ev):.1f}% variance explained")
+
+            # PCA Variance برای Travel Reviews در پنجره Info نمایش داده نمی‌شود.
+            is_travel_reviews = (
+                str(meta.get("id", "")).strip().upper() == "D21"
+                or str(meta.get("name") or ds.name).strip().casefold() == "travel reviews"
+            )
+
+            if not is_travel_reviews:
+                pca_info = (
+                    meta.get("dimensionality_reduction")
+                    or meta.get("pca")
+                    or model_eval.get("dimensionality_reduction")
+                    or model_eval.get("pca")
+                    or {}
+                )
+                ev_pca = pca_info.get("total_explained_variance_pct")
+                if ev_pca is None:
+                    ev_pca = pca_info.get("explained_variance_pct")
+
+                if ev_pca is None:
+                    ratios = pca_info.get("explained_variance_ratio")
+                    if isinstance(ratios, dict):
+                        ev_pca = sum(float(value) for value in ratios.values()) * 100
+                    elif isinstance(ratios, (list, tuple)):
+                        ev_pca = sum(float(value) for value in ratios) * 100
+
+                if ev_pca is not None:
+                    ev_pca = float(ev_pca)
+                    if 0 <= ev_pca <= 1:
+                        ev_pca *= 100
+                    quality.append(f"PCA variance {ev_pca:.1f}%")
+
         elif task == "Classification":
             acc = self._find_metric(meta, "accuracy", "test_accuracy")
             f1 = self._find_metric(meta, "f1", "f1_score", "f1_macro")
@@ -546,6 +610,7 @@ class DatasetsModule(HomeModule):
                 quality.append(f"F1 {f1:.3f}")
             if best_k is not None:
                 quality.append(f"best k = {int(best_k)}")
+
         elif task == "Regression":
             r2 = self._find_metric(meta, "r2", "r2_score", "r_squared")
             mae = self._find_metric(meta, "mae", "mean_absolute_error")
@@ -556,6 +621,7 @@ class DatasetsModule(HomeModule):
                 quality.append(f"MAE {mae:,.2f}")
             if rmse is not None:
                 quality.append(f"RMSE {rmse:,.2f}")
+
         if quality:
             table.append(("Quality", " · ".join(quality)))
 
@@ -587,6 +653,95 @@ class DatasetsModule(HomeModule):
         photo = ImageTk.PhotoImage(img.convert("RGB"))
         self._cache[key] = photo
         return photo
+
+    def _dataset_image_path(self, ds):
+        """Find a dataset image by metadata ID inside its task-specific assets folder."""
+        assets_root = BASE / "assets" / "DataSets"
+        task_name = str(ds.task or "").strip().casefold()
+        task_folder = assets_root / task_name
+
+        if not task_folder.is_dir() and assets_root.is_dir():
+            for folder in assets_root.iterdir():
+                if folder.is_dir() and folder.name.casefold() == task_name:
+                    task_folder = folder
+                    break
+
+        if not task_folder.is_dir():
+            return None
+
+        dataset_id = str(ds.id or "").strip().casefold()
+        if not dataset_id:
+            return None
+
+        supported_extensions = {".png", ".jpg", ".jpeg", ".webp"}
+        candidates = []
+        for image_path in task_folder.iterdir():
+            if not image_path.is_file() or image_path.suffix.casefold() not in supported_extensions:
+                continue
+
+            image_stem = image_path.stem.casefold()
+            if (
+                image_stem == dataset_id
+                or image_stem.startswith(dataset_id + "_")
+                or image_stem.startswith(dataset_id + "-")
+            ):
+                candidates.append(image_path)
+
+        extension_order = {".png": 0, ".jpg": 1, ".jpeg": 2, ".webp": 3}
+        candidates.sort(key=lambda path: (extension_order.get(path.suffix.casefold(), 9), path.name.casefold()))
+        return candidates[0] if candidates else None
+
+    def _dataset_thumbnail(self, ds, width=170, height=151):
+        """Create a full-bleed header image, flush to the card's left/top/bottom edges."""
+        image_path = self._dataset_image_path(ds)
+        if image_path is None:
+            return None
+
+        try:
+            modified = image_path.stat().st_mtime_ns
+            cache_key = (
+                "dataset_header_image", self.k, theme.name, str(image_path),
+                modified, width, height
+            )
+            if cache_key in self._cache:
+                return self._cache[cache_key]
+
+            scale = 3
+            out_w = self.s(width) * scale
+            out_h = self.s(height) * scale
+            corner = self.s(36) * scale
+
+            with Image.open(image_path) as source_image:
+                source_image = source_image.convert("RGB")
+                fitted = ImageOps.fit(
+                    source_image,
+                    (out_w, out_h),
+                    method=Image.LANCZOS,
+                    centering=(0.5, 0.5)
+                ).convert("RGBA")
+
+            # Only the card's outer top-left corner is rounded. The image
+            # remains flush with the header's top, bottom and left edges.
+            mask = Image.new("L", (out_w, out_h), 0)
+            mask_draw = ImageDraw.Draw(mask)
+            mask_draw.rounded_rectangle(
+                (0, 0, out_w - 1, out_h - 1),
+                radius=corner,
+                fill=255
+            )
+            mask_draw.rectangle((corner, 0, out_w - 1, out_h - 1), fill=255)
+            mask_draw.rectangle((0, corner, corner, out_h - 1), fill=255)
+            fitted.putalpha(mask)
+
+            photo = ImageTk.PhotoImage(
+                fitted.resize((self.s(width), self.s(height)), Image.LANCZOS)
+            )
+            self._cache[cache_key] = photo
+            return photo
+
+        except (OSError, ValueError) as error:
+            print(f"[Datasets] Could not load image for {ds.id}: {error}")
+            return None
 
     def _info_card(self, height):
         """بدنهٔ پنجره: سایه + کارت + هدر گرادیانی با درخششِ صورتی گوشهٔ بالا-راست."""
@@ -698,8 +853,18 @@ class DatasetsModule(HomeModule):
         self.create_image(S(x0) - pad, S(y0) - pad, image=card, anchor="nw", tags=ov + ("ov_card",))
         self.tag_bind("ov_card", "<Button-1>", lambda e: None)
 
+        # --- تصویر تمام‌لبه در سمت چپ هدر؛ بدون قاب یا حاشیه
+        thumbnail = self._dataset_thumbnail(info["ds"], width=170, height=151)
+        header_left = left
+        if thumbnail is not None:
+            self.create_image(
+                S(x0), S(y0), image=thumbnail,
+                anchor="nw", tags=ov + ("ov_dataset_image",)
+            )
+            header_left = x0 + 170 + 26
+
         # --- هدر: چیپ‌ها + عنوان
-        cx = left
+        cx = header_left
         for kind, label in (("task", info["task"]), ("level", info["level"]), ("domain", info["domain"])):
             w = self.text_width(label, 17, True) + 40 + (20 if kind == "level" else 0)
             self.create_image(S(cx), S(y0 + 34), image=self._shape(w, 38, 19, "#ffffff", alpha=46),
@@ -712,7 +877,12 @@ class DatasetsModule(HomeModule):
             self.text(tx, y0 + 53, label, 17, "white", True, tags=ov)
             cx += w + 14
 
-        self.text(left, y0 + 108, self._fit(info["title"], 40, True, inner_w), 40, "white", True, tags=ov)
+        title_width = right - header_left - 18
+        self.text(
+            header_left, y0 + 108,
+            self._fit(info["title"], 40, True, title_width),
+            40, "white", True, tags=ov
+        )
 
         # --- توضیح (ایتالیک، حداکثر دو خط)
         for i, line in enumerate(self._wrap(info["description"], 22, False, inner_w, 2)):
@@ -1114,11 +1284,13 @@ class DatasetsModule(HomeModule):
         # نشان سطح (عرضش برای جای تزئین لازم است)
         bw = self.text_width(ds.level, 17, True) + 62
 
-        # تزئین: فقط در فاصلهٔ آزاد بین آیکون و نشان سطح
+        # تزئین فضای بین آیکون و نشان سطح
+        gap_x = x + pad + 54 + 14
         gap_w = int(CARD_W - pad - bw - 14 - (pad + 54 + 14))
         if gap_w >= 56:
-            self.create_image(self.s(x + pad + 54 + 14), self.s(y + 18), image=self._decor(ds.task, gap_w, 58),
+            self.create_image(self.s(gap_x), self.s(y + 18), image=self._decor(ds.task, gap_w, 58),
                               anchor="nw", tags=tags)
+
         self.create_image(self.s(x + pad), self.s(y + 20), image=self._task_icon(ds.task, 54), anchor="nw", tags=tags)
 
         # نشان سطح
@@ -1132,8 +1304,9 @@ class DatasetsModule(HomeModule):
                           anchor="center", tags=tags)
         self.text(bx2 - bw + 38, by, ds.level, 17, c("title"), True, tags=tags)
 
-        # عنوان (حداکثر دو خط) و زیرعنوان
-        lines = self._wrap(ds.name, 24, True, CARD_W - 2 * pad)
+        # عنوان دیتاست همراه با شناسهٔ Metadata داخل پرانتز
+        dataset_title = f"{ds.name} ({str(ds.id).strip()})" if str(ds.id).strip() else ds.name
+        lines = self._wrap(dataset_title, 24, True, CARD_W - 2 * pad)
         top = y + 84
         for i, line in enumerate(lines):
             self.text(x + pad, top + i * 29 + 14, line, 24, c("title"), True, tags=tags)
@@ -1331,3 +1504,5 @@ class DatasetsModule(HomeModule):
         if hidden:
             self.text(px + pad, py + ph - 26, f"+ {hidden} more topics", 16, c("body"), anchor="w",
                       tags=self._d("popup"))
+
+

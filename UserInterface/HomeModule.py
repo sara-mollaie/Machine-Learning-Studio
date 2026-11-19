@@ -3,7 +3,7 @@ import tkinter.font as tkfont
 from pathlib import Path
 from PIL import Image, ImageTk, ImageDraw, ImageFilter
 
-from UserInterfaceLayer.Theme import theme, FONT
+from UserInterface.Theme import theme, FONT
 
 BASE = Path(__file__).resolve().parent.parent
 ICONS = BASE / "assets" / "icons"

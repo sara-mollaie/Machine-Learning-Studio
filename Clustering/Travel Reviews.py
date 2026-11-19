@@ -16,7 +16,7 @@ from sklearn.metrics import (
     davies_bouldin_score
 )
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 BASE_DIR = Path(__file__).resolve().parent
 RANDOM_STATE = 42
@@ -214,23 +214,23 @@ df_features = df_features.copy()
 
 
 # region Data Normalization
-scaler = StandardScaler()
+scaler = MinMaxScaler()
 scaled_data = scaler.fit_transform(df_features)
 df_scaled = pd.DataFrame(
     scaled_data,
     columns=FEATURES,
     index=df.index
 )
-print("\nNormalized Data:")
+print("\nMinMax-Scaled Data:")
 print(df_scaled.head())
 print("-" * 60)
-print("Normalized Data Shape:")
+print("MinMax-Scaled Data Shape:")
 print(df_scaled.shape)
 print("-" * 60)
-print("Normalized Data Mean:")
+print("MinMax-Scaled Data Mean:")
 print(df_scaled.mean().round(4))
 print("-" * 60)
-print("Normalized Data Standard Deviation:")
+print("MinMax-Scaled Data Standard Deviation:")
 print(df_scaled.std().round(4))
 print("-" * 60)
 # endregion
@@ -347,12 +347,12 @@ elbow_metric_support = {
 elbow_support_count = sum(elbow_metric_support.values())
 elbow_supported_by_validation = elbow_support_count >= 2
 
-# K=3 is explicitly selected by the user.
+# K=2 is selected after comparing cluster quality and cluster balance.
 # Elbow and validation metrics are still calculated and saved for reference.
-final_k = 3
+final_k = 2
 selection_reason = (
-    "K=3 explicitly selected by the user; Elbow and validation metrics "
-    "are retained for reference."
+    "K=2 selected after comparing internal validation metrics; it improves "
+    "Silhouette and avoids the very small cluster produced by K=3."
 )
 
 print("\nBest K Based On Elbow Method:", elbow_k)
@@ -953,7 +953,7 @@ metadata = {
         }
     },
     "preprocessing": {
-        "method": "StandardScaler",
+        "method": "MinMaxScaler",
         "input_features": FEATURES,
         "missing_value_method": "Median Imputation",
         "rating_range": {
@@ -974,7 +974,7 @@ metadata = {
             2
         )
     },
-    "clustering": {
+    "Clustering": {
         "algorithm": "KMeans",
         "n_clusters": int(final_k),
         "random_state": RANDOM_STATE,
@@ -1027,7 +1027,7 @@ metadata = {
         "elbow_support_count": int(elbow_support_count),
         "elbow_supported_by_validation": bool(elbow_supported_by_validation),
         "final_k": int(final_k),
-        "selection_method": "User-selected K (3); Elbow and internal validation retained for reference",
+        "selection_method": "Selected K=2 after internal validation comparison",
         "selection_reason": selection_reason,
         "manual_k_selection": True,
         "best_silhouette_score": round(
@@ -1095,11 +1095,11 @@ print(
 )
 print(
     "Algorithm:",
-    saved_metadata["clustering"]["algorithm"]
+    saved_metadata["Clustering"]["algorithm"]
 )
 print(
     "Final K:",
-    saved_metadata["clustering"]["n_clusters"]
+    saved_metadata["Clustering"]["n_clusters"]
 )
 print(
     "PCA Components:",
@@ -1111,11 +1111,11 @@ print(
 )
 print(
     "Cluster Sizes:",
-    saved_metadata["clustering"]["cluster_sizes"]
+    saved_metadata["Clustering"]["cluster_sizes"]
 )
 print(
     "Silhouette Score:",
-    saved_metadata["clustering"]["silhouette_score"]
+    saved_metadata["Clustering"]["silhouette_score"]
 )
 print(
     "Total SSD:",

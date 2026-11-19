@@ -8,7 +8,7 @@ import webbrowser
 from pathlib import Path
 from PIL import Image, ImageTk, ImageDraw
 
-from UserInterfaceLayer.Theme import theme, FONT
+from UserInterface.Theme import theme, FONT
 
 
 # =====================================================

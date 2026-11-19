@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from UserInterfaceLayer.HomeModule import HomeModule
-from UserInterfaceLayer.Datasets import DatasetsModule
-from UserInterfaceLayer.Dialogs import InfoDialog, SettingsDialog
-from UserInterfaceLayer.Theme import theme, FONT
+from UserInterface.HomeModule import HomeModule
+from UserInterface.Datasets import DatasetsModule
+from UserInterface.Dialogs import InfoDialog, SettingsDialog
+from UserInterface.Theme import theme, FONT
 
 
 class ComingSoon(tk.Canvas):

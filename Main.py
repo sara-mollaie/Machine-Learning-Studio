@@ -1,10 +1,10 @@
 import ctypes
 from PIL import Image
 
-from UserInterfaceLayer.Window import Window
-from UserInterfaceLayer.MainView import MainView
-from UserInterfaceLayer.HomeModule import BG_PATH
-from UserInterfaceLayer.Theme import theme
+from UserInterface.Window import Window
+from UserInterface.MainView import MainView
+from UserInterface.HomeModule import BG_PATH
+from UserInterface.Theme import theme
 
 
 def apply_titlebar_theme(window):

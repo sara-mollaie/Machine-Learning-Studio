@@ -273,7 +273,7 @@ rank_df = pd.DataFrame({
 rank_df["MeanRank"] = rank_df.mean(axis=1)
 best_k_combined = int(rank_df["MeanRank"].idxmin())
 
-# Validate the Elbow recommendation with three clustering metrics.
+# Validate the Elbow recommendation with three Clustering metrics.
 elbow_metric_support = {
     "Silhouette": best_k_silhouette == elbow_k,
     "Calinski-Harabasz": best_k_ch == elbow_k,
@@ -757,7 +757,7 @@ metadata = {
         "metrics_per_k": k_selection_metrics,
         "combined_ranking": combined_ranking
     },
-    "clustering": {
+    "Clustering": {
         "algorithm": "KMeans",
         "n_clusters": int(kmeans_final.n_clusters),
         "random_state": RANDOM_STATE,
@@ -801,13 +801,13 @@ print("Metadata Verification:")
 print("Dataset Name:", saved_metadata["name"])
 print("Total Rows:", saved_metadata["dataset_statistics"]["rows"])
 print("Total Columns:", saved_metadata["dataset_statistics"]["columns"])
-print("Algorithm:", saved_metadata["clustering"]["algorithm"])
+print("Algorithm:", saved_metadata["Clustering"]["algorithm"])
 print("Final K:", saved_metadata["k_selection"]["final_k"])
-print("Total Clusters:", saved_metadata["clustering"]["n_clusters"])
-print("Cluster Sizes:", saved_metadata["clustering"]["cluster_sizes"])
-print("Silhouette Score:", saved_metadata["clustering"]["silhouette_score"])
-print("Total SSD:", saved_metadata["clustering"]["ssd"]["total_ssd"])
-print("SSD Verification:", saved_metadata["clustering"]["ssd"]["matches_kmeans_inertia"])
+print("Total Clusters:", saved_metadata["Clustering"]["n_clusters"])
+print("Cluster Sizes:", saved_metadata["Clustering"]["cluster_sizes"])
+print("Silhouette Score:", saved_metadata["Clustering"]["silhouette_score"])
+print("Total SSD:", saved_metadata["Clustering"]["ssd"]["total_ssd"])
+print("SSD Verification:", saved_metadata["Clustering"]["ssd"]["matches_kmeans_inertia"])
 print("Model Verification:", saved_metadata["model_verification"])
 print("\nMetadata Process Completed Successfully!")
 

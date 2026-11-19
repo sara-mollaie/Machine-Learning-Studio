@@ -176,7 +176,7 @@
         }
     },
     "preprocessing": {
-        "method": "StandardScaler",
+        "method": "MinMaxScaler",
         "input_features": [
             "Art Galleries",
             "Dance Clubs",
@@ -198,15 +198,15 @@
         "method": "PCA",
         "n_components": 3,
         "explained_variance_ratio": {
-            "PC1": 0.2619,
-            "PC2": 0.1388,
-            "PC3": 0.1356
+            "PC1": 0.3705,
+            "PC2": 0.144,
+            "PC3": 0.1117
         },
-        "total_explained_variance_pct": 53.63
+        "total_explained_variance_pct": 62.63
     },
     "clustering": {
         "algorithm": "KMeans",
-        "n_clusters": 3,
+        "n_clusters": 2,
         "random_state": 42,
         "n_init": 10,
         "input_space": "PCA (3 components)",
@@ -223,226 +223,213 @@
         ],
         "cluster_label_column": "Cluster",
         "cluster_sizes": {
-            "0": 384,
-            "1": 343,
-            "2": 253
+            "0": 371,
+            "1": 609
         },
         "cluster_percentages": {
-            "0": 39.18,
-            "1": 35.0,
-            "2": 25.82
+            "0": 37.86,
+            "1": 62.14
         },
         "cluster_profiles": {
             "0": {
-                "Art Galleries": 0.949,
-                "Dance Clubs": 1.208,
-                "Juice Bars": 0.654,
-                "Restaurants": 0.445,
-                "Museums": 0.662,
-                "Resorts": 1.438,
-                "Beaches": 2.808,
-                "Theaters": 1.415,
-                "Religious Institutions": 2.996
+                "Art Galleries": 0.909,
+                "Dance Clubs": 1.42,
+                "Juice Bars": 1.786,
+                "Restaurants": 0.609,
+                "Museums": 1.194,
+                "Resorts": 2.215,
+                "Beaches": 2.807,
+                "Theaters": 1.552,
+                "Religious Institutions": 2.543
             },
             "1": {
-                "Art Galleries": 0.916,
-                "Dance Clubs": 1.48,
-                "Juice Bars": 1.708,
-                "Restaurants": 0.655,
-                "Museums": 1.221,
-                "Resorts": 2.254,
-                "Beaches": 2.785,
-                "Theaters": 1.507,
-                "Religious Institutions": 2.533
-            },
-            "2": {
-                "Art Galleries": 0.777,
-                "Dance Clubs": 1.4,
-                "Juice Bars": 0.617,
-                "Restaurants": 0.5,
-                "Museums": 0.98,
-                "Resorts": 1.901,
-                "Beaches": 2.944,
-                "Theaters": 1.888,
-                "Religious Institutions": 2.862
+                "Art Galleries": 0.884,
+                "Dance Clubs": 1.311,
+                "Juice Bars": 0.542,
+                "Restaurants": 0.486,
+                "Museums": 0.785,
+                "Resorts": 1.616,
+                "Beaches": 2.852,
+                "Theaters": 1.58,
+                "Religious Institutions": 2.955
             }
         },
-        "silhouette_score": 0.2781
+        "silhouette_score": 0.3855
     },
     "model_evaluation": {
-        "SSD": 2526.3159,
+        "SSD": 75.3005,
         "SSD_space": "PCA (3 components)",
         "SSD_description": "Sum of Squared Distances from each PCA-transformed sample to its assigned cluster center.",
-        "inertia": 2526.3159,
+        "inertia": 75.3005,
         "ssd_verification": true,
-        "silhouette_score": 0.2781,
+        "silhouette_score": 0.3855,
         "inertia_per_k": {
-            "1": 4730.474,
-            "2": 3094.5984,
-            "3": 2526.3159,
-            "4": 2108.2914,
-            "5": 1896.7166,
-            "6": 1694.289,
-            "7": 1537.2059,
-            "8": 1412.2814,
-            "9": 1317.0863,
-            "10": 1231.8289
+            "1": 132.5502,
+            "2": 75.3005,
+            "3": 57.0168,
+            "4": 48.9548,
+            "5": 41.8243,
+            "6": 36.5097,
+            "7": 32.845,
+            "8": 30.4,
+            "9": 28.543,
+            "10": 26.1776
         },
         "silhouette_scores": {
-            "2": 0.323,
-            "3": 0.2781,
-            "4": 0.2903,
-            "5": 0.2473,
-            "6": 0.2317,
-            "7": 0.2349,
-            "8": 0.2391,
-            "9": 0.2384,
-            "10": 0.2361
+            "2": 0.3855,
+            "3": 0.3204,
+            "4": 0.3046,
+            "5": 0.306,
+            "6": 0.2875,
+            "7": 0.2748,
+            "8": 0.2631,
+            "9": 0.2681,
+            "10": 0.2688
         },
         "calinski_harabasz_scores": {
-            "2": 516.9932,
-            "3": 426.2145,
-            "4": 404.6326,
-            "5": 364.1706,
-            "6": 349.0889,
-            "7": 336.872,
-            "8": 326.2485,
-            "9": 314.5579,
-            "10": 306.1109
+            "2": 743.5566,
+            "3": 647.1446,
+            "4": 555.5403,
+            "5": 528.7471,
+            "6": 512.4317,
+            "7": 492.2778,
+            "8": 466.5888,
+            "9": 442.2757,
+            "10": 437.954
         },
         "davies_bouldin_scores": {
-            "2": 1.2206,
-            "3": 1.2902,
-            "4": 1.1541,
-            "5": 1.2654,
-            "6": 1.2672,
-            "7": 1.183,
-            "8": 1.1445,
-            "9": 1.1199,
-            "10": 1.1371
+            "2": 1.0071,
+            "3": 1.1726,
+            "4": 1.12,
+            "5": 1.0798,
+            "6": 1.0936,
+            "7": 1.0797,
+            "8": 1.1023,
+            "9": 1.0965,
+            "10": 1.0933
         },
         "metrics_per_k": {
             "1": {
-                "Inertia": 4730.474,
+                "Inertia": 132.5502,
                 "Silhouette": null,
                 "Calinski-Harabasz": null,
                 "Davies-Bouldin": null
             },
             "2": {
-                "Inertia": 3094.5984,
-                "Silhouette": 0.323,
-                "Calinski-Harabasz": 516.9932,
-                "Davies-Bouldin": 1.2206
+                "Inertia": 75.3005,
+                "Silhouette": 0.3855,
+                "Calinski-Harabasz": 743.5566,
+                "Davies-Bouldin": 1.0071
             },
             "3": {
-                "Inertia": 2526.3159,
-                "Silhouette": 0.2781,
-                "Calinski-Harabasz": 426.2145,
-                "Davies-Bouldin": 1.2902
+                "Inertia": 57.0168,
+                "Silhouette": 0.3204,
+                "Calinski-Harabasz": 647.1446,
+                "Davies-Bouldin": 1.1726
             },
             "4": {
-                "Inertia": 2108.2914,
-                "Silhouette": 0.2903,
-                "Calinski-Harabasz": 404.6326,
-                "Davies-Bouldin": 1.1541
+                "Inertia": 48.9548,
+                "Silhouette": 0.3046,
+                "Calinski-Harabasz": 555.5403,
+                "Davies-Bouldin": 1.12
             },
             "5": {
-                "Inertia": 1896.7166,
-                "Silhouette": 0.2473,
-                "Calinski-Harabasz": 364.1706,
-                "Davies-Bouldin": 1.2654
+                "Inertia": 41.8243,
+                "Silhouette": 0.306,
+                "Calinski-Harabasz": 528.7471,
+                "Davies-Bouldin": 1.0798
             },
             "6": {
-                "Inertia": 1694.289,
-                "Silhouette": 0.2317,
-                "Calinski-Harabasz": 349.0889,
-                "Davies-Bouldin": 1.2672
+                "Inertia": 36.5097,
+                "Silhouette": 0.2875,
+                "Calinski-Harabasz": 512.4317,
+                "Davies-Bouldin": 1.0936
             },
             "7": {
-                "Inertia": 1537.2059,
-                "Silhouette": 0.2349,
-                "Calinski-Harabasz": 336.872,
-                "Davies-Bouldin": 1.183
+                "Inertia": 32.845,
+                "Silhouette": 0.2748,
+                "Calinski-Harabasz": 492.2778,
+                "Davies-Bouldin": 1.0797
             },
             "8": {
-                "Inertia": 1412.2814,
-                "Silhouette": 0.2391,
-                "Calinski-Harabasz": 326.2485,
-                "Davies-Bouldin": 1.1445
+                "Inertia": 30.4,
+                "Silhouette": 0.2631,
+                "Calinski-Harabasz": 466.5888,
+                "Davies-Bouldin": 1.1023
             },
             "9": {
-                "Inertia": 1317.0863,
-                "Silhouette": 0.2384,
-                "Calinski-Harabasz": 314.5579,
-                "Davies-Bouldin": 1.1199
+                "Inertia": 28.543,
+                "Silhouette": 0.2681,
+                "Calinski-Harabasz": 442.2757,
+                "Davies-Bouldin": 1.0965
             },
             "10": {
-                "Inertia": 1231.8289,
-                "Silhouette": 0.2361,
-                "Calinski-Harabasz": 306.1109,
-                "Davies-Bouldin": 1.1371
+                "Inertia": 26.1776,
+                "Silhouette": 0.2688,
+                "Calinski-Harabasz": 437.954,
+                "Davies-Bouldin": 1.0933
             }
         },
         "combined_ranking": {
             "2": {
                 "Silhouette": 1.0,
                 "Calinski-Harabasz": 1.0,
-                "Davies-Bouldin": 6.0,
-                "MeanRank": 2.67
+                "Davies-Bouldin": 1.0,
+                "MeanRank": 1.0
             },
             "3": {
-                "Silhouette": 3.0,
+                "Silhouette": 2.0,
                 "Calinski-Harabasz": 2.0,
                 "Davies-Bouldin": 9.0,
-                "MeanRank": 4.67
+                "MeanRank": 4.33
             },
             "4": {
-                "Silhouette": 2.0,
+                "Silhouette": 4.0,
                 "Calinski-Harabasz": 3.0,
-                "Davies-Bouldin": 4.0,
-                "MeanRank": 3.0
+                "Davies-Bouldin": 8.0,
+                "MeanRank": 5.0
             },
             "5": {
-                "Silhouette": 4.0,
+                "Silhouette": 3.0,
                 "Calinski-Harabasz": 4.0,
-                "Davies-Bouldin": 7.0,
-                "MeanRank": 5.0
+                "Davies-Bouldin": 3.0,
+                "MeanRank": 3.33
             },
             "6": {
-                "Silhouette": 9.0,
+                "Silhouette": 5.0,
                 "Calinski-Harabasz": 5.0,
-                "Davies-Bouldin": 8.0,
-                "MeanRank": 7.33
+                "Davies-Bouldin": 5.0,
+                "MeanRank": 5.0
             },
             "7": {
-                "Silhouette": 8.0,
+                "Silhouette": 6.0,
                 "Calinski-Harabasz": 6.0,
-                "Davies-Bouldin": 5.0,
-                "MeanRank": 6.33
+                "Davies-Bouldin": 2.0,
+                "MeanRank": 4.67
             },
             "8": {
-                "Silhouette": 5.0,
+                "Silhouette": 9.0,
                 "Calinski-Harabasz": 7.0,
-                "Davies-Bouldin": 3.0,
-                "MeanRank": 5.0
+                "Davies-Bouldin": 7.0,
+                "MeanRank": 7.67
             },
             "9": {
-                "Silhouette": 6.0,
+                "Silhouette": 8.0,
                 "Calinski-Harabasz": 8.0,
-                "Davies-Bouldin": 1.0,
-                "MeanRank": 5.0
+                "Davies-Bouldin": 6.0,
+                "MeanRank": 7.33
             },
             "10": {
                 "Silhouette": 7.0,
                 "Calinski-Harabasz": 9.0,
-                "Davies-Bouldin": 2.0,
-                "MeanRank": 6.0
+                "Davies-Bouldin": 4.0,
+                "MeanRank": 6.67
             }
         },
-        "elbow_k": 4,
+        "elbow_k": 3,
         "best_k_by_silhouette": 2,
         "best_k_by_calinski_harabasz": 2,
-        "best_k_by_davies_bouldin": 9,
+        "best_k_by_davies_bouldin": 2,
         "best_k_combined": 2,
         "elbow_metric_support": {
             "Silhouette": false,
@@ -451,11 +438,11 @@
         },
         "elbow_support_count": 0,
         "elbow_supported_by_validation": false,
-        "final_k": 3,
-        "selection_method": "User-selected K (3); Elbow and internal validation retained for reference",
-        "selection_reason": "K=3 explicitly selected by the user; Elbow and validation metrics are retained for reference.",
+        "final_k": 2,
+        "selection_method": "Selected K=2 after internal validation comparison",
+        "selection_reason": "K=2 selected after comparing internal validation metrics; it improves Silhouette and avoids the very small cluster produced by K=3.",
         "manual_k_selection": true,
-        "best_silhouette_score": 0.323
+        "best_silhouette_score": 0.3855
     },
     "model_verification": true,
     "correlation_matrix": {

@@ -143,8 +143,8 @@
         ]
     },
     "preprocessing": {
-        "transformation": "Log Transformation",
-        "transformation_method": "numpy.log1p",
+        "transformation": "No additional transformation",
+        "transformation_method": "identity",
         "normalization": "MinMaxScaler",
         "input_features": [
             "Fresh",
@@ -163,9 +163,9 @@
         ],
         "best_k_silhouette": 2,
         "best_k_calinski_harabasz": 2,
-        "best_k_davies_bouldin": 2,
+        "best_k_davies_bouldin": 9,
         "best_k_combined": 2,
-        "elbow_k": 3,
+        "elbow_k": 4,
         "elbow_metric_support": {
             "Silhouette": false,
             "Calinski-Harabasz": false,
@@ -173,126 +173,126 @@
         },
         "elbow_support_count": 0,
         "elbow_supported_by_validation": false,
-        "selection_method": "Elbow + internal validation consensus",
-        "selection_reason": "Elbow K was not supported by at least two validation metrics; combined ranking selected K.",
+        "selection_method": "K=2 selected after Silhouette and validation comparison",
+        "selection_reason": "K=2 selected because it provides the strongest Silhouette score, a meaningful customer segment, and the best overall validation balance.",
         "final_k": 2,
-        "manual_override": false,
+        "manual_override": true,
         "metrics_per_k": {
             "1": {
-                "Inertia": 59.7404,
+                "Inertia": 24.9242,
                 "Silhouette": null,
                 "Calinski-Harabasz": null,
                 "Davies-Bouldin": null
             },
             "2": {
-                "Inertia": 40.9726,
-                "Silhouette": 0.3004,
-                "Calinski-Harabasz": 200.63,
-                "Davies-Bouldin": 1.3036
+                "Inertia": 17.246,
+                "Silhouette": 0.5708,
+                "Calinski-Harabasz": 195.0047,
+                "Davies-Bouldin": 1.0015
             },
             "3": {
-                "Inertia": 34.769,
-                "Silhouette": 0.2579,
-                "Calinski-Harabasz": 156.9285,
-                "Davies-Bouldin": 1.3298
+                "Inertia": 13.8789,
+                "Silhouette": 0.4398,
+                "Calinski-Harabasz": 173.8906,
+                "Davies-Bouldin": 1.0893
             },
             "4": {
-                "Inertia": 30.6699,
-                "Silhouette": 0.2016,
-                "Calinski-Harabasz": 137.7548,
-                "Davies-Bouldin": 1.5341
+                "Inertia": 10.7667,
+                "Silhouette": 0.4093,
+                "Calinski-Harabasz": 191.1056,
+                "Davies-Bouldin": 0.971
             },
             "5": {
-                "Inertia": 27.8821,
-                "Silhouette": 0.2024,
-                "Calinski-Harabasz": 124.2584,
-                "Davies-Bouldin": 1.4881
+                "Inertia": 9.0759,
+                "Silhouette": 0.3823,
+                "Calinski-Harabasz": 189.9003,
+                "Davies-Bouldin": 0.9876
             },
             "6": {
-                "Inertia": 25.847,
-                "Silhouette": 0.2026,
-                "Calinski-Harabasz": 113.8216,
-                "Davies-Bouldin": 1.411
+                "Inertia": 7.9653,
+                "Silhouette": 0.3522,
+                "Calinski-Harabasz": 184.8075,
+                "Davies-Bouldin": 0.9923
             },
             "7": {
-                "Inertia": 24.0941,
-                "Silhouette": 0.2006,
-                "Calinski-Harabasz": 106.7683,
-                "Davies-Bouldin": 1.4378
+                "Inertia": 7.3445,
+                "Silhouette": 0.3209,
+                "Calinski-Harabasz": 172.7374,
+                "Davies-Bouldin": 0.9308
             },
             "8": {
-                "Inertia": 22.6854,
-                "Silhouette": 0.1966,
-                "Calinski-Harabasz": 100.8057,
-                "Davies-Bouldin": 1.4014
+                "Inertia": 6.6343,
+                "Silhouette": 0.3153,
+                "Calinski-Harabasz": 170.1378,
+                "Davies-Bouldin": 0.8638
             },
             "9": {
-                "Inertia": 21.5803,
-                "Silhouette": 0.1959,
-                "Calinski-Harabasz": 95.2665,
-                "Davies-Bouldin": 1.4144
+                "Inertia": 5.8802,
+                "Silhouette": 0.3279,
+                "Calinski-Harabasz": 174.4829,
+                "Davies-Bouldin": 0.8435
             },
             "10": {
-                "Inertia": 20.5578,
-                "Silhouette": 0.177,
-                "Calinski-Harabasz": 91.063,
-                "Davies-Bouldin": 1.4436
+                "Inertia": 5.3822,
+                "Silhouette": 0.3327,
+                "Calinski-Harabasz": 173.4734,
+                "Davies-Bouldin": 0.8719
             }
         },
         "combined_ranking": {
             "2": {
                 "Silhouette": 1.0,
                 "Calinski-Harabasz": 1.0,
-                "Davies-Bouldin": 1.0,
-                "MeanRank": 1.0
+                "Davies-Bouldin": 8.0,
+                "MeanRank": 3.33
             },
             "3": {
                 "Silhouette": 2.0,
-                "Calinski-Harabasz": 2.0,
-                "Davies-Bouldin": 2.0,
-                "MeanRank": 2.0
-            },
-            "4": {
-                "Silhouette": 5.0,
-                "Calinski-Harabasz": 3.0,
+                "Calinski-Harabasz": 6.0,
                 "Davies-Bouldin": 9.0,
                 "MeanRank": 5.67
             },
+            "4": {
+                "Silhouette": 3.0,
+                "Calinski-Harabasz": 2.0,
+                "Davies-Bouldin": 5.0,
+                "MeanRank": 3.33
+            },
             "5": {
                 "Silhouette": 4.0,
-                "Calinski-Harabasz": 4.0,
-                "Davies-Bouldin": 8.0,
-                "MeanRank": 5.33
+                "Calinski-Harabasz": 3.0,
+                "Davies-Bouldin": 6.0,
+                "MeanRank": 4.33
             },
             "6": {
-                "Silhouette": 3.0,
-                "Calinski-Harabasz": 5.0,
-                "Davies-Bouldin": 4.0,
-                "MeanRank": 4.0
+                "Silhouette": 5.0,
+                "Calinski-Harabasz": 4.0,
+                "Davies-Bouldin": 7.0,
+                "MeanRank": 5.33
             },
             "7": {
-                "Silhouette": 6.0,
-                "Calinski-Harabasz": 6.0,
-                "Davies-Bouldin": 6.0,
-                "MeanRank": 6.0
-            },
-            "8": {
-                "Silhouette": 7.0,
-                "Calinski-Harabasz": 7.0,
-                "Davies-Bouldin": 3.0,
-                "MeanRank": 5.67
-            },
-            "9": {
                 "Silhouette": 8.0,
                 "Calinski-Harabasz": 8.0,
-                "Davies-Bouldin": 5.0,
-                "MeanRank": 7.0
+                "Davies-Bouldin": 4.0,
+                "MeanRank": 6.67
             },
-            "10": {
+            "8": {
                 "Silhouette": 9.0,
                 "Calinski-Harabasz": 9.0,
-                "Davies-Bouldin": 7.0,
-                "MeanRank": 8.33
+                "Davies-Bouldin": 2.0,
+                "MeanRank": 6.67
+            },
+            "9": {
+                "Silhouette": 7.0,
+                "Calinski-Harabasz": 5.0,
+                "Davies-Bouldin": 1.0,
+                "MeanRank": 4.33
+            },
+            "10": {
+                "Silhouette": 6.0,
+                "Calinski-Harabasz": 7.0,
+                "Davies-Bouldin": 3.0,
+                "MeanRank": 5.33
             }
         }
     },
@@ -302,7 +302,7 @@
         "random_state": 42,
         "n_init": 10,
         "scaler": "MinMaxScaler",
-        "transformation": "Log1p",
+        "transformation": "None (raw spending values)",
         "input_features": [
             "Fresh",
             "Milk",
@@ -313,65 +313,65 @@
         ],
         "cluster_label_column": "ClusterLabel",
         "cluster_sizes": {
-            "0": 260,
-            "1": 180
+            "0": 393,
+            "1": 47
         },
         "cluster_percentages": {
-            "0": 59.09,
-            "1": 40.91
+            "0": 89.32,
+            "1": 10.68
         },
         "cluster_profiles": {
             "0": {
-                "Fresh": 14163.21,
-                "Milk": 2822.69,
-                "Grocery": 3200.19,
-                "Frozen": 4120.0,
-                "Detergents_Paper": 482.32,
-                "Delicassen": 1343.67
+                "Fresh": 12123.78,
+                "Milk": 4130.72,
+                "Grocery": 5531.76,
+                "Frozen": 3089.27,
+                "Detergents_Paper": 1676.59,
+                "Delicassen": 1309.73
             },
             "1": {
-                "Fresh": 8876.09,
-                "Milk": 10091.43,
-                "Grocery": 14813.96,
-                "Frozen": 1558.06,
-                "Detergents_Paper": 6346.97,
-                "Delicassen": 1786.61
+                "Fresh": 10967.79,
+                "Milk": 19723.09,
+                "Grocery": 28182.55,
+                "Frozen": 2926.94,
+                "Detergents_Paper": 12956.57,
+                "Delicassen": 3323.83
             }
         },
         "channel_distribution": {
             "1": {
-                "0": 254,
-                "1": 44
+                "0": 296,
+                "1": 2
             },
             "2": {
-                "0": 6,
-                "1": 136
+                "0": 97,
+                "1": 45
             }
         },
         "region_distribution": {
             "1": {
-                "0": 50,
-                "1": 27
+                "0": 70,
+                "1": 7
             },
             "2": {
-                "0": 28,
-                "1": 19
+                "0": 39,
+                "1": 8
             },
             "3": {
-                "0": 182,
-                "1": 134
+                "0": 284,
+                "1": 32
             }
         },
-        "inertia": 40.97256293020613,
-        "silhouette_score": 0.3004,
+        "inertia": 17.24603293521645,
+        "silhouette_score": 0.5708,
         "ssd": {
-            "total_ssd": 40.9726,
-            "total_sum_squares": 59.7404,
-            "between_cluster_ss": 18.7679,
-            "explained_variance_pct": 31.42,
+            "total_ssd": 17.246,
+            "total_sum_squares": 24.9242,
+            "between_cluster_ss": 7.6782,
+            "explained_variance_pct": 30.81,
             "per_cluster_ssd": {
-                "0": 24.2287,
-                "1": 16.7439
+                "0": 10.0655,
+                "1": 7.1805
             },
             "matches_kmeans_inertia": true
         }
