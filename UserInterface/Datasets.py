@@ -270,6 +270,31 @@ class DatasetsModule(HomeModule):
             self._load_data()
         self._draw_dynamic()
 
+    def set_task_filter(self, task):
+        """نمایش دیتاست‌های الگوریتم انتخاب‌شده از صفحه Algorithms."""
+        task = _canonical(task, TASKS, "")
+        if task not in TASKS:
+            return
+
+        self.task_filter = task
+        self.level_filter = None
+        self.topic_filter = None
+        self.page = 1
+        self._popup = False
+
+        # بستن پنجرهٔ Info در صورت باز بودن
+        self._info = None
+        self.delete("overlay")
+
+        # پاک کردن جست‌وجوی قبلی تا فقط فیلتر الگوریتم اعمال شود
+        self.entry.delete(0, "end")
+        self.entry.insert(0, "Search datasets")
+        self.entry.config(fg=theme.c("body"))
+        self._placeholder_on = True
+
+        self._apply_filters()
+        self._draw_dynamic()
+
     def destroy(self):
         if self._poll_job:
             try:
@@ -1269,9 +1294,11 @@ class DatasetsModule(HomeModule):
         tint = pal["tint"].get(ds.task, pal["tint_default"])
         accent = TASK_ACCENT.get(ds.task, TASK_DEFAULT)[0]
 
-        if theme.name == "light":      # سایهٔ رنگی و ملایم (برای Clustering سبز)
-            sh_rgb, sh_a, sh_blur, sh_off = CARD_SHADOW.get(ds.task, CARD_SHADOW_DEFAULT), LIGHT_SHADOW_ALPHA, 16, 8
+        if theme.name == "light":
+            # در تم روشن سایهٔ کارت‌های دیتاست غیرفعال است.
+            sh_rgb, sh_a, sh_blur, sh_off = (0, 0, 0), 0, 0, 0
         else:
+            # در تم تاریک سایهٔ کارت‌ها حفظ می‌شود.
             sh_rgb, sh_a, sh_blur, sh_off = c("shadow_rgb"), c("shadow_a"), 14, 10
 
         def glass(border):
@@ -1504,5 +1531,3 @@ class DatasetsModule(HomeModule):
         if hidden:
             self.text(px + pad, py + ph - 26, f"+ {hidden} more topics", 16, c("body"), anchor="w",
                       tags=self._d("popup"))
-
-
