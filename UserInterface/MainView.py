@@ -4,6 +4,7 @@ from tkinter import messagebox
 from UserInterface.HomeModule import HomeModule
 from UserInterface.Datasets import DatasetsModule
 from UserInterface.Algorithms import AlgorithmsModule
+from UserInterface.PredictorModule import PredictorModule
 from UserInterface.Dialogs import InfoDialog, SettingsDialog
 from UserInterface.Theme import theme, FONT
 
@@ -65,7 +66,8 @@ class MainView(tk.Frame):
             self,
             scale=scale,
             on_navigate=self.navigate,
-            on_open=self.open_dataset
+            on_open=self.open_dataset,
+            on_predict=self.open_predictor
         )
         self.register("datasets", datasets)
 
@@ -78,7 +80,18 @@ class MainView(tk.Frame):
         )
         self.register("algorithms", algorithms)
 
+        # Predictor Page
+        predictor = PredictorModule(
+            self,
+            scale=scale,
+            on_navigate=self.navigate
+        )
+        self.register("predictor", predictor)
+
         self.navigate("home")
+
+        # بعد از نمایش Home، مدل‌ها و تصویرهای صفحهٔ Predictor در پس‌زمینه آماده می‌شوند
+        self.after(1200, self._warm_predictor)
 
     def register(self, name, page):
         self.pages[name] = page
@@ -125,3 +138,31 @@ class MainView(tk.Frame):
             f"Rows: {ds.rows:,}   Columns: {ds.columns:,}",
             parent=self.winfo_toplevel()
         )
+
+    def _warm_predictor(self):
+        """بارگذاری پیش‌دستی: باز شدن صفحهٔ Predictor را فوری می‌کند."""
+        predictor = self.pages.get("predictor")
+        datasets = self.pages.get("datasets")
+        if predictor is None:
+            return
+        clustering = [d for d in getattr(datasets, "all", []) if d.task == "Clustering"]
+        predictor.preload(clustering)
+        predictor.prewarm()
+
+    def open_predictor(self, ds):
+        """با زدن Open predictor در پنجرهٔ Info، صفحهٔ Predictor باز می‌شود."""
+        if ds.task != "Clustering":
+            messagebox.showinfo(
+                "Predictor",
+                f"The predictor for “{ds.name}” will be available soon.",
+                parent=self.winfo_toplevel()
+            )
+            return
+
+        datasets = self.pages.get("datasets")
+        if datasets is not None and hasattr(datasets, "_close_info"):
+            datasets._close_info()          # پنجرهٔ Info بسته شود
+
+        predictor = self.pages["predictor"]
+        predictor.load_dataset(ds)
+        self.navigate("predictor")

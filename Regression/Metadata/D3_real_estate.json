@@ -1,0 +1,300 @@
+{
+    "id": "D3",
+    "run_timestamp": "2026-11-22 01:13:29.672776",
+    "name": "Real Estate Valuation",
+    "level": "Beginner",
+    "domain": "Real Estate",
+    "task": "Regression",
+    "description": "Predict the price of a house per unit area from real estate valuation attributes.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 414,
+        "columns": 8,
+        "column_names": [
+            "No",
+            "X1 transaction date",
+            "X2 house age",
+            "X3 distance to the nearest MRT station",
+            "X4 number of convenience stores",
+            "X5 latitude",
+            "X6 longitude",
+            "Y house price of unit area"
+        ],
+        "data_types": {
+            "No": "int64",
+            "X1 transaction date": "float64",
+            "X2 house age": "float64",
+            "X3 distance to the nearest MRT station": "float64",
+            "X4 number of convenience stores": "int64",
+            "X5 latitude": "float64",
+            "X6 longitude": "float64",
+            "Y house price of unit area": "float64"
+        },
+        "missing_values": {
+            "No": 0,
+            "X1 transaction date": 0,
+            "X2 house age": 0,
+            "X3 distance to the nearest MRT station": 0,
+            "X4 number of convenience stores": 0,
+            "X5 latitude": 0,
+            "X6 longitude": 0,
+            "Y house price of unit area": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "No": {
+                "count": 414.0,
+                "mean": 207.5,
+                "std": 119.66,
+                "min": 1.0,
+                "25%": 104.25,
+                "50%": 207.5,
+                "75%": 310.75,
+                "max": 414.0
+            },
+            "X1 transaction date": {
+                "count": 414.0,
+                "mean": 2013.15,
+                "std": 0.28,
+                "min": 2012.67,
+                "25%": 2012.92,
+                "50%": 2013.17,
+                "75%": 2013.42,
+                "max": 2013.58
+            },
+            "X2 house age": {
+                "count": 414.0,
+                "mean": 17.71,
+                "std": 11.39,
+                "min": 0.0,
+                "25%": 9.02,
+                "50%": 16.1,
+                "75%": 28.15,
+                "max": 43.8
+            },
+            "X3 distance to the nearest MRT station": {
+                "count": 414.0,
+                "mean": 1083.89,
+                "std": 1262.11,
+                "min": 23.38,
+                "25%": 289.32,
+                "50%": 492.23,
+                "75%": 1454.28,
+                "max": 6488.02
+            },
+            "X4 number of convenience stores": {
+                "count": 414.0,
+                "mean": 4.09,
+                "std": 2.95,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 4.0,
+                "75%": 6.0,
+                "max": 10.0
+            },
+            "X5 latitude": {
+                "count": 414.0,
+                "mean": 24.97,
+                "std": 0.01,
+                "min": 24.93,
+                "25%": 24.96,
+                "50%": 24.97,
+                "75%": 24.98,
+                "max": 25.01
+            },
+            "X6 longitude": {
+                "count": 414.0,
+                "mean": 121.53,
+                "std": 0.02,
+                "min": 121.47,
+                "25%": 121.53,
+                "50%": 121.54,
+                "75%": 121.54,
+                "max": 121.57
+            },
+            "Y house price of unit area": {
+                "count": 414.0,
+                "mean": 37.98,
+                "std": 13.61,
+                "min": 7.6,
+                "25%": 27.7,
+                "50%": 38.45,
+                "75%": 46.6,
+                "max": 117.5
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "X1 transaction date",
+            "X2 house age",
+            "X3 distance to the nearest MRT station",
+            "X4 number of convenience stores",
+            "X5 latitude",
+            "X6 longitude"
+        ],
+        "target_column": "Y house price of unit area",
+        "excluded_columns": [
+            "No"
+        ]
+    },
+    "preprocessing": {
+        "method": "Median Imputation + StandardScaler",
+        "input_features": [
+            "X1 transaction date",
+            "X2 house age",
+            "X3 distance to the nearest MRT station",
+            "X4 number of convenience stores",
+            "X5 latitude",
+            "X6 longitude"
+        ],
+        "missing_value_method": "Median Imputation"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "Random Forest",
+                "MAE": 3.6646,
+                "MSE": 29.5913,
+                "RMSE": 5.4398,
+                "R2": 0.8236,
+                "R2 Percentage": 82.3609,
+                "Accuracy": 88.54
+            },
+            {
+                "Model": "SVR",
+                "MAE": 4.0763,
+                "MSE": 36.303,
+                "RMSE": 6.0252,
+                "R2": 0.7836,
+                "R2 Percentage": 78.3601,
+                "Accuracy": 87.97
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 4.6465,
+                "MSE": 41.7935,
+                "RMSE": 6.4648,
+                "R2": 0.7509,
+                "R2 Percentage": 75.0873,
+                "Accuracy": 85.58
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 5.2953,
+                "MSE": 53.0805,
+                "RMSE": 7.2856,
+                "R2": 0.6836,
+                "R2 Percentage": 68.3592,
+                "Accuracy": 83.07
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 5.3052,
+                "MSE": 53.5023,
+                "RMSE": 7.3145,
+                "R2": 0.6811,
+                "R2 Percentage": 68.1078,
+                "Accuracy": 82.82
+            }
+        ],
+        "recommended_model": "Random Forest",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_definition": "max(0, 100 - MAPE percentage)",
+        "hyperparameter_tuning": {
+            "method": "GridSearchCV",
+            "cv": 5,
+            "scoring": "neg_root_mean_squared_error",
+            "best_parameters": {
+                "Linear Regression": {},
+                "Ridge": {
+                    "model__alpha": 10.0
+                },
+                "Random Forest": {
+                    "model__max_depth": null,
+                    "model__min_samples_leaf": 4,
+                    "model__n_estimators": 600
+                },
+                "Gradient Boosting": {
+                    "model__learning_rate": 0.1,
+                    "model__max_depth": 1,
+                    "model__min_samples_leaf": 1,
+                    "model__n_estimators": 400
+                },
+                "SVR": {
+                    "model__C": 100.0,
+                    "model__epsilon": 0.3,
+                    "model__gamma": "scale"
+                }
+            }
+        }
+    },
+    "feature_importance": {
+        "method": "Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "X3 distance to the nearest MRT station",
+                "Coefficient": -5.787,
+                "Absolute Coefficient": 5.787,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "X4 number of convenience stores",
+                "Coefficient": 3.219,
+                "Absolute Coefficient": 3.219,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "X2 house age",
+                "Coefficient": -3.0627,
+                "Absolute Coefficient": 3.0627,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "X5 latitude",
+                "Coefficient": 2.8552,
+                "Absolute Coefficient": 2.8552,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "X1 transaction date",
+                "Coefficient": 1.5305,
+                "Absolute Coefficient": 1.5305,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "X6 longitude",
+                "Coefficient": -0.4412,
+                "Absolute Coefficient": 0.4412,
+                "Importance Rank": 6
+            }
+        ],
+        "most_influential_feature": "X3 distance to the nearest MRT station"
+    },
+    "model_verification": true,
+    "output_files": {
+        "original_dataset": "DataSets/Real estate valuation data set.xlsx",
+        "processed_dataset": "DataSets/Processed/real_estate_regression_results.csv",
+        "metrics": "DataSets/Processed/real_estate_metrics.csv",
+        "metadata_latest": "Metadata/D3_real_estate.json",
+        "feature_columns": "ModelsOutcome/real_estate_feature_columns.joblib",
+        "models": {
+            "Linear Regression": "ModelsOutcome\\real_estate_linear_regression.joblib",
+            "Ridge": "ModelsOutcome\\real_estate_ridge.joblib",
+            "Random Forest": "ModelsOutcome\\real_estate_random_forest.joblib",
+            "Gradient Boosting": "ModelsOutcome\\real_estate_gradient_boosting.joblib",
+            "SVR": "ModelsOutcome\\real_estate_svr.joblib"
+        }
+    }
+}

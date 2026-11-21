@@ -66,7 +66,7 @@ PALETTE = {
     },
 }
 
-# سایهٔ رنگی و ملایم زیر کارت‌ها در تم روشن (سبز برای Clustering)
+# سایهٔ رنگی و ملایم زیر کارت‌ها در تم روشن (صورتی: Classification، سبز: Clustering، بنفش: Regression)
 CARD_SHADOW = {
     "Regression": (108, 76, 214),
     "Classification": (238, 92, 159),
@@ -497,7 +497,8 @@ class DatasetsModule(HomeModule):
         stats = meta.get("dataset_statistics") or {}
         fs = meta.get("feature_selection") or {}
         pre = meta.get("preprocessing") or {}
-        clu = meta.get("clustering") or {}
+        # کلید می‌تواند "Clustering" یا "clustering" باشد
+        clu = meta.get("clustering") or meta.get("Clustering") or {}
         task = ds.task
 
         rows = _to_int(stats.get("rows", ds.rows))
@@ -1295,10 +1296,11 @@ class DatasetsModule(HomeModule):
         accent = TASK_ACCENT.get(ds.task, TASK_DEFAULT)[0]
 
         if theme.name == "light":
-            # در تم روشن سایهٔ کارت‌های دیتاست غیرفعال است.
-            sh_rgb, sh_a, sh_blur, sh_off = (0, 0, 0), 0, 0, 0
+            # تم روشن: سایهٔ هم‌رنگ دیتاست (Classification صورتی، Clustering سبز، Regression بنفش)
+            sh_rgb = CARD_SHADOW.get(ds.task, CARD_SHADOW_DEFAULT)
+            sh_a, sh_blur, sh_off = LIGHT_SHADOW_ALPHA, 16, 8
         else:
-            # در تم تاریک سایهٔ کارت‌ها حفظ می‌شود.
+            # در تم تاریک سایهٔ پیش‌فرض تم حفظ می‌شود.
             sh_rgb, sh_a, sh_blur, sh_off = c("shadow_rgb"), c("shadow_a"), 14, 10
 
         def glass(border):

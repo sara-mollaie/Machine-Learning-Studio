@@ -6,6 +6,7 @@ import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 
 from matplotlib.patches import Patch
 from sklearn.compose import ColumnTransformer
@@ -109,12 +110,11 @@ def set_chart_title(ax, title):
         fontweight="bold",
         color=TITLE_ACCENT,
         pad=24,
-        loc="center",
     )
 
 
-def display_figure(rect=(0, 0, 1, 0.97)):
-    plt.tight_layout(rect=rect)
+def display_figure():
+    plt.tight_layout(rect=(0, 0, 1, 0.97))
     show_figure()
 
 # endregion
@@ -371,7 +371,7 @@ negative_coefficients = coefficient_df[coefficient_df["Coefficient"] < 0].sort_v
 )
 top_coefficients = pd.concat([positive_coefficients, negative_coefficients]).head(10)
 plot_coefficients = top_coefficients.iloc[::-1]
-plt.figure(figsize=(13, 7), facecolor=BG_COLOR)
+plt.figure(figsize=(12, 7), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
 set_chart_title(ax, "Abalone - Most Influential Physical Measurements")
@@ -400,7 +400,7 @@ for bar, value, coefficient in zip(
         color=TITLE_COLOR,
         fontweight="bold",
     )
-ax.set_xlim(0, coefficient_df["Absolute Coefficient"].max() * 1.5)
+ax.set_xlim(0, coefficient_df["Absolute Coefficient"].max() * 1.2)
 ax.set_xlabel("Absolute Coefficient (Importance)", fontsize=12, color=TEXT_COLOR)
 ax.set_ylabel("Feature", fontsize=12, color=TEXT_COLOR)
 ax.tick_params(axis="x", colors=TEXT_COLOR)
@@ -410,11 +410,9 @@ legend = ax.legend(
         Patch(facecolor=PURPLE, label="Positive coefficient"),
         Patch(facecolor=LIGHT_PINK, label="Negative coefficient"),
     ],
-    loc="upper right",
+    loc="lower right",
     facecolor=BG_COLOR,
     edgecolor=LAVENDER,
-    framealpha=0.96,
-    fontsize=9,
 )
 for text in legend.get_texts():
     text.set_color(TEXT_COLOR)
@@ -436,6 +434,38 @@ print("-" * 60)
 print("Best Model Metrics:")
 for metric in ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"]:
     print(f"{metric}: {best_metrics[metric]:.4f}")
+
+# endregion
+
+
+# region Correlation Heatmap
+
+correlation_columns = FEATURES[1:] + [RAW_TARGET, TARGET]
+correlation_matrix = abalone_df[correlation_columns].corr()
+
+plt.figure(figsize=(12, 9), facecolor=BG_COLOR)
+ax = plt.gca()
+ax.set_facecolor(BG_COLOR)
+sns.heatmap(
+    correlation_matrix,
+    annot=True,
+    fmt=".2f",
+    cmap="Purples",
+    vmin=-1,
+    vmax=1,
+    center=0,
+    linewidths=0.8,
+    linecolor=BG_COLOR,
+    cbar_kws={"label": "Correlation"},
+    annot_kws={"fontsize": 9, "color": TITLE_COLOR},
+    ax=ax,
+)
+set_chart_title(ax, "Abalone - Correlation Heatmap")
+ax.tick_params(axis="x", rotation=35, colors=TEXT_COLOR)
+ax.tick_params(axis="y", rotation=0, colors=TEXT_COLOR)
+ax.set_xlabel("Variables", fontsize=12, color=TEXT_COLOR)
+ax.set_ylabel("Variables", fontsize=12, color=TEXT_COLOR)
+display_figure()
 
 # endregion
 
@@ -465,14 +495,10 @@ style_axes(ax)
 set_chart_title(ax, "Abalone - Regression Model Accuracy")
 accuracy_plot = metrics_df.set_index("Model")[["Accuracy"]]
 accuracy_plot = accuracy_plot.sort_values("Accuracy", ascending=False)
-accuracy_bar_colors = [
-    MODEL_COLORS[index % len(MODEL_COLORS)]
-    for index in range(len(accuracy_plot))
-]
 accuracy_bars = ax.bar(
     accuracy_plot.index,
     accuracy_plot["Accuracy"],
-    color=accuracy_bar_colors,
+    color=PURPLE,
     edgecolor="white",
     linewidth=0.8,
 )
@@ -502,7 +528,7 @@ style_axes(ax)
 set_chart_title(ax, f"Abalone - Residual Distribution ({best_model_name})")
 residuals = y_test.to_numpy() - best_prediction
 ax.hist(residuals, bins=25, color=PURPLE, alpha=0.85, edgecolor="white")
-ax.axvline(0, color="#D81B75", linewidth=2.8, zorder=5)
+ax.axvline(0, color=PINK, linewidth=2)
 ax.set_xlabel("Residual (Actual - Predicted)", fontsize=12, color=TEXT_COLOR)
 ax.set_ylabel("Frequency", fontsize=12, color=TEXT_COLOR)
 ax.tick_params(colors=TEXT_COLOR)
@@ -516,8 +542,9 @@ display_figure()
 output_folder = BASE_DIR / "Datasets" / "Processed"
 output_folder.mkdir(parents=True, exist_ok=True)
 processed_df = abalone_df.copy()
-processed_df["Predicted_Age"] = np.nan
-processed_df.loc[y_test.index, "Predicted_Age"] = best_prediction
+predicted_age = pd.Series(pd.NA, index=processed_df.index, dtype="Int64")
+predicted_age.loc[y_test.index] = np.round(best_prediction).astype(int)
+processed_df["Predicted_Age"] = predicted_age
 processed_path = output_folder / "abalone_regression_results.csv"
 processed_df.to_csv(processed_path, index=False)
 
@@ -660,4 +687,3 @@ print("Model Verification:", saved_metadata["model_verification"])
 print("\nMetadata Process Completed Successfully!")
 
 # endregion
-
