@@ -1,0 +1,293 @@
+{
+    "id": "D14",
+    "run_timestamp": "2026-11-23 01:35:19.788378",
+    "name": "Concrete",
+    "level": "Intermediate",
+    "domain": "Civil Engineering/Construction",
+    "task": "Regression",
+    "description": "Estimate concrete compressive strength in MPa from mixture ingredients and age.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 1030,
+        "columns": 9,
+        "column_names": [
+            "Cement",
+            "Blast Furnace Slag",
+            "Fly Ash",
+            "Water",
+            "Superplasticizer",
+            "Coarse Aggregate",
+            "Fine Aggregate",
+            "Age",
+            "Concrete compressive strength"
+        ],
+        "data_types": {
+            "Cement": "float64",
+            "Blast Furnace Slag": "float64",
+            "Fly Ash": "float64",
+            "Water": "float64",
+            "Superplasticizer": "float64",
+            "Coarse Aggregate": "float64",
+            "Fine Aggregate": "float64",
+            "Age": "int64",
+            "Concrete compressive strength": "float64"
+        },
+        "missing_values": {
+            "Cement": 0,
+            "Blast Furnace Slag": 0,
+            "Fly Ash": 0,
+            "Water": 0,
+            "Superplasticizer": 0,
+            "Coarse Aggregate": 0,
+            "Fine Aggregate": 0,
+            "Age": 0,
+            "Concrete compressive strength": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "Cement": {
+                "count": 1030.0,
+                "mean": 281.17,
+                "std": 104.51,
+                "min": 102.0,
+                "25%": 192.38,
+                "50%": 272.9,
+                "75%": 350.0,
+                "max": 540.0
+            },
+            "Blast Furnace Slag": {
+                "count": 1030.0,
+                "mean": 73.9,
+                "std": 86.28,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 22.0,
+                "75%": 142.95,
+                "max": 359.4
+            },
+            "Fly Ash": {
+                "count": 1030.0,
+                "mean": 54.19,
+                "std": 64.0,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 118.27,
+                "max": 200.1
+            },
+            "Water": {
+                "count": 1030.0,
+                "mean": 181.57,
+                "std": 21.36,
+                "min": 121.75,
+                "25%": 164.9,
+                "50%": 185.0,
+                "75%": 192.0,
+                "max": 247.0
+            },
+            "Superplasticizer": {
+                "count": 1030.0,
+                "mean": 6.2,
+                "std": 5.97,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 6.35,
+                "75%": 10.16,
+                "max": 32.2
+            },
+            "Coarse Aggregate": {
+                "count": 1030.0,
+                "mean": 972.92,
+                "std": 77.75,
+                "min": 801.0,
+                "25%": 932.0,
+                "50%": 968.0,
+                "75%": 1029.4,
+                "max": 1145.0
+            },
+            "Fine Aggregate": {
+                "count": 1030.0,
+                "mean": 773.58,
+                "std": 80.18,
+                "min": 594.0,
+                "25%": 730.95,
+                "50%": 779.51,
+                "75%": 824.0,
+                "max": 992.6
+            },
+            "Age": {
+                "count": 1030.0,
+                "mean": 45.66,
+                "std": 63.17,
+                "min": 1.0,
+                "25%": 7.0,
+                "50%": 28.0,
+                "75%": 56.0,
+                "max": 365.0
+            },
+            "Concrete compressive strength": {
+                "count": 1030.0,
+                "mean": 35.82,
+                "std": 16.71,
+                "min": 2.33,
+                "25%": 23.71,
+                "50%": 34.44,
+                "75%": 46.14,
+                "max": 82.6
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Cement",
+            "Blast Furnace Slag",
+            "Fly Ash",
+            "Water",
+            "Superplasticizer",
+            "Coarse Aggregate",
+            "Fine Aggregate",
+            "Age"
+        ],
+        "target_column": "Concrete compressive strength",
+        "excluded_columns": []
+    },
+    "preprocessing": {
+        "numeric_method": "Median Imputation + StandardScaler",
+        "missing_value_method": "Training-set median for numeric features"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "split_method": "Grouped random split by identical feature rows",
+        "training_rows": 826,
+        "test_rows": 204,
+        "random_state": 42,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 3.5396,
+                "MSE": 21.5006,
+                "RMSE": 4.6369,
+                "R2": 0.907,
+                "R2 Percentage": 90.7009,
+                "Accuracy": 88.56
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 3.2624,
+                "MSE": 20.0377,
+                "RMSE": 4.4763,
+                "R2": 0.9133,
+                "R2 Percentage": 91.3336,
+                "Accuracy": 88.03
+            },
+            {
+                "Model": "SVR",
+                "MAE": 4.3081,
+                "MSE": 37.501,
+                "RMSE": 6.1238,
+                "R2": 0.8378,
+                "R2 Percentage": 83.7806,
+                "Accuracy": 85.44
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 8.472,
+                "MSE": 113.3293,
+                "RMSE": 10.6456,
+                "R2": 0.5098,
+                "R2 Percentage": 50.9844,
+                "Accuracy": 66.93
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 8.4769,
+                "MSE": 113.4366,
+                "RMSE": 10.6507,
+                "R2": 0.5094,
+                "R2 Percentage": 50.938,
+                "Accuracy": 66.88
+            }
+        ],
+        "recommended_model": "Gradient Boosting",
+        "selection_rule": "Highest MAPE-based score on the held-out test set",
+        "accuracy_definition": "MAPE-based score: max(0, 100 - MAPE percentage); this is not a standard regression accuracy metric"
+    },
+    "feature_importance": {
+        "method": "Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "Cement",
+                "Coefficient": 12.6211,
+                "Absolute Coefficient": 12.6211,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "Blast Furnace Slag",
+                "Coefficient": 8.4733,
+                "Absolute Coefficient": 8.4733,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "Age",
+                "Coefficient": 6.9087,
+                "Absolute Coefficient": 6.9087,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "Fly Ash",
+                "Coefficient": 5.1318,
+                "Absolute Coefficient": 5.1318,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "Water",
+                "Coefficient": -3.4233,
+                "Absolute Coefficient": 3.4233,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "Superplasticizer",
+                "Coefficient": 2.1095,
+                "Absolute Coefficient": 2.1095,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "Fine Aggregate",
+                "Coefficient": 1.6583,
+                "Absolute Coefficient": 1.6583,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "Coarse Aggregate",
+                "Coefficient": 1.3879,
+                "Absolute Coefficient": 1.3879,
+                "Importance Rank": 8
+            }
+        ],
+        "most_influential_feature": "Cement"
+    },
+    "model_verification": true,
+    "output_files": {
+        "original_dataset": "DataSets/Concrete_Data.xls",
+        "processed_dataset": "DataSets/Processed/concrete_regression_results.csv",
+        "metrics": "DataSets/Processed/concrete_metrics.csv",
+        "metadata_latest": "Metadata/D14_concrete.json",
+        "feature_columns": "ModelsOutcome/concrete_feature_columns.joblib",
+        "models": {
+            "Linear Regression": "ModelsOutcome\\concrete_linear_regression.joblib",
+            "Ridge": "ModelsOutcome\\concrete_ridge.joblib",
+            "Random Forest": "ModelsOutcome\\concrete_random_forest.joblib",
+            "Gradient Boosting": "ModelsOutcome\\concrete_gradient_boosting.joblib",
+            "SVR": "ModelsOutcome\\concrete_svr.joblib"
+        }
+    }
+}

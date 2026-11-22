@@ -13,6 +13,7 @@ from UserInterface.Datasets import (
 )
 from UserInterface.HomeModule import BASE, _rgb
 from UserInterface.Theme import theme, FONT
+from UserInterface.DatasetNav import draw_dataset_navbar
 
 # پس‌زمینه‌های مخصوص صفحهٔ Predictor (عنوان «Predict the Cluster» داخل خود عکس است)
 PRED_BG = {
@@ -177,7 +178,38 @@ class PredictorModule(DatasetsModule):
             "labels": {f: labels.get(f) or PredictorModule._pretty(f) for f in features},
         }
         bundle["quality"] = PredictorModule._compute_quality(model, scaler, features, root, files)
+        bundle["decimals"] = PredictorModule._detect_decimals(root, files, features, meta)
+        # تنظیم دستی اختیاری در متادیتا، مثلاً {"sgot": 1} یعنی SGOT با یک رقم اعشار
+        for f, d in (meta.get("feature_decimals") or {}).items():
+            if f in features:
+                bundle["decimals"][f] = max(0, min(3, int(d)))
         return meta, bundle
+
+    @staticmethod
+    def _detect_decimals(root, files, features, meta=None):
+        """تعداد رقم اعشار واقعی هر ویژگی (۰ = عدد صحیح).
+        اول از خود فایل داده؛ اگر خوانده نشد، از آمار توصیفی ذخیره‌شده در متادیتا."""
+        try:
+            rel = files.get("processed_dataset") or files.get("original_dataset")
+            df = pd.read_csv(root / rel, usecols=features)[features]
+            result = {}
+            for f in features:
+                col = pd.to_numeric(df[f], errors="coerce").dropna().to_numpy(dtype=float)
+                result[f] = next((d for d in range(0, 4) if np.allclose(col, np.round(col, d), atol=1e-9)), 3)
+            return result
+        except Exception as error:
+            print("[Predictor] decimals could not be read from the data file:", error)
+
+        # پشتیبان: اگر کمینه، بیشینه و چارک‌ها همه صحیح باشند، ستون صحیح است
+        stats = ((meta or {}).get("dataset_statistics") or {}).get("descriptive_statistics") or {}
+        result = {}
+        for f in features:
+            st = stats.get(f) or {}
+            keys = ("min", "25%", "50%", "75%", "max")
+            if all(isinstance(st.get(k), (int, float)) for k in keys) and \
+                    all(float(st[k]).is_integer() for k in keys):
+                result[f] = 0
+        return result
 
     @staticmethod
     def _compute_quality(model, scaler, features, root, files):
@@ -193,7 +225,6 @@ class PredictorModule(DatasetsModule):
             est = steps[-1][1] if steps else model
             space = data
             if steps and len(steps) > 1:
-                space = data
                 for _, step in steps[:-1]:
                     space = step.transform(space)
             space = np.asarray(space, dtype=float)
@@ -275,6 +306,14 @@ class PredictorModule(DatasetsModule):
     def _pretty(name):
         text = str(name).replace("_", " ")
         return text.upper() if text.islower() and len(text) <= 4 else text.title()
+
+    def _fmt_feat(self, f, v):
+        """مقدار را با همان تعداد اعشارِ داده نمایش می‌دهد (MCV در Liver عدد صحیح است)."""
+        dec = (self.bundle.get("decimals") or {}).get(f)
+        if dec is None:
+            lo, hi = self.bundle["range"][f]
+            return self._fmt(v, lo, hi)
+        return f"{v:,.{dec}f}"
 
     @staticmethod
     def _fmt(v, lo, hi):
@@ -445,7 +484,7 @@ class PredictorModule(DatasetsModule):
         self.delete("all")
         self.config(cursor="")
         self.create_image(0, 0, image=self._bg_photo(), anchor="nw")
-        self._navbar()
+        draw_dataset_navbar(self)
         if self.ds is not None:
             self._draw_page()
 
@@ -509,7 +548,7 @@ class PredictorModule(DatasetsModule):
             state = "hidden" if v is None else "normal"
 
             self.text(x, y, b["labels"][f], 19, c("body"))
-            val_id = self.create_text(S(x + colw), S(y), text="—" if v is None else self._fmt(v, lo, hi),
+            val_id = self.create_text(S(x + colw), S(y), text="—" if v is None else self._fmt_feat(f, v),
                                       anchor="e", fill=c("body") if v is None else c("title"),
                                       font=(FONT, -S(19), "bold"))
             self.create_image(S(x + colw / 2), S(ty), image=hit_img, anchor="center", tags=(tag,))
@@ -531,13 +570,18 @@ class PredictorModule(DatasetsModule):
         s = self._sl[name]
         t = min(1.0, max(0.0, (event.x / self.k - s["x"]) / s["w"]))
         first = self.vals[name] is None
-        self.vals[name] = s["lo"] + t * (s["hi"] - s["lo"])
+        val = s["lo"] + t * (s["hi"] - s["lo"])
+        dec = (self.bundle.get("decimals") or {}).get(name)
+        if dec is not None:                              # مثلاً عدد صحیح بماند
+            val = min(s["hi"], max(s["lo"], round(val, dec)))
+            t = (val - s["lo"]) / (s["hi"] - s["lo"]) if s["hi"] > s["lo"] else 0.0
+        self.vals[name] = val
 
         full = s["full"]
         s["photo"] = ImageTk.PhotoImage(full.crop((0, 0, max(1, round(t * full.width)), full.height)))
         self.itemconfigure(s["fill"], image=s["photo"])
         self.coords(s["knob"], S(s["x"] + t * s["w"]), S(s["ty"]))
-        self.itemconfigure(s["val"], text=self._fmt(self.vals[name], s["lo"], s["hi"]))
+        self.itemconfigure(s["val"], text=self._fmt_feat(name, self.vals[name]))
         if first:
             self.itemconfigure(s["fill"], state="normal")
             self.itemconfigure(s["knob"], state="normal")

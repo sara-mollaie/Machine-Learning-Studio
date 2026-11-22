@@ -410,7 +410,8 @@ legend = ax.legend(
         Patch(facecolor=PURPLE, label="Positive coefficient"),
         Patch(facecolor=LIGHT_PINK, label="Negative coefficient"),
     ],
-    loc="lower right",
+    loc="center right",
+    borderaxespad=0,
     facecolor=BG_COLOR,
     edgecolor=LAVENDER,
 )
@@ -443,21 +444,21 @@ for metric in ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"]:
 correlation_columns = FEATURES[1:] + [RAW_TARGET, TARGET]
 correlation_matrix = abalone_df[correlation_columns].corr()
 
-plt.figure(figsize=(12, 9), facecolor=BG_COLOR)
+plt.figure(figsize=(8.8, 6.2), dpi=100, facecolor=BG_COLOR)
 ax = plt.gca()
 ax.set_facecolor(BG_COLOR)
 sns.heatmap(
     correlation_matrix,
     annot=True,
     fmt=".2f",
-    cmap="Purples",
+    cmap=sns.blend_palette(["#FFF7FB", "#F6CFE3", "#D69ACD", "#9562AF", "#51267D"], as_cmap=True),
     vmin=-1,
     vmax=1,
     center=0,
     linewidths=0.8,
     linecolor=BG_COLOR,
     cbar_kws={"label": "Correlation"},
-    annot_kws={"fontsize": 9, "color": TITLE_COLOR},
+    annot_kws={"fontsize": 9, "fontweight": "bold"},
     ax=ax,
 )
 set_chart_title(ax, "Abalone - Correlation Heatmap")
@@ -498,7 +499,7 @@ accuracy_plot = accuracy_plot.sort_values("Accuracy", ascending=False)
 accuracy_bars = ax.bar(
     accuracy_plot.index,
     accuracy_plot["Accuracy"],
-    color=PURPLE,
+    color=MODEL_COLORS[:len(accuracy_plot)],
     edgecolor="white",
     linewidth=0.8,
 )

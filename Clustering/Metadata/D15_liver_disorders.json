@@ -4,6 +4,7 @@
     "level": "Intermediate",
     "domain": "Healthcare",
     "task": "Clustering",
+    "feature_decimals": {"sgot": 1},
     "description": "Discover patterns in liver blood test measurements and analyze their relationship with alcohol consumption.",
     "source": "Data Science Dojo",
     "dataset_statistics": {

@@ -1,0 +1,308 @@
+{
+    "id": "D22",
+    "run_timestamp": "2026-11-23 03:09:32.644803",
+    "name": "Istanbul Stock Exchange",
+    "level": "Intermediate",
+    "domain": "Business/Finance",
+    "task": "Regression",
+    "description": "Estimate same-day ISE_USD returns from seven international market index returns.",
+    "source": "UCI Machine Learning Repository / Data Science Dojo",
+    "dataset_statistics": {
+        "rows": 536,
+        "columns": 10,
+        "column_names": [
+            "Date",
+            "ISE_TL",
+            "ISE_USD",
+            "SP",
+            "DAX",
+            "FTSE",
+            "NIKKEI",
+            "BOVESPA",
+            "EU",
+            "EM"
+        ],
+        "data_types": {
+            "Date": "datetime64[us]",
+            "ISE_TL": "float64",
+            "ISE_USD": "float64",
+            "SP": "float64",
+            "DAX": "float64",
+            "FTSE": "float64",
+            "NIKKEI": "float64",
+            "BOVESPA": "float64",
+            "EU": "float64",
+            "EM": "float64"
+        },
+        "missing_values": {
+            "Date": 0,
+            "ISE_TL": 0,
+            "ISE_USD": 0,
+            "SP": 0,
+            "DAX": 0,
+            "FTSE": 0,
+            "NIKKEI": 0,
+            "BOVESPA": 0,
+            "EU": 0,
+            "EM": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "Date": {
+                "count": 536,
+                "mean": "2010-01-26T03:37:36.716",
+                "min": "2009-01-05T00:00:00.000",
+                "25%": "2009-07-14T18:00:00.000",
+                "50%": "2010-01-27T12:00:00.000",
+                "75%": "2010-08-05T06:00:00.000",
+                "max": "2011-02-22T00:00:00.000",
+                "std": null
+            },
+            "ISE_TL": {
+                "count": 536.0,
+                "mean": 0.001629,
+                "min": -0.062208,
+                "25%": -0.006669,
+                "50%": 0.002189,
+                "75%": 0.010584,
+                "max": 0.068952,
+                "std": 0.016264
+            },
+            "ISE_USD": {
+                "count": 536.0,
+                "mean": 0.001552,
+                "min": -0.084716,
+                "25%": -0.009753,
+                "50%": 0.002643,
+                "75%": 0.013809,
+                "max": 0.100621,
+                "std": 0.021122
+            },
+            "SP": {
+                "count": 536.0,
+                "mean": 0.000643,
+                "min": -0.054262,
+                "25%": -0.004675,
+                "50%": 0.000876,
+                "75%": 0.006706,
+                "max": 0.068366,
+                "std": 0.014093
+            },
+            "DAX": {
+                "count": 536.0,
+                "mean": 0.000721,
+                "min": -0.052331,
+                "25%": -0.006212,
+                "50%": 0.000887,
+                "75%": 0.008224,
+                "max": 0.058951,
+                "std": 0.014557
+            },
+            "FTSE": {
+                "count": 536.0,
+                "mean": 0.00051,
+                "min": -0.054816,
+                "25%": -0.005808,
+                "50%": 0.000409,
+                "75%": 0.007428,
+                "max": 0.050323,
+                "std": 0.012656
+            },
+            "NIKKEI": {
+                "count": 536.0,
+                "mean": 0.000308,
+                "min": -0.050448,
+                "25%": -0.007407,
+                "50%": 0.0,
+                "75%": 0.007882,
+                "max": 0.061229,
+                "std": 0.01485
+            },
+            "BOVESPA": {
+                "count": 536.0,
+                "mean": 0.000935,
+                "min": -0.053849,
+                "25%": -0.007215,
+                "50%": 0.000279,
+                "75%": 0.008881,
+                "max": 0.063792,
+                "std": 0.015751
+            },
+            "EU": {
+                "count": 536.0,
+                "mean": 0.000471,
+                "min": -0.048817,
+                "25%": -0.005952,
+                "50%": 0.000196,
+                "75%": 0.007792,
+                "max": 0.067042,
+                "std": 0.01299
+            },
+            "EM": {
+                "count": 536.0,
+                "mean": 0.000936,
+                "min": -0.038564,
+                "25%": -0.004911,
+                "50%": 0.001077,
+                "75%": 0.006423,
+                "max": 0.047805,
+                "std": 0.010501
+            }
+        },
+        "date_start": "2009-01-05T00:00:00",
+        "date_end": "2011-02-22T00:00:00"
+    },
+    "feature_selection": {
+        "selected_features": [
+            "SP",
+            "DAX",
+            "FTSE",
+            "NIKKEI",
+            "BOVESPA",
+            "EU",
+            "EM"
+        ],
+        "target_column": "ISE_USD",
+        "excluded_columns": [
+            "Date",
+            "ISE_TL"
+        ]
+    },
+    "preprocessing": {
+        "numeric_method": "Median Imputation + StandardScaler",
+        "categorical_method": null,
+        "missing_value_method": "Training-set median for numeric features",
+        "split_method": "Chronological, no shuffling",
+        "test_size": 0.2,
+        "train_rows": 428,
+        "test_rows": 108
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Direction Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "Ridge",
+                "MAE": 0.01001862,
+                "MSE": 0.00016247,
+                "RMSE": 0.01274644,
+                "R2": 0.38889543,
+                "R2 Percentage": 38.88954264,
+                "Direction Accuracy": 71.2962963
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 0.01003804,
+                "MSE": 0.00016299,
+                "RMSE": 0.01276657,
+                "R2": 0.38696342,
+                "R2 Percentage": 38.69634191,
+                "Direction Accuracy": 71.2962963
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 0.01001944,
+                "MSE": 0.00015813,
+                "RMSE": 0.01257512,
+                "R2": 0.40521165,
+                "R2 Percentage": 40.52116539,
+                "Direction Accuracy": 70.37037037
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 0.01031596,
+                "MSE": 0.00016299,
+                "RMSE": 0.01276684,
+                "R2": 0.38693761,
+                "R2 Percentage": 38.69376061,
+                "Direction Accuracy": 68.51851852
+            },
+            {
+                "Model": "SVR",
+                "MAE": 0.01124074,
+                "MSE": 0.00021041,
+                "RMSE": 0.01450549,
+                "R2": 0.2085879,
+                "R2 Percentage": 20.8587899,
+                "Direction Accuracy": 68.51851852
+            }
+        ],
+        "recommended_model": "Ridge",
+        "selection_rule": "Highest test-set Direction Accuracy; lowest RMSE breaks ties (descriptive comparison, not unbiased final selection)",
+        "direction_accuracy_definition": "Percent of test observations with correct sign (positive versus nonpositive)",
+        "note": "MAPE is omitted because market returns can be zero or near zero.",
+        "prediction_horizon": "same-day association, not next-day forecast"
+    },
+    "feature_importance": {
+        "method": "Standardized Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "EU",
+                "Coefficient": 0.01650882,
+                "Absolute Coefficient": 0.01650882,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "EM",
+                "Coefficient": 0.01071163,
+                "Absolute Coefficient": 0.01071163,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "FTSE",
+                "Coefficient": -0.00490287,
+                "Absolute Coefficient": 0.00490287,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "BOVESPA",
+                "Coefficient": -0.00458691,
+                "Absolute Coefficient": 0.00458691,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "DAX",
+                "Coefficient": -0.00273576,
+                "Absolute Coefficient": 0.00273576,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "SP",
+                "Coefficient": 0.00151198,
+                "Absolute Coefficient": 0.00151198,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "NIKKEI",
+                "Coefficient": 0.0012335,
+                "Absolute Coefficient": 0.0012335,
+                "Importance Rank": 7
+            }
+        ],
+        "most_influential_feature": "EU"
+    },
+    "model_verification": true,
+    "output_files": {
+        "original_dataset": "DataSets/data_akbilgic.xlsx",
+        "processed_dataset": "DataSets/Processed/istanbul_stock_exchange_regression_results.csv",
+        "metrics": "DataSets/Processed/istanbul_stock_exchange_metrics.csv",
+        "metadata_latest": "Metadata/D22_istanbul_stock_exchange.json",
+        "feature_columns": "ModelsOutcome/istanbul_stock_exchange_feature_columns.joblib",
+        "models": {
+            "Linear Regression": "ModelsOutcome\\istanbul_stock_exchange_linear_regression.joblib",
+            "Ridge": "ModelsOutcome\\istanbul_stock_exchange_ridge.joblib",
+            "Random Forest": "ModelsOutcome\\istanbul_stock_exchange_random_forest.joblib",
+            "Gradient Boosting": "ModelsOutcome\\istanbul_stock_exchange_gradient_boosting.joblib",
+            "SVR": "ModelsOutcome\\istanbul_stock_exchange_svr.joblib"
+        }
+    }
+}

@@ -5,6 +5,8 @@ from UserInterface.HomeModule import HomeModule
 from UserInterface.Datasets import DatasetsModule
 from UserInterface.Algorithms import AlgorithmsModule
 from UserInterface.PredictorModule import PredictorModule
+from UserInterface.EvaluateModule import EvaluateModule
+from UserInterface.VisualizationModule import VisualizationModule
 from UserInterface.Dialogs import InfoDialog, SettingsDialog
 from UserInterface.Theme import theme, FONT
 
@@ -12,7 +14,7 @@ from UserInterface.Theme import theme, FONT
 class ComingSoon(tk.Canvas):
     """صفحهٔ موقت برای ماژول‌هایی که هنوز ساخته نشده‌اند."""
 
-    def __init__(self, master, name, size, on_back):
+    def __init__(self, master, name, size, on_back, back_text="← Home"):
         self.w, self.h = size
         super().__init__(
             master, width=self.w, height=self.h,
@@ -20,7 +22,7 @@ class ComingSoon(tk.Canvas):
         )
         self.page_name = name
         self._btn = tk.Button(
-            self, text="← Home", command=on_back, bd=0,
+            self, text=back_text, command=on_back, bd=0,
             padx=20, pady=8, bg="#a3305f", fg="white",
             font=(FONT, 12, "bold"), cursor="hand2"
         )
@@ -49,10 +51,14 @@ class ComingSoon(tk.Canvas):
 class MainView(tk.Frame):
     """قاب اصلی: صفحه‌ها را ثبت می‌کند و بین آن‌ها جابه‌جا می‌شود."""
 
+    # صفحه‌هایی که فقط وقتی یک دیتاست باز است معنی دارند
+    DATASET_PAGES = ("evaluate", "visualization")
+
     def __init__(self, master, scale):
         super().__init__(master, bd=0, highlightthickness=0)
         self.pages = {}
         self.current = None
+        self.dataset = None          # دیتاستی که الان Predictor/Evaluate رویش کار می‌کند
 
         # Home Page
         home = HomeModule(
@@ -88,6 +94,22 @@ class MainView(tk.Frame):
         )
         self.register("predictor", predictor)
 
+        # Evaluate Page (هم‌دیتاست با Predictor)
+        evaluate = EvaluateModule(
+            self,
+            scale=scale,
+            on_navigate=self.navigate
+        )
+        self.register("evaluate", evaluate)
+
+        # Visualization Page (نمودارهای همان دیتاست)
+        visualization = VisualizationModule(
+            self,
+            scale=scale,
+            on_navigate=self.navigate
+        )
+        self.register("visualization", visualization)
+
         self.navigate("home")
 
         # بعد از نمایش Home، مدل‌ها و تصویرهای صفحهٔ Predictor در پس‌زمینه آماده می‌شوند
@@ -106,9 +128,17 @@ class MainView(tk.Frame):
             SettingsDialog(self.winfo_toplevel())
             return
 
+        # Evaluate / Visualization بدون دیتاست بازشده معنی ندارند
+        if name in self.DATASET_PAGES and self.dataset is None:
+            return
+
         page = self.pages.get(name)
         if page is None:
             return
+
+        # Evaluate همیشه با دیتاستی ساخته می‌شود که Predictor رویش باز بوده
+        if name in self.DATASET_PAGES:
+            page.load_dataset(self.dataset)
 
         if self.current is not None:
             self.current.pack_forget()
@@ -162,6 +192,8 @@ class MainView(tk.Frame):
         datasets = self.pages.get("datasets")
         if datasets is not None and hasattr(datasets, "_close_info"):
             datasets._close_info()          # پنجرهٔ Info بسته شود
+
+        self.dataset = ds                   # Evaluate و Visualization از همین استفاده می‌کنند
 
         predictor = self.pages["predictor"]
         predictor.load_dataset(ds)

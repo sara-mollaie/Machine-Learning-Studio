@@ -448,25 +448,26 @@ for metric in ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"]:
 correlation_columns = FEATURES + [TARGET]
 correlation_matrix = real_estate_df[correlation_columns].corr()
 
-plt.figure(figsize=(12, 8), facecolor=BG_COLOR)
+plt.figure(figsize=(11.5, 6.6), dpi=100, facecolor=BG_COLOR)
 ax = plt.gca()
 ax.set_facecolor(BG_COLOR)
 sns.heatmap(
     correlation_matrix,
+    xticklabels=[column.split()[0] for column in correlation_columns],
     annot=True,
     fmt=".2f",
-    cmap="Purples",
+    cmap=sns.blend_palette(["#FFF7FB", "#F6CFE3", "#D69ACD", "#9562AF", "#51267D"], as_cmap=True),
     vmin=-1,
     vmax=1,
     center=0,
     linewidths=0.8,
     linecolor=BG_COLOR,
     cbar_kws={"label": "Correlation"},
-    annot_kws={"fontsize": 9, "color": TITLE_COLOR},
+    annot_kws={"fontsize": 9, "fontweight": "bold"},
     ax=ax,
 )
 set_chart_title(ax, "Real Estate - Correlation Heatmap")
-ax.tick_params(axis="x", rotation=35, colors=TEXT_COLOR)
+ax.tick_params(axis="x", rotation=0, colors=TEXT_COLOR)
 ax.tick_params(axis="y", rotation=0, colors=TEXT_COLOR)
 ax.set_xlabel("Variables", fontsize=12, color=TEXT_COLOR)
 ax.set_ylabel("Variables", fontsize=12, color=TEXT_COLOR)
