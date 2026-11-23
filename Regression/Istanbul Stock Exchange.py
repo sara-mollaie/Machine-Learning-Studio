@@ -62,10 +62,11 @@ def center_figure_window():
             width = window.winfo_reqwidth()
         if height <= 1:
             height = window.winfo_reqheight()
-        x = max(20, (window.winfo_screenwidth() - width) // 2)
+        x = (window.winfo_screenwidth() - width) // 2
         y = max(40, (window.winfo_screenheight() - height) // 2 - 40)
         window.geometry(f"+{x}+{y}")
         window.update_idletasks()
+        window.update()
     except Exception:
         pass
 
@@ -82,37 +83,38 @@ def show_figure():
 def style_axes(ax):
     ax.set_facecolor(BG_COLOR)
     ax.set_axisbelow(True)
-    ax.grid(color=LAVENDER, alpha=0.30, linewidth=0.8)
+    ax.grid(color=LAVENDER, alpha=0.3, linewidth=0.8)
     for spine in ax.spines.values():
         spine.set_color(LAVENDER)
         spine.set_linewidth(0.8)
 
 
 def set_chart_title(ax, title):
-    ax.set_title("")
-    ax.figure.suptitle(title.replace("\n", " "), fontsize=16,
-                       fontweight="bold", color=TITLE_ACCENT,
-                       x=0.5, y=0.94, ha="center")
+    # Match Concrete: axes title, pink bold font, and 24-point padding.
+    ax.set_title(
+        title.replace("\n", " "),
+        fontsize=18,
+        fontweight="bold",
+        color=TITLE_ACCENT,
+        pad=24,
+    )
 
 
 def display_figure():
+    # Match Concrete's plot layout and window behavior.
+    # Shrink exceptionally long Istanbul titles only when required to keep one line.
     fig = plt.gcf()
-    window = getattr(fig.canvas.manager, "window", None)
-    # Keep the chart dimensions consistent with the Abalone dataset.
-    width, height = fig.get_size_inches() * fig.dpi
-    if window is not None and hasattr(window, "winfo_screenwidth"):
-        window.update_idletasks()
-        width = min(width, window.winfo_screenwidth() * 0.95)
-        height = min(height, window.winfo_screenheight() - 160)
-    fig.set_size_inches(width / fig.dpi, height / fig.dpi, forward=True)
     fig.canvas.draw()
-    title = fig._suptitle
-    if title is not None:
-        title_width = title.get_window_extent(fig.canvas.get_renderer()).width
-        available_width = fig.bbox.width * 0.94
-        if title_width > available_width:
-            title.set_fontsize(title.get_fontsize() * available_width / title_width)
-    fig.tight_layout(rect=(0.015, 0.015, 0.985, 0.89), pad=1.2)
+    renderer = fig.canvas.get_renderer()
+    for ax in fig.axes:
+        title = ax.title
+        if not title.get_text():
+            continue
+        max_width = fig.bbox.width * 0.94
+        actual_width = title.get_window_extent(renderer).width
+        if actual_width > max_width:
+            title.set_fontsize(max(11, title.get_fontsize() * max_width / actual_width))
+    plt.tight_layout(rect=(0, 0, 1, 0.97))
     show_figure()
 
 # endregion
@@ -346,7 +348,7 @@ for metric in ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Direction Accuracy"
 # region Correlation Heatmap
 correlation_columns = FEATURES + [TARGET]
 correlation_matrix = stock_df[correlation_columns].corr()
-plt.figure(figsize=(8.8, 6.2), facecolor=BG_COLOR)
+plt.figure(figsize=(10.2, 6.2), dpi=100, facecolor=BG_COLOR)
 ax = plt.gca()
 ax.set_facecolor(BG_COLOR)
 sns.heatmap(correlation_matrix, annot=True, fmt=".2f",

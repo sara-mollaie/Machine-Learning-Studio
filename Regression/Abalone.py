@@ -15,7 +15,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import (
     mean_absolute_error,
-    mean_absolute_percentage_error,
     mean_squared_error,
     r2_score,
 )
@@ -312,15 +311,21 @@ for model_name, estimator in models.items():
     predictions[model_name] = prediction
 
     mse = mean_squared_error(y_test, prediction)
-    mape_percentage = mean_absolute_percentage_error(y_test, prediction) * 100
+    rmse = float(np.sqrt(mse))
+    # RMSE is an error, not a percentage. Normalize by the test target range
+    # to obtain a clearly defined, RMSE-derived display score.
+    target_range = float(y_test.max() - y_test.min())
+    if target_range <= 0:
+        raise ValueError("Cannot calculate RMSE-based percentage: target range is zero.")
+    accuracy = max(0.0, 100.0 * (1.0 - rmse / target_range))
     records.append({
         "Model": model_name,
         "MAE": mean_absolute_error(y_test, prediction),
         "MSE": mse,
-        "RMSE": np.sqrt(mse),
+        "RMSE": rmse,
+        "Accuracy": round(accuracy, 2),
         "R2": r2_score(y_test, prediction),
         "R2 Percentage": r2_score(y_test, prediction) * 100,
-        "Accuracy": max(0.0, 100.0 - mape_percentage),
     })
 
 metrics_df = pd.DataFrame(records).sort_values("RMSE", ascending=True).reset_index(drop=True)
@@ -493,11 +498,10 @@ display_figure()
 plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, "Abalone - Regression Model Accuracy")
-accuracy_plot = metrics_df.set_index("Model")[["Accuracy"]]
-accuracy_plot = accuracy_plot.sort_values("Accuracy", ascending=False)
+set_chart_title(ax, "Abalone - Regression Model Accuracy (RMSE-based)")
+accuracy_plot = metrics_df.sort_values("RMSE", ascending=True, kind="stable")
 accuracy_bars = ax.bar(
-    accuracy_plot.index,
+    accuracy_plot["Model"],
     accuracy_plot["Accuracy"],
     color=MODEL_COLORS[:len(accuracy_plot)],
     edgecolor="white",
@@ -517,7 +521,7 @@ for bar in accuracy_bars:
     )
 ax.set_xlabel("Model", fontsize=12, color=TEXT_COLOR)
 ax.set_ylabel("Accuracy (%)", fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+ax.set_ylim(0, 105)
 ax.margins(x=0.08)
 ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
 ax.tick_params(axis="y", colors=TEXT_COLOR)
@@ -607,7 +611,7 @@ missing_values = {column: int(value) for column, value in original_df.isna().sum
 descriptive_statistics = json.loads(original_df.describe().round(2).to_json())
 metrics_metadata = json.loads(metrics_df.round(4).to_json(orient="records"))
 for result in metrics_metadata:
-    result["Accuracy"] = round(result["Accuracy"], 2)
+    result["Accuracy"] = round(float(result["Accuracy"]), 2)
 feature_importance_metadata = json.loads(coefficient_df.round(4).to_json(orient="records"))
 run_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
@@ -648,7 +652,11 @@ metadata = {
         "results": metrics_metadata,
         "recommended_model": best_model_name,
         "selection_rule": "Lowest RMSE on the held-out test set",
-        "accuracy_definition": "max(0, 100 - MAPE percentage)",
+        "primary_metric": "RMSE",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_unit": "percent",
+        "accuracy_decimal_places": 2,
+        "lower_is_better": True,
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",

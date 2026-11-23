@@ -1,6 +1,6 @@
 {
     "id": "D1",
-    "run_timestamp": "2026-11-23 03:01:44.593750",
+    "run_timestamp": "2026-11-23 05:31:56.675999",
     "name": "Abalone",
     "level": "Beginner",
     "domain": "Environment",
@@ -180,50 +180,54 @@
                 "MAE": 1.4931,
                 "MSE": 4.7984,
                 "RMSE": 2.1905,
+                "Accuracy": 89.05,
                 "R2": 0.5567,
-                "R2 Percentage": 55.6741,
-                "Accuracy": 87.69
+                "R2 Percentage": 55.6741
             },
             {
                 "Model": "Ridge",
                 "MAE": 1.5939,
                 "MSE": 4.8911,
                 "RMSE": 2.2116,
+                "Accuracy": 88.94,
                 "R2": 0.5482,
-                "R2 Percentage": 54.8173,
-                "Accuracy": 86.28
+                "R2 Percentage": 54.8173
             },
             {
                 "Model": "Linear Regression",
                 "MAE": 1.5931,
                 "MSE": 4.8912,
                 "RMSE": 2.2116,
+                "Accuracy": 88.94,
                 "R2": 0.5482,
-                "R2 Percentage": 54.8163,
-                "Accuracy": 86.27
+                "R2 Percentage": 54.8163
             },
             {
                 "Model": "Random Forest",
                 "MAE": 1.574,
                 "MSE": 4.9951,
                 "RMSE": 2.235,
+                "Accuracy": 88.83,
                 "R2": 0.5386,
-                "R2 Percentage": 53.8569,
-                "Accuracy": 86.75
+                "R2 Percentage": 53.8569
             },
             {
                 "Model": "Gradient Boosting",
                 "MAE": 1.5738,
                 "MSE": 5.0708,
                 "RMSE": 2.2518,
+                "Accuracy": 88.74,
                 "R2": 0.5316,
-                "R2 Percentage": 53.1572,
-                "Accuracy": 86.78
+                "R2 Percentage": 53.1572
             }
         ],
         "recommended_model": "SVR",
         "selection_rule": "Lowest RMSE on the held-out test set",
-        "accuracy_definition": "max(0, 100 - MAPE percentage)"
+        "primary_metric": "RMSE",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_unit": "percent",
+        "accuracy_decimal_places": 2,
+        "lower_is_better": true
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",
