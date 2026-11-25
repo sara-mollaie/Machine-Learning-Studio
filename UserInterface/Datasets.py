@@ -484,6 +484,48 @@ class DatasetsModule(HomeModule):
                     return float(value)
         return None
 
+    @staticmethod
+    def _regression_summary(meta):
+        """
+        مدل انتخاب‌شده و دقت آن را از متادیتای Regression برمی‌گرداند: (نام مدل, دقت به درصد)
+        ساختار مورد انتظار: model_evaluation → recommended_model و results (فهرست {"Model", "Accuracy", ...}).
+        """
+        ev = meta.get("model_evaluation") or meta.get("evaluation") or {}
+        results = ev.get("results") if isinstance(ev.get("results"), list) else meta.get("results")
+        results = [r for r in results if isinstance(r, dict)] if isinstance(results, list) else []
+
+        def entry_name(entry):
+            return str(entry.get("Model") or entry.get("model") or entry.get("name") or "").strip()
+
+        def entry_accuracy(entry):
+            for key in ("Accuracy", "accuracy"):
+                value = entry.get(key)
+                if isinstance(value, (int, float)):
+                    return float(value)
+            return None
+
+        name = (ev.get("recommended_model") or ev.get("best_model") or meta.get("recommended_model")
+                or meta.get("best_model_name") or meta.get("best_model"))
+        name = str(name).strip() if name else ""
+
+        chosen = next((r for r in results if name and entry_name(r).casefold() == name.casefold()), None)
+
+        # اگر مدل پیشنهادی در متادیتا نبود، مدلی که بیشترین دقت را دارد انتخاب می‌شود.
+        if chosen is None and not name:
+            scored = [r for r in results if isinstance(r.get("RMSE"), (int, float)) and math.isfinite(r["RMSE"])]
+            if scored:
+                chosen = min(scored, key=lambda r: r["RMSE"])
+                name = entry_name(chosen)
+
+        if chosen is not None:
+            name = entry_name(chosen) or name                # همان املای نام مدل در results
+
+        accuracy = entry_accuracy(chosen) if chosen is not None else None
+        if accuracy is None:
+            accuracy = DatasetsModule._find_metric(meta, "accuracy", "test_accuracy")
+
+        return name, accuracy
+
     def _parse_info(self, ds, meta):
         """
         متادیتا را برای هر سه نوع الگوریتم به ساختار ثابت پنجره تبدیل می‌کند:
@@ -650,6 +692,18 @@ class DatasetsModule(HomeModule):
 
         if quality:
             table.append(("Quality", " · ".join(quality)))
+
+        # Regression: X و Y نمایش داده می‌شوند و بعد از آن‌ها مدل انتخاب‌شده و دقت آن؛ ردیف‌های Algorithm و Quality نمی‌آیند.
+        if task == "Regression":
+            table = [row for row in table if row[0] in ("Preparation", "X (features)", "Y (target)")]
+            regression_target = fs.get("target_column") or fs.get("target") or target
+            if regression_target and not any(row[0] == "Y (target)" for row in table):
+                table.append(("Y (target)", str(regression_target)))
+            model_name, accuracy = self._regression_summary(meta)
+            if model_name:
+                table.append(("Model", model_name))
+            if accuracy is not None:
+                table.append(("Accuracy", f"{accuracy:.2f}%"))
 
         return {
             "ds": ds,

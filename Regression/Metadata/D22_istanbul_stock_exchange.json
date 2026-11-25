@@ -1,6 +1,6 @@
 {
     "id": "D22",
-    "run_timestamp": "2026-11-23 05:14:40.295041",
+    "run_timestamp": "2026-11-23 17:50:49.269890",
     "name": "Istanbul Stock Exchange",
     "level": "Intermediate",
     "domain": "Business/Finance",
@@ -178,6 +178,9 @@
         "test_rows": 108
     },
     "model_evaluation": {
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_target_range": 0.085405788,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
         "test_size": 0.2,
         "random_state": 42,
         "metrics": [
@@ -186,9 +189,20 @@
             "RMSE",
             "R2",
             "R2 Percentage",
-            "Direction Accuracy"
+            "Direction Accuracy",
+            "Accuracy"
         ],
         "results": [
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 0.01001944,
+                "MSE": 0.00015813,
+                "RMSE": 0.01257512,
+                "R2": 0.40521165,
+                "R2 Percentage": 40.52116539,
+                "Direction Accuracy": 70.37037037,
+                "Accuracy": 85.27602929
+            },
             {
                 "Model": "Ridge",
                 "MAE": 0.01001862,
@@ -196,7 +210,8 @@
                 "RMSE": 0.01274644,
                 "R2": 0.38889543,
                 "R2 Percentage": 38.88954264,
-                "Direction Accuracy": 71.2962963
+                "Direction Accuracy": 71.2962963,
+                "Accuracy": 85.07544171
             },
             {
                 "Model": "Linear Regression",
@@ -205,16 +220,8 @@
                 "RMSE": 0.01276657,
                 "R2": 0.38696342,
                 "R2 Percentage": 38.69634191,
-                "Direction Accuracy": 71.2962963
-            },
-            {
-                "Model": "Gradient Boosting",
-                "MAE": 0.01001944,
-                "MSE": 0.00015813,
-                "RMSE": 0.01257512,
-                "R2": 0.40521165,
-                "R2 Percentage": 40.52116539,
-                "Direction Accuracy": 70.37037037
+                "Direction Accuracy": 71.2962963,
+                "Accuracy": 85.05186833
             },
             {
                 "Model": "Random Forest",
@@ -223,7 +230,8 @@
                 "RMSE": 0.01276684,
                 "R2": 0.38693761,
                 "R2 Percentage": 38.69376061,
-                "Direction Accuracy": 68.51851852
+                "Direction Accuracy": 68.51851852,
+                "Accuracy": 85.05155363
             },
             {
                 "Model": "SVR",
@@ -232,11 +240,12 @@
                 "RMSE": 0.01450549,
                 "R2": 0.2085879,
                 "R2 Percentage": 20.8587899,
-                "Direction Accuracy": 68.51851852
+                "Direction Accuracy": 68.51851852,
+                "Accuracy": 83.01580127
             }
         ],
-        "recommended_model": "Ridge",
-        "selection_rule": "Highest test-set Direction Accuracy; lowest RMSE breaks ties (descriptive comparison, not unbiased final selection)",
+        "recommended_model": "Gradient Boosting",
+        "selection_rule": "Lowest test-set RMSE (descriptive comparison)",
         "direction_accuracy_definition": "Percent of test observations with correct sign (positive versus nonpositive)",
         "note": "MAPE is omitted because market returns can be zero or near zero.",
         "prediction_horizon": "same-day association, not next-day forecast"
@@ -291,18 +300,21 @@
         "most_influential_feature": "EU"
     },
     "model_verification": true,
+    "model_verification_results": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
+    "prediction_postprocessing": {
+        "clip_min": null
+    },
     "output_files": {
         "original_dataset": "DataSets/data_akbilgic.xlsx",
         "processed_dataset": "DataSets/Processed/istanbul_stock_exchange_regression_results.csv",
         "metrics": "DataSets/Processed/istanbul_stock_exchange_metrics.csv",
         "metadata_latest": "Metadata/D22_istanbul_stock_exchange.json",
-        "feature_columns": "ModelsOutcome/istanbul_stock_exchange_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\istanbul_stock_exchange_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\istanbul_stock_exchange_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\istanbul_stock_exchange_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\istanbul_stock_exchange_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\istanbul_stock_exchange_svr.joblib"
-        }
+        "model_bundle": "ModelsOutcome/istanbul_stock_exchange_regression_models.joblib"
     }
 }

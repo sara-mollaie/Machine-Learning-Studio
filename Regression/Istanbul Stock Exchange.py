@@ -255,6 +255,15 @@ models = {
 trained_models = {}
 predictions = {}
 records = []
+ACCURACY_DEFINITION = "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))"
+accuracy_target_range = float(y_test.max() - y_test.min())
+if not np.isfinite(accuracy_target_range) or accuracy_target_range <= 0:
+    raise ValueError("Test target range must be finite and positive for the RMSE-based score.")
+
+def rmse_accuracy(rmse):
+    """Custom normalized RMSE score, not standard regression accuracy."""
+    return float(np.clip(100.0 * (1.0 - float(rmse) / accuracy_target_range), 0.0, 100.0))
+
 for model_name, estimator in models.items():
     model_pipeline = Pipeline([
         ("preprocessor", create_preprocessor()),
@@ -274,11 +283,12 @@ for model_name, estimator in models.items():
         "R2": r2_score(y_test, prediction),
         "R2 Percentage": r2_score(y_test, prediction) * 100,
         "Direction Accuracy": direction_accuracy,
+        "Accuracy": rmse_accuracy(np.sqrt(mse)),
     })
 
 metrics_df = pd.DataFrame(records).sort_values(
-    by=["Direction Accuracy", "RMSE"],
-    ascending=[False, True],
+    by="RMSE",
+    ascending=True,
     kind="stable",
 ).reset_index(drop=True)
 best_model_name = metrics_df.iloc[0]["Model"]
@@ -288,7 +298,7 @@ print(metrics_df.round(6).to_string(index=False))
 print("-" * 60)
 print("Recommended Model:", best_model_name)
 print("Direction Accuracy:", f"{metrics_df.iloc[0]['Direction Accuracy']:.2f}%")
-print("Selection Rule: Highest Direction Accuracy; lowest RMSE breaks ties")
+print("Selection Rule: Lowest RMSE on the held-out test set")
 print("Note: Comparing models on the test set introduces selection bias; use walk-forward validation for rigorous tuning.")
 # endregion
 
@@ -306,7 +316,7 @@ print("\nFeature Importance Based On Standardized Linear Regression Coefficients
 print(coefficient_df.round(6).to_string(index=False))
 print("Most Influential Feature:", coefficient_df.iloc[0]["Feature"])
 
-plot_coefficients = coefficient_df.iloc[::-1]
+plot_coefficients = coefficient_df.sort_values("Coefficient", ascending=True, kind="stable")
 plt.figure(figsize=(12, 7), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
@@ -341,7 +351,7 @@ print("\nModel Comparison:")
 print(comparison_df.round(6).to_string(index=False))
 print("-" * 60)
 print("Best Model Metrics:")
-for metric in ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Direction Accuracy"]:
+for metric in ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Direction Accuracy", "Accuracy"]:
     print(f"{metric}: {best_metrics[metric]:.6f}")
 # endregion
 
@@ -379,34 +389,22 @@ ax.tick_params(colors=TEXT_COLOR)
 ax.legend(facecolor=BG_COLOR, edgecolor=LAVENDER)
 display_figure()
 
-# Direction Accuracy uses the sign of returns, not MAPE-based regression accuracy.
+# The comparison chart uses the custom normalized RMSE score.
 # The chart follows the Abalone five-bar model comparison layout.
-accuracy_plot = metrics_df.sort_values(
-    "Direction Accuracy", ascending=False, kind="stable"
-)
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+plt.figure(figsize=(14, 8.5), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, "Istanbul Stock Exchange - Regression Model Direction Accuracy")
-accuracy_bars = ax.bar(
-    accuracy_plot["Model"],
-    accuracy_plot["Direction Accuracy"],
-    color=MODEL_COLORS[:len(accuracy_plot)],
-    edgecolor="white",
-    linewidth=0.8,
-)
-for bar in accuracy_bars:
-    value = bar.get_height()
-    ax.text(
-        bar.get_x() + bar.get_width() / 2,
-        value + 1.0,
-        f"{value:.2f}%",
-        ha="center", va="bottom", fontsize=10,
-        color=TITLE_COLOR, fontweight="bold",
-    )
-ax.set_xlabel("Model", fontsize=12, color=TEXT_COLOR)
-ax.set_ylabel("Direction Accuracy (%)", fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+set_chart_title(ax, "Istanbul Stock Exchange - Regression Model Accuracy (RMSE-based)")
+accuracy_plot = metrics_df.sort_values("RMSE", ascending=True, kind="stable")
+bars = ax.bar(accuracy_plot["Model"], accuracy_plot["Accuracy"],
+              color=MODEL_COLORS[:len(accuracy_plot)], edgecolor="white", linewidth=0.8)
+for bar in bars:
+    value = float(bar.get_height())
+    ax.text(bar.get_x() + bar.get_width()/2, value + 1.0, f"{value:.2f}%",
+            ha="center", va="bottom", fontsize=11, color=TITLE_COLOR, fontweight="bold")
+ax.set_xlabel("Model", fontsize=13, color=TEXT_COLOR)
+ax.set_ylabel("Accuracy (%)", fontsize=13, color=TEXT_COLOR)
+ax.set_ylim(0, 105)
 ax.set_yticks(np.arange(0, 101, 20))
 ax.margins(x=0.08)
 ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
@@ -445,23 +443,34 @@ print("Metrics:", metrics_path)
 # region Training Models
 model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-model_paths = {}
-feature_columns_path = model_folder / "istanbul_stock_exchange_feature_columns.joblib"
-joblib.dump(FEATURES, feature_columns_path)
-print("Saved Feature Columns:", feature_columns_path)
-for model_name, model_pipeline in trained_models.items():
-    model_file_name = model_name.lower().replace(" ", "_") + ".joblib"
-    model_path = model_folder / f"istanbul_stock_exchange_{model_file_name}"
-    joblib.dump({"model": model_pipeline, "model_name": model_name,
-                 "target_column": TARGET, "feature_columns": FEATURES,
-                 "prediction_horizon": "same-day association"}, model_path)
-    model_paths[model_name] = model_path
-    print("Saved Model:", model_path)
-best_bundle = joblib.load(model_paths[best_model_name])
-prediction_verification = best_bundle["model"].predict(x_test)
-model_verification = bool(np.allclose(best_prediction, prediction_verification))
-print("\nModels Loaded Successfully!")
-print("Model Verification:", model_verification)
+model_bundle_path = model_folder / "istanbul_stock_exchange_regression_models.joblib"
+model_bundle = {
+    "schema_version": 1, "dataset_id": "D22", "dataset_name": "Istanbul Stock Exchange",
+    "models": trained_models, "model_names": list(trained_models),
+    "best_model_name": str(best_model_name), "recommended_model": str(best_model_name),
+    "feature_columns": list(FEATURES), "target_column": TARGET,
+    "metrics": metrics_df.to_dict(orient="records"),
+    "accuracy_definition": ACCURACY_DEFINITION,
+    "accuracy_target_range": accuracy_target_range,
+    "accuracy_reference_partition": "test", "selection_rule": "Lowest test RMSE",
+    "prediction_postprocessing": {"clip_min": None},
+    "random_state": RANDOM_STATE,
+}
+joblib.dump(model_bundle, model_bundle_path, compress=3)
+loaded_bundle = joblib.load(model_bundle_path)
+model_verification_results = {}
+for name, pipeline in loaded_bundle["models"].items():
+    restored_prediction = pipeline.predict(x_test)
+    clip_min = loaded_bundle["prediction_postprocessing"]["clip_min"]
+    if clip_min is not None:
+        restored_prediction = np.maximum(clip_min, restored_prediction)
+    model_verification_results[name] = bool(np.allclose(
+        predictions[name], restored_prediction, rtol=1e-7, atol=1e-8))
+model_verification = len(model_verification_results) == 5 and all(model_verification_results.values())
+if not model_verification:
+    raise RuntimeError("Saved models failed prediction verification.")
+print("Saved Model Bundle:", model_bundle_path)
+print("Model Verification:", model_verification_results)
 # endregion
 
 # region Save Metadata
@@ -509,12 +518,15 @@ metadata = {
         "test_rows": len(x_test),
     },
     "model_evaluation": {
+        "accuracy_definition": ACCURACY_DEFINITION,
+        "accuracy_target_range": accuracy_target_range,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
         "test_size": TEST_SIZE,
         "random_state": RANDOM_STATE,
-        "metrics": ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Direction Accuracy"],
+        "metrics": ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Direction Accuracy", "Accuracy"],
         "results": metrics_metadata,
         "recommended_model": best_model_name,
-        "selection_rule": "Highest test-set Direction Accuracy; lowest RMSE breaks ties (descriptive comparison, not unbiased final selection)",
+        "selection_rule": "Lowest test-set RMSE (descriptive comparison)",
         "direction_accuracy_definition": "Percent of test observations with correct sign (positive versus nonpositive)",
         "note": "MAPE is omitted because market returns can be zero or near zero.",
         "prediction_horizon": "same-day association, not next-day forecast",
@@ -526,13 +538,14 @@ metadata = {
         "most_influential_feature": coefficient_df.iloc[0]["Feature"],
     },
     "model_verification": model_verification,
+    "model_verification_results": model_verification_results,
+    "prediction_postprocessing": model_bundle["prediction_postprocessing"],
     "output_files": {
         "original_dataset": str(dataset_path.relative_to(BASE_DIR).as_posix()),
         "processed_dataset": str(processed_path.relative_to(BASE_DIR).as_posix()),
         "metrics": str(metrics_path.relative_to(BASE_DIR).as_posix()),
         "metadata_latest": "Metadata/D22_istanbul_stock_exchange.json",
-        "feature_columns": str(feature_columns_path.relative_to(BASE_DIR).as_posix()),
-        "models": {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "model_bundle": model_bundle_path.relative_to(BASE_DIR).as_posix(),
     },
 }
 metadata_file = metadata_folder / "D22_istanbul_stock_exchange.json"

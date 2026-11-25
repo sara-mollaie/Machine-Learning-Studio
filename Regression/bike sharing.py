@@ -185,20 +185,24 @@ for name, estimator in models.items():
     trained_models[name] = pipeline
     predictions[name] = prediction
     mse = mean_squared_error(y_test, prediction)
-    # WAPE-based score is well-defined for zero counts; unlike MAPE it does not divide by each target.
-    wape = np.abs(y_test.to_numpy() - prediction).sum() / max(np.abs(y_test.to_numpy()).sum(), 1e-12)
+    rmse = float(np.sqrt(mse))
+    # RMSE-based descriptive score: compare RMSE with the mean actual rental count.
+    # This is a custom regression score, not classification accuracy.
+    mean_actual = max(float(np.mean(np.abs(y_test.to_numpy()))), 1e-12)
+    accuracy = max(0.0, 100.0 * (1.0 - rmse / mean_actual))
     records.append({'Model': name, 'MAE': mean_absolute_error(y_test, prediction),
-                    'MSE': mse, 'RMSE': np.sqrt(mse), 'R2': r2_score(y_test, prediction),
+                    'MSE': mse, 'RMSE': rmse, 'R2': r2_score(y_test, prediction),
                     'R2 Percentage': r2_score(y_test, prediction) * 100,
-                    'Accuracy': max(0.0, 100.0 * (1.0 - wape))})
+                    'Accuracy': accuracy})
 metrics_df = pd.DataFrame(records).sort_values(['Accuracy', 'RMSE'],
                                                  ascending=[False, True], kind='stable').reset_index(drop=True)
 best_model_name = str(metrics_df.iloc[0]['Model'])
 best_prediction = predictions[best_model_name]
 print('\nRegression Metrics:\n', metrics_df.round(4).to_string(index=False))
 print('Recommended Model:', best_model_name)
-print('Selection Rule: Highest WAPE-based Accuracy, lowest RMSE as tie-breaker')
-print('Note: This is a descriptive regression score, not classification accuracy.')
+print('Selection Rule: Highest RMSE-based Accuracy, lowest RMSE as tie-breaker')
+print('Accuracy = max(0, 100 * (1 - RMSE / mean(abs(actual))))')
+print('Note: This is a custom regression score, not classification accuracy.')
 # endregion
 
 # region Feature Importance
@@ -274,23 +278,26 @@ ax.tick_params(colors=TEXT_COLOR)
 ax.legend(facecolor=BG_COLOR, edgecolor=LAVENDER)
 display_figure()
 
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+# Abalone-style five-model comparison chart, ranked by RMSE-based Accuracy.
+plt.figure(figsize=(13.5, 8), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, 'Bike Sharing - Regression Model Accuracy')
+set_chart_title(ax, 'Bike Sharing - Regression Model Accuracy (RMSE-based)')
 accuracy_plot = metrics_df.sort_values(['Accuracy', 'RMSE'], ascending=[False, True], kind='stable')
+bar_colors = MODEL_COLORS[:len(accuracy_plot)]
 bars = ax.bar(accuracy_plot['Model'], accuracy_plot['Accuracy'],
-              color=MODEL_COLORS[:len(accuracy_plot)], edgecolor='white', linewidth=0.8)
+              color=bar_colors, edgecolor='white', linewidth=0.8, width=0.78)
 for bar in bars:
-    value = bar.get_height()
+    value = float(bar.get_height())
     ax.text(bar.get_x() + bar.get_width() / 2, value + 1.0, f'{value:.2f}%',
-            ha='center', va='bottom', fontsize=10, color=TITLE_COLOR, fontweight='bold')
-ax.set_xlabel('Model', fontsize=12, color=TEXT_COLOR)
-ax.set_ylabel('WAPE-based Accuracy (%)', fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+            ha='center', va='bottom', fontsize=11, color=TITLE_COLOR, fontweight='bold')
+ax.set_xlabel('Model', fontsize=13, color=TEXT_COLOR)
+ax.set_ylabel('Accuracy (%)', fontsize=13, color=TEXT_COLOR)
+top_limit = max(100.0, float(accuracy_plot['Accuracy'].max()) + 7.0)
+ax.set_ylim(0, top_limit)
 ax.margins(x=0.08)
-ax.tick_params(axis='x', rotation=20, colors=TEXT_COLOR)
-ax.tick_params(axis='y', colors=TEXT_COLOR)
+ax.tick_params(axis='x', rotation=20, labelsize=10, colors=TEXT_COLOR)
+ax.tick_params(axis='y', labelsize=10, colors=TEXT_COLOR)
 display_figure()
 
 plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
@@ -324,18 +331,42 @@ print('Metrics:', metrics_path)
 # region Training Models
 model_folder = BASE_DIR / 'ModelsOutcome'
 model_folder.mkdir(parents=True, exist_ok=True)
-feature_columns_path = model_folder / 'bike_sharing_feature_columns.joblib'
-joblib.dump(FEATURES, feature_columns_path)
-model_paths = {}
-for name, pipeline in trained_models.items():
-    path = model_folder / ('bike_sharing_' + name.lower().replace(' ', '_') + '.joblib')
-    joblib.dump({'model': pipeline, 'model_name': name, 'target_column': TARGET,
-                 'feature_columns': FEATURES, 'granularity': 'hourly' if HOURLY else 'daily'}, path)
-    model_paths[name] = path
-    print('Saved Model:', path)
-best_bundle = joblib.load(model_paths[best_model_name])
-model_verification = bool(np.allclose(best_prediction, best_bundle['model'].predict(x_test)))
+
+# Save all five trained pipelines, feature columns, and evaluation results
+# together so the future UI can load one file and let the user choose a model.
+models_bundle_path = model_folder / 'bike_sharing_regression_models.joblib'
+model_bundle = {
+    'models': trained_models,
+    'feature_columns': FEATURES,
+    'target_column': TARGET,
+    'dataset_name': DATASET_NAME,
+    'dataset_id': DATASET_ID,
+    'granularity': 'hourly' if HOURLY else 'daily',
+    'recommended_model': best_model_name,
+    'model_metrics': metrics_df.to_dict(orient='records'),
+    'accuracy_definition': 'max(0, 100 * (1 - RMSE / mean(abs(actual))))',
+    'accuracy_type': 'Custom RMSE-based regression score; not classification accuracy',
+    'test_size': TEST_SIZE,
+    'random_state': RANDOM_STATE,
+}
+joblib.dump(model_bundle, models_bundle_path, compress=3)
+print('Saved Combined Models Bundle:', models_bundle_path)
+print('Models Included:', list(trained_models.keys()))
+print('Feature Columns Included:', len(FEATURES))
+
+# Reload and verify every saved model against its original test predictions.
+loaded_bundle = joblib.load(models_bundle_path)
+verification_results = {}
+for name, saved_pipeline in loaded_bundle['models'].items():
+    reloaded_prediction = saved_pipeline.predict(x_test)
+    verification_results[name] = bool(np.allclose(
+        predictions[name], reloaded_prediction, rtol=1e-7, atol=1e-8
+    ))
+model_verification = bool(all(verification_results.values()))
+print('Individual Model Verification:', verification_results)
 print('Model Verification:', model_verification)
+if not model_verification:
+    raise RuntimeError('At least one saved model failed prediction verification.')
 # endregion
 
 # region Save Metadata
@@ -372,9 +403,10 @@ metadata = {
         'metrics': ['MAE', 'MSE', 'RMSE', 'R2', 'R2 Percentage', 'Accuracy'],
         'results': json.loads(metrics_df.round(6).to_json(orient='records')),
         'recommended_model': best_model_name,
-        'selection_rule': 'Highest WAPE-based Accuracy, lowest RMSE as tie-breaker',
-        'accuracy_definition': 'max(0, 100 * (1 - sum(abs(actual-predicted))/sum(abs(actual))))',
-        'accuracy_caveat': 'Descriptive regression score, not classification accuracy.',
+        'selection_rule': 'Highest RMSE-based Accuracy, lowest RMSE as tie-breaker',
+        'accuracy_definition': 'max(0, 100 * (1 - RMSE / mean(abs(actual))))',
+        'accuracy_reference_value': float(np.mean(np.abs(y_test.to_numpy()))),
+        'accuracy_caveat': 'Custom descriptive regression score, not classification accuracy.',
     },
     'feature_importance': {
         'method': 'Standardized Linear Regression Coefficients',
@@ -383,12 +415,12 @@ metadata = {
         'most_influential_feature': str(coefficient_df.iloc[0]['Feature']),
     },
     'model_verification': model_verification,
+    'individual_model_verification': verification_results,
     'output_files': {
         'original_dataset': str(dataset_path.relative_to(BASE_DIR)),
         'processed_dataset': str(processed_path.relative_to(BASE_DIR)),
         'metrics': str(metrics_path.relative_to(BASE_DIR)),
-        'feature_columns': str(feature_columns_path.relative_to(BASE_DIR)),
-        'models': {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        'models_bundle': str(models_bundle_path.relative_to(BASE_DIR)),
         'metadata_latest': 'Metadata/D23_bike_sharing.json',
     },
 }

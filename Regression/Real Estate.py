@@ -15,7 +15,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import (
     mean_absolute_error,
-    mean_absolute_percentage_error,
     mean_squared_error,
     r2_score,
 )
@@ -131,7 +130,7 @@ def display_figure():
 dataset_path = BASE_DIR / "DataSets" / "Real estate valuation data set.xlsx"
 if not dataset_path.exists():
     dataset_path = BASE_DIR / "Datasets" / "real_estate_valuation.xlsx"
-real_estate_df = pd.read_excel(dataset_path)
+real_estate_df = pd.read_excel(dataset_path, engine="openpyxl")
 real_estate_df.columns = real_estate_df.columns.str.strip()
 
 expected_excel_columns = FEATURES + [TARGET]
@@ -211,7 +210,7 @@ print(X.isnull().sum())
 print("Missing Values In Target:", int(y.isnull().sum()))
 print("-" * 60)
 
-if not np.isfinite(X.to_numpy()).all():
+if np.isinf(X.to_numpy()).any():
     raise ValueError("Feature values contain infinite values.")
 if not np.isfinite(y.to_numpy()).all():
     raise ValueError("Target values contain infinite values.")
@@ -296,6 +295,15 @@ predictions = {}
 records = []
 best_parameters = {}
 
+ACCURACY_DEFINITION = "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))"
+accuracy_target_range = float(y_test.max() - y_test.min())
+if not np.isfinite(accuracy_target_range) or accuracy_target_range <= 0:
+    raise ValueError("Test target range must be finite and positive for the RMSE-based score.")
+
+def rmse_accuracy(rmse):
+    """Custom normalized RMSE score, not standard regression accuracy."""
+    return float(np.clip(100.0 * (1.0 - float(rmse) / accuracy_target_range), 0.0, 100.0))
+
 for model_name, estimator in models.items():
     model_pipeline = Pipeline([
         ("preprocessor", create_preprocessor()),
@@ -323,7 +331,6 @@ for model_name, estimator in models.items():
     predictions[model_name] = prediction
 
     mse = mean_squared_error(y_test, prediction)
-    mape_percentage = mean_absolute_percentage_error(y_test, prediction) * 100
     records.append({
         "Model": model_name,
         "MAE": mean_absolute_error(y_test, prediction),
@@ -331,7 +338,7 @@ for model_name, estimator in models.items():
         "RMSE": np.sqrt(mse),
         "R2": r2_score(y_test, prediction),
         "R2 Percentage": r2_score(y_test, prediction) * 100,
-        "Accuracy": max(0.0, 100.0 - mape_percentage),
+        "Accuracy": rmse_accuracy(np.sqrt(mse)),
     })
 
 metrics_df = pd.DataFrame(records).sort_values("RMSE", ascending=True).reset_index(drop=True)
@@ -508,36 +515,21 @@ for text in legend.get_texts():
     text.set_color(TEXT_COLOR)
 display_figure()
 
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+plt.figure(figsize=(14, 8.5), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, "Real Estate - Regression Model Accuracy")
-accuracy_plot = metrics_df.set_index("Model")[["Accuracy"]].sort_values(
-    "Accuracy",
-    ascending=False,
-)
-accuracy_bars = ax.bar(
-    accuracy_plot.index,
-    accuracy_plot["Accuracy"],
-    color=MODEL_COLORS[:len(accuracy_plot)],
-    edgecolor="white",
-    linewidth=0.8,
-)
-for bar in accuracy_bars:
-    value = bar.get_height()
-    ax.text(
-        bar.get_x() + bar.get_width() / 2,
-        value + 1.0,
-        f"{value:.2f}%",
-        ha="center",
-        va="bottom",
-        fontsize=10,
-        color=TITLE_COLOR,
-        fontweight="bold",
-    )
-ax.set_xlabel("Model", fontsize=12, color=TEXT_COLOR)
-ax.set_ylabel("Accuracy (%)", fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, max(100, accuracy_plot["Accuracy"].max() + 8))
+set_chart_title(ax, "Real Estate - Regression Model Accuracy (RMSE-based)")
+accuracy_plot = metrics_df.sort_values("RMSE", ascending=True, kind="stable")
+bars = ax.bar(accuracy_plot["Model"], accuracy_plot["Accuracy"],
+              color=MODEL_COLORS[:len(accuracy_plot)], edgecolor="white", linewidth=0.8)
+for bar in bars:
+    value = float(bar.get_height())
+    ax.text(bar.get_x() + bar.get_width()/2, value + 1.0, f"{value:.2f}%",
+            ha="center", va="bottom", fontsize=11, color=TITLE_COLOR, fontweight="bold")
+ax.set_xlabel("Model", fontsize=13, color=TEXT_COLOR)
+ax.set_ylabel("Accuracy (%)", fontsize=13, color=TEXT_COLOR)
+ax.set_ylim(0, 105)
+ax.set_yticks(np.arange(0, 101, 20))
 ax.margins(x=0.08)
 ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
 ax.tick_params(axis="y", colors=TEXT_COLOR)
@@ -560,7 +552,7 @@ display_figure()
 
 # region Save Results
 
-output_folder = BASE_DIR / "Datasets" / "Processed"
+output_folder = BASE_DIR / "DataSets" / "Processed"
 output_folder.mkdir(parents=True, exist_ok=True)
 processed_df = real_estate_df.copy()
 processed_df["Predicted_Price"] = np.nan
@@ -579,37 +571,36 @@ print("Metrics:", metrics_path)
 
 
 # region Training Models
-
 model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-model_paths = {}
-
-feature_columns_path = model_folder / "real_estate_feature_columns.joblib"
-joblib.dump(FEATURES, feature_columns_path)
-print("Saved Feature Columns:", feature_columns_path)
-
-for model_name, model_pipeline in trained_models.items():
-    model_file_name = model_name.lower().replace(" ", "_") + ".joblib"
-    model_path = model_folder / f"real_estate_{model_file_name}"
-    joblib.dump(
-        {
-            "model": model_pipeline,
-            "model_name": model_name,
-            "target_column": TARGET,
-            "feature_columns": FEATURES,
-        },
-        model_path,
-    )
-    model_paths[model_name] = model_path
-    print("Saved Model:", model_path)
-
-best_bundle = joblib.load(model_paths[best_model_name])
-prediction_verification = best_bundle["model"].predict(x_test)
-model_verification = bool(np.allclose(best_prediction, prediction_verification))
-
-print("\nModels Loaded Successfully!")
-print("Model Verification:", model_verification)
-
+model_bundle_path = model_folder / "real_estate_regression_models.joblib"
+model_bundle = {
+    "schema_version": 1, "dataset_id": "D3", "dataset_name": "Real Estate",
+    "models": trained_models, "model_names": list(trained_models),
+    "best_model_name": str(best_model_name), "recommended_model": str(best_model_name),
+    "feature_columns": list(FEATURES), "target_column": TARGET,
+    "metrics": metrics_df.to_dict(orient="records"),
+    "accuracy_definition": ACCURACY_DEFINITION,
+    "accuracy_target_range": accuracy_target_range,
+    "accuracy_reference_partition": "test", "selection_rule": "Lowest test RMSE",
+    "prediction_postprocessing": {"clip_min": None},
+    "random_state": RANDOM_STATE,
+}
+joblib.dump(model_bundle, model_bundle_path, compress=3)
+loaded_bundle = joblib.load(model_bundle_path)
+model_verification_results = {}
+for name, pipeline in loaded_bundle["models"].items():
+    restored_prediction = pipeline.predict(x_test)
+    clip_min = loaded_bundle["prediction_postprocessing"]["clip_min"]
+    if clip_min is not None:
+        restored_prediction = np.maximum(clip_min, restored_prediction)
+    model_verification_results[name] = bool(np.allclose(
+        predictions[name], restored_prediction, rtol=1e-7, atol=1e-8))
+model_verification = len(model_verification_results) == 5 and all(model_verification_results.values())
+if not model_verification:
+    raise RuntimeError("Saved models failed prediction verification.")
+print("Saved Model Bundle:", model_bundle_path)
+print("Model Verification:", model_verification_results)
 # endregion
 
 
@@ -657,13 +648,15 @@ metadata = {
         "missing_value_method": "Median Imputation",
     },
     "model_evaluation": {
+        "accuracy_definition": ACCURACY_DEFINITION,
+        "accuracy_target_range": accuracy_target_range,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
         "test_size": TEST_SIZE,
         "random_state": RANDOM_STATE,
         "metrics": ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"],
         "results": metrics_metadata,
         "recommended_model": best_model_name,
         "selection_rule": "Lowest RMSE on the held-out test set",
-        "accuracy_definition": "max(0, 100 - MAPE percentage)",
         "hyperparameter_tuning": {
             "method": "GridSearchCV",
             "cv": 5,
@@ -678,13 +671,14 @@ metadata = {
         "most_influential_feature": coefficient_df.iloc[0]["Feature"],
     },
     "model_verification": model_verification,
+    "model_verification_results": model_verification_results,
+    "prediction_postprocessing": model_bundle["prediction_postprocessing"],
     "output_files": {
-        "original_dataset": "DataSets/Real estate valuation data set.xlsx",
+        "original_dataset": dataset_path.relative_to(BASE_DIR).as_posix(),
         "processed_dataset": "DataSets/Processed/real_estate_regression_results.csv",
         "metrics": "DataSets/Processed/real_estate_metrics.csv",
         "metadata_latest": "Metadata/D3_real_estate.json",
-        "feature_columns": "ModelsOutcome/real_estate_feature_columns.joblib",
-        "models": {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "model_bundle": model_bundle_path.relative_to(BASE_DIR).as_posix(),
     },
 }
 

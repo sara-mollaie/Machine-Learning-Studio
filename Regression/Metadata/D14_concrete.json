@@ -1,6 +1,6 @@
 {
     "id": "D14",
-    "run_timestamp": "2026-11-23 05:09:49.324936",
+    "run_timestamp": "2026-11-23 15:06:52.090741",
     "name": "Concrete",
     "level": "Intermediate",
     "domain": "Civil Engineering/Construction",
@@ -171,22 +171,22 @@
         ],
         "results": [
             {
-                "Model": "Gradient Boosting",
-                "MAE": 3.5396,
-                "MSE": 21.5006,
-                "RMSE": 4.6369,
-                "R2": 0.907,
-                "R2 Percentage": 90.7009,
-                "Accuracy": 88.56
-            },
-            {
                 "Model": "Random Forest",
                 "MAE": 3.2624,
                 "MSE": 20.0377,
                 "RMSE": 4.4763,
                 "R2": 0.9133,
                 "R2 Percentage": 91.3336,
-                "Accuracy": 88.03
+                "Accuracy": 93.94
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 3.5396,
+                "MSE": 21.5006,
+                "RMSE": 4.6369,
+                "R2": 0.907,
+                "R2 Percentage": 90.7009,
+                "Accuracy": 93.73
             },
             {
                 "Model": "SVR",
@@ -195,7 +195,7 @@
                 "RMSE": 6.1238,
                 "R2": 0.8378,
                 "R2 Percentage": 83.7806,
-                "Accuracy": 85.44
+                "Accuracy": 91.72
             },
             {
                 "Model": "Linear Regression",
@@ -204,7 +204,7 @@
                 "RMSE": 10.6456,
                 "R2": 0.5098,
                 "R2 Percentage": 50.9844,
-                "Accuracy": 66.93
+                "Accuracy": 85.6
             },
             {
                 "Model": "Ridge",
@@ -213,12 +213,12 @@
                 "RMSE": 10.6507,
                 "R2": 0.5094,
                 "R2 Percentage": 50.938,
-                "Accuracy": 66.88
+                "Accuracy": 85.59
             }
         ],
-        "recommended_model": "Gradient Boosting",
-        "selection_rule": "Highest MAPE-based score on the held-out test set",
-        "accuracy_definition": "MAPE-based score: max(0, 100 - MAPE percentage); this is not a standard regression accuracy metric"
+        "recommended_model": "Random Forest",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_definition": "RMSE-based score: max(0, (1 - RMSE / (max(y_test) - min(y_test))) * 100); this is a project comparison score, not a standard regression accuracy metric"
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",
@@ -276,18 +276,19 @@
         "most_influential_feature": "Cement"
     },
     "model_verification": true,
+    "model_verification_by_name": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
     "output_files": {
         "original_dataset": "DataSets/Concrete_Data.xls",
         "processed_dataset": "DataSets/Processed/concrete_regression_results.csv",
         "metrics": "DataSets/Processed/concrete_metrics.csv",
         "metadata_latest": "Metadata/D14_concrete.json",
-        "feature_columns": "ModelsOutcome/concrete_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\concrete_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\concrete_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\concrete_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\concrete_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\concrete_svr.joblib"
-        }
+        "model_bundle": "ModelsOutcome/concrete_regression_models.joblib",
+        "models": "All five trained regression pipelines are stored in the consolidated model bundle."
     }
 }

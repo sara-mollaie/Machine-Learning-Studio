@@ -15,7 +15,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import (
     mean_absolute_error,
-    mean_absolute_percentage_error,
     mean_squared_error,
     r2_score,
 )
@@ -267,29 +266,36 @@ for model_name, estimator in models.items():
     predictions[model_name] = prediction
 
     mse = mean_squared_error(y_test, prediction)
-    mape_percentage = mean_absolute_percentage_error(y_test, prediction) * 100
+    rmse = float(np.sqrt(mse))
+    target_range = float(y_test.max() - y_test.min())
+    if target_range <= 0:
+        raise ValueError("The target range in the test set must be greater than zero.")
+
+    # Same RMSE-based score used by the Abalone project.
+    accuracy = max(0.0, (1.0 - rmse / target_range) * 100.0)
     records.append({
         "Model": model_name,
         "MAE": mean_absolute_error(y_test, prediction),
         "MSE": mse,
-        "RMSE": np.sqrt(mse),
+        "RMSE": rmse,
         "R2": r2_score(y_test, prediction),
         "R2 Percentage": r2_score(y_test, prediction) * 100,
-        "Accuracy": max(0.0, 100.0 - mape_percentage),
+        "Accuracy": accuracy,
     })
 
-# Select the model with the highest MAPE-based score, matching the Accuracy chart.
+# Lowest RMSE determines the recommended regression model.
 metrics_df = pd.DataFrame(records).sort_values(
-    "Accuracy", ascending=False, kind="stable"
+    "RMSE", ascending=True, kind="stable"
 ).reset_index(drop=True)
-best_model_name = metrics_df.iloc[0]["Model"]
+best_model_name = str(metrics_df.iloc[0]["Model"])
 best_prediction = predictions[best_model_name]
 
 print("\nRegression Metrics:")
 print(metrics_df.round(4).to_string(index=False))
 print("-" * 60)
 print("Recommended Model:", best_model_name)
-print("Selection Rule: Highest MAPE-based score on the held-out test set")
+print("Selection Rule: Lowest RMSE on the held-out test set")
+print("Accuracy Formula: max(0, (1 - RMSE / target range) * 100)")
 
 # endregion
 
@@ -458,21 +464,20 @@ for text in legend.get_texts():
     text.set_color(TEXT_COLOR)
 display_figure()
 
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+plt.figure(figsize=(12, 7), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, "Concrete - Regression Model Accuracy")
-accuracy_plot = metrics_df.set_index("Model")[["Accuracy"]]
-accuracy_plot = accuracy_plot.sort_values("Accuracy", ascending=False, kind="stable")
+set_chart_title(ax, "Concrete - Regression Model Accuracy (RMSE-based)")
+accuracy_plot = metrics_df.sort_values("RMSE", ascending=True, kind="stable")
 accuracy_bars = ax.bar(
-    accuracy_plot.index,
+    accuracy_plot["Model"],
     accuracy_plot["Accuracy"],
     color=MODEL_COLORS[:len(accuracy_plot)],
     edgecolor="white",
     linewidth=0.8,
 )
 for bar in accuracy_bars:
-    value = bar.get_height()
+    value = float(bar.get_height())
     ax.text(
         bar.get_x() + bar.get_width() / 2,
         value + 1.0,
@@ -485,7 +490,7 @@ for bar in accuracy_bars:
     )
 ax.set_xlabel("Model", fontsize=12, color=TEXT_COLOR)
 ax.set_ylabel("Accuracy (%)", fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+ax.set_ylim(0, max(100, float(accuracy_plot["Accuracy"].max()) + 6))
 ax.margins(x=0.08)
 ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
 ax.tick_params(axis="y", colors=TEXT_COLOR)
@@ -530,33 +535,57 @@ print("Metrics:", metrics_path)
 
 model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-model_paths = {}
 
-feature_columns_path = model_folder / "concrete_feature_columns.joblib"
-joblib.dump(FEATURES, feature_columns_path)
-print("Saved Feature Columns:", feature_columns_path)
+# Store all five trained pipelines in one bundle for the future Predict interface.
+model_bundle_path = model_folder / "concrete_regression_models.joblib"
+metrics_records = metrics_df.to_dict(orient="records")
 
+model_verification_by_name = {}
 for model_name, model_pipeline in trained_models.items():
-    model_file_name = model_name.lower().replace(" ", "_") + ".joblib"
-    model_path = model_folder / f"concrete_{model_file_name}"
-    joblib.dump(
-        {
-            "model": model_pipeline,
-            "model_name": model_name,
-            "target_column": TARGET,
-            "feature_columns": FEATURES,
-        },
-        model_path,
+    reloaded_prediction = model_pipeline.predict(x_test)
+    model_verification_by_name[model_name] = bool(
+        np.allclose(predictions[model_name], reloaded_prediction)
     )
-    model_paths[model_name] = model_path
-    print("Saved Model:", model_path)
 
-best_bundle = joblib.load(model_paths[best_model_name])
-prediction_verification = best_bundle["model"].predict(x_test)
-model_verification = bool(np.allclose(best_prediction, prediction_verification))
+model_verification = all(model_verification_by_name.values())
 
-print("\nModels Loaded Successfully!")
+model_bundle = {
+    "dataset_id": "D14",
+    "dataset_name": "Concrete",
+    "models": trained_models,
+    "model_names": list(trained_models.keys()),
+    "best_model_name": best_model_name,
+    "best_model": trained_models[best_model_name],
+    "target_column": TARGET,
+    "feature_columns": FEATURES,
+    "metrics": metrics_records,
+    "accuracy_definition": "max(0, (1 - RMSE / (max(y_test) - min(y_test))) * 100)",
+    "model_verification": model_verification_by_name,
+    "recommended_model_selection": "Lowest RMSE on the held-out test set",
+}
+
+joblib.dump(model_bundle, model_bundle_path, compress=3)
+
+# Reload the saved bundle and verify every model from the actual saved file.
+loaded_bundle = joblib.load(model_bundle_path)
+saved_model_verification = {}
+for model_name in loaded_bundle["model_names"]:
+    saved_prediction = loaded_bundle["models"][model_name].predict(x_test)
+    saved_model_verification[model_name] = bool(
+        np.allclose(predictions[model_name], saved_prediction)
+    )
+
+model_verification = all(saved_model_verification.values())
+loaded_bundle["model_verification"] = saved_model_verification
+joblib.dump(loaded_bundle, model_bundle_path, compress=3)
+
+print("\nAll five regression models saved in one bundle:")
+print("Saved Model Bundle:", model_bundle_path)
+print("Models:", ", ".join(loaded_bundle["model_names"]))
+print("Best Model:", loaded_bundle["best_model_name"])
 print("Model Verification:", model_verification)
+for model_name, verified in saved_model_verification.items():
+    print(f"{model_name} Verification: {verified}")
 
 # endregion
 
@@ -612,8 +641,8 @@ metadata = {
         "metrics": ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"],
         "results": metrics_metadata,
         "recommended_model": best_model_name,
-        "selection_rule": "Highest MAPE-based score on the held-out test set",
-        "accuracy_definition": "MAPE-based score: max(0, 100 - MAPE percentage); this is not a standard regression accuracy metric",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_definition": "RMSE-based score: max(0, (1 - RMSE / (max(y_test) - min(y_test))) * 100); this is a project comparison score, not a standard regression accuracy metric",
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",
@@ -622,13 +651,14 @@ metadata = {
         "most_influential_feature": coefficient_df.iloc[0]["Feature"],
     },
     "model_verification": model_verification,
+    "model_verification_by_name": saved_model_verification,
     "output_files": {
         "original_dataset": "DataSets/Concrete_Data.xls",
         "processed_dataset": "DataSets/Processed/concrete_regression_results.csv",
         "metrics": "DataSets/Processed/concrete_metrics.csv",
         "metadata_latest": "Metadata/D14_concrete.json",
-        "feature_columns": "ModelsOutcome/concrete_feature_columns.joblib",
-        "models": {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "model_bundle": "ModelsOutcome/concrete_regression_models.joblib",
+        "models": "All five trained regression pipelines are stored in the consolidated model bundle.",
     },
 }
 
@@ -650,6 +680,7 @@ print("Total Columns:", saved_metadata["dataset_statistics"]["columns"])
 print("Target Column:", saved_metadata["feature_selection"]["target_column"])
 print("Recommended Model:", saved_metadata["model_evaluation"]["recommended_model"])
 print("Model Verification:", saved_metadata["model_verification"])
+print("Model Bundle:", saved_metadata["output_files"]["model_bundle"])
 print("\nMetadata Process Completed Successfully!")
 
 # endregion

@@ -1,6 +1,6 @@
 {
     "id": "D31",
-    "run_timestamp": "2026-11-23 05:26:52.453797",
+    "run_timestamp": "2026-11-23 18:04:39.906392",
     "name": "Online News Popularity",
     "level": "Advanced",
     "domain": "Business/Web",
@@ -875,6 +875,9 @@
         "split_method": "Original article order 80/20, no shuffling"
     },
     "model_evaluation": {
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_target_range": 284695.0,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
         "test_size": 0.2,
         "training_rows": 31715,
         "test_rows": 7929,
@@ -888,22 +891,13 @@
         ],
         "results": [
             {
-                "Model": "SVR",
-                "MAE": 2037.845811,
-                "MSE": 67623843.130783,
-                "RMSE": 8223.371762,
-                "R2": -0.022656,
-                "R2 Percentage": -2.265629,
-                "Accuracy": 35.542399
-            },
-            {
                 "Model": "Linear Regression",
                 "MAE": 2928.525104,
                 "MSE": 65044221.829046,
                 "RMSE": 8064.999803,
                 "R2": 0.016355,
                 "R2 Percentage": 1.635459,
-                "Accuracy": 0.0
+                "Accuracy": 97.167144
             },
             {
                 "Model": "Ridge",
@@ -912,7 +906,16 @@
                 "RMSE": 8065.709011,
                 "R2": 0.016182,
                 "R2 Percentage": 1.618159,
-                "Accuracy": 0.0
+                "Accuracy": 97.166895
+            },
+            {
+                "Model": "SVR",
+                "MAE": 2037.845811,
+                "MSE": 67623843.130783,
+                "RMSE": 8223.371762,
+                "R2": -0.022656,
+                "R2 Percentage": -2.265629,
+                "Accuracy": 97.111515
             },
             {
                 "Model": "Gradient Boosting",
@@ -921,7 +924,7 @@
                 "RMSE": 8386.881989,
                 "R2": -0.063729,
                 "R2 Percentage": -6.372878,
-                "Accuracy": 0.0
+                "Accuracy": 97.054082
             },
             {
                 "Model": "Random Forest",
@@ -930,12 +933,11 @@
                 "RMSE": 8633.285008,
                 "R2": -0.127151,
                 "R2 Percentage": -12.715075,
-                "Accuracy": 0.0
+                "Accuracy": 96.967532
             }
         ],
-        "recommended_model": "SVR",
-        "selection_rule": "Highest Concrete-style MAPE-based Accuracy, lowest RMSE as tie-breaker",
-        "accuracy_definition": "max(0, 100 - 100 * mean_absolute_percentage_error(actual, predicted))",
+        "recommended_model": "Linear Regression",
+        "selection_rule": "Lowest RMSE on the held-out test set",
         "accuracy_caveat": "Descriptive regression score, not classification accuracy."
     },
     "feature_importance": {
@@ -1294,18 +1296,21 @@
         "most_influential_feature": "n_unique_tokens"
     },
     "model_verification": true,
+    "model_verification_results": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
+    "prediction_postprocessing": {
+        "clip_min": 0.0
+    },
     "output_files": {
         "original_dataset": "DataSets\\OnlineNewsPopularity.csv",
         "processed_dataset": "DataSets\\Processed\\online_news_popularity_regression_results.csv",
         "metrics": "DataSets\\Processed\\online_news_popularity_metrics.csv",
-        "feature_columns": "ModelsOutcome\\online_news_popularity_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\online_news_popularity_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\online_news_popularity_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\online_news_popularity_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\online_news_popularity_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\online_news_popularity_svr.joblib"
-        },
+        "model_bundle": "ModelsOutcome/online_news_popularity_regression_models.joblib",
         "metadata_latest": "Metadata/D31_online_news_popularity.json"
     }
 }

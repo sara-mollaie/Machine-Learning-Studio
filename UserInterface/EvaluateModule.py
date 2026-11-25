@@ -303,6 +303,23 @@ class EvaluateModule(DatasetsModule):
         if self.ds is not None:
             self._draw_page()
 
+    def _draw_back_button(self):
+        S = self.s
+        dark = theme.name == "dark"
+        color = "#f1d5fa" if dark else "#ffffff"
+        bg = "#50336f" if dark else "#713b91"
+        edge = "#805ba1" if dark else "#713b91"
+        w, h = 90, 30
+        x, y = MX + 4, 103
+        tag = "evaluate_back"
+        self.create_image(S(x), S(y), image=self._shape(w, h, 10, bg, border=(edge, 255)), anchor="nw", tags=(tag,))
+        cy = y + h / 2
+        self.create_line(S(x+29), S(cy), S(x+14), S(cy), fill=color, width=max(1,S(2)), capstyle="round", tags=(tag,))
+        self.create_line(S(x+21), S(cy-7), S(x+14), S(cy), S(x+21), S(cy+7), fill=color, width=max(1,S(2)), capstyle="round", joinstyle="round", tags=(tag,))
+        self.text(x+37, cy, "Back", 16, color, True, tags=(tag,))
+        self.hover(tag)
+        self.tag_bind(tag, "<Button-1>", lambda e: self.on_navigate("predictor"))
+
     def _draw_page(self):
 
         c, S = theme.c, self.s
@@ -310,7 +327,8 @@ class EvaluateModule(DatasetsModule):
 
         # ----- مسیر + عنوان -----
         crumb_y = 118
-        x = MX + 4
+        x = MX + 108
+        self._draw_back_button()
 
         self.text(x, crumb_y, "Datasets", 20, c("accent"), True, tags=("crumb_ds",))
         self.hover("crumb_ds")
@@ -666,3 +684,4 @@ class EvaluateModule(DatasetsModule):
 
             for i, line in enumerate(lines):
                 self.text(left + 20, ins_y + 22 + 24 + i * 22 - 2, line, 16, "#eadcf6")
+

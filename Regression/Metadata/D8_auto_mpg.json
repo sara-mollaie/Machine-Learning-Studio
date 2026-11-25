@@ -1,6 +1,6 @@
 {
     "id": "D8",
-    "run_timestamp": "2026-11-22 13:53:00.640216",
+    "run_timestamp": "2026-11-23 14:45:51.904288",
     "name": "Auto MPG",
     "level": "Intermediate",
     "domain": "Automobiles",
@@ -160,22 +160,22 @@
         ],
         "results": [
             {
-                "Model": "Random Forest",
-                "MAE": 1.5822,
-                "MSE": 4.6531,
-                "RMSE": 2.1571,
-                "R2": 0.9135,
-                "R2 Percentage": 91.3458,
-                "Accuracy": 92.82
-            },
-            {
                 "Model": "SVR",
                 "MAE": 1.612,
                 "MSE": 4.3134,
                 "RMSE": 2.0769,
                 "R2": 0.9198,
                 "R2 Percentage": 91.9775,
-                "Accuracy": 92.58
+                "Accuracy": 91.03
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 1.5822,
+                "MSE": 4.6531,
+                "RMSE": 2.1571,
+                "R2": 0.9135,
+                "R2 Percentage": 91.3458,
+                "Accuracy": 90.68
             },
             {
                 "Model": "Gradient Boosting",
@@ -184,16 +184,7 @@
                 "RMSE": 2.3374,
                 "R2": 0.8984,
                 "R2 Percentage": 89.8383,
-                "Accuracy": 91.97
-            },
-            {
-                "Model": "Ridge",
-                "MAE": 2.285,
-                "MSE": 8.3424,
-                "RMSE": 2.8883,
-                "R2": 0.8448,
-                "R2 Percentage": 84.484,
-                "Accuracy": 88.42
+                "Accuracy": 89.9
             },
             {
                 "Model": "Linear Regression",
@@ -202,12 +193,21 @@
                 "RMSE": 2.8877,
                 "R2": 0.8449,
                 "R2 Percentage": 84.4909,
-                "Accuracy": 88.37
+                "Accuracy": 87.52
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 2.285,
+                "MSE": 8.3424,
+                "RMSE": 2.8883,
+                "R2": 0.8448,
+                "R2 Percentage": 84.484,
+                "Accuracy": 87.52
             }
         ],
-        "recommended_model": "Random Forest",
-        "selection_rule": "Highest MAPE-based score on the held-out test set",
-        "accuracy_definition": "MAPE-based score: max(0, 100 - MAPE percentage); this is not a standard regression accuracy metric"
+        "recommended_model": "SVR",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_definition": "RMSE-based normalized score: max(0, (1 - RMSE / mean(abs(y_test))) * 100); this is not a standard regression accuracy metric"
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",
@@ -271,18 +271,18 @@
         "most_influential_feature": "Weight"
     },
     "model_verification": true,
+    "model_verification_results": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
     "output_files": {
         "original_dataset": "DataSets/auto-mpg.data",
         "processed_dataset": "DataSets/Processed/auto_mpg_regression_results.csv",
         "metrics": "DataSets/Processed/auto_mpg_metrics.csv",
         "metadata_latest": "Metadata/D8_auto_mpg.json",
-        "feature_columns": "ModelsOutcome/auto_mpg_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\auto_mpg_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\auto_mpg_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\auto_mpg_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\auto_mpg_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\auto_mpg_svr.joblib"
-        }
+        "combined_models": "ModelsOutcome/auto_mpg_regression_models.joblib"
     }
 }

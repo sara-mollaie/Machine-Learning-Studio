@@ -1,12 +1,12 @@
 {
     "id": "D10",
     "name": "Daily Demand Forecasting Orders",
-    "run_timestamp": "2026-11-22T13:56:07",
+    "run_timestamp": "2026-11-23T15:12:09",
     "level": "Intermediate",
     "domain": "Business",
     "task": "Regression",
     "source": "UCI Machine Learning Repository",
-    "description": "Forecast total orders for the next observed working day.",
+    "description": "Forecast total orders for the next observed working day using calendar information and previously observed order totals.",
     "dataset_statistics": {
         "rows": 60,
         "columns": 13,
@@ -223,17 +223,21 @@
         "calendar_method": "OneHotEncoder",
         "history_method": "StandardScaler",
         "history_window": 5,
-        "forecast_horizon": "One observed working day",
+        "forecast_horizon": "One observed working day; rolling one-step-ahead evaluation",
         "observations_with_complete_history": 55
     },
     "model_evaluation": {
         "recommended_model": "Random Forest",
         "validation_method": "TimeSeriesSplit",
+        "cv_splits": 4,
         "selection_rule": "Highest test Accuracy; ties use lower CV RMSE",
         "training_rows": 43,
         "test_rows": 12,
-        "cv_splits": 4,
+        "test_days": 12,
+        "random_state": 42,
         "metrics": [
+            "CV RMSE",
+            "CV RMSE Std",
             "MAE",
             "MSE",
             "RMSE",
@@ -241,51 +245,64 @@
             "R2 Percentage",
             "Accuracy"
         ],
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / training_target_range))",
+        "accuracy_normalization_range": 409.08899999999994,
+        "accuracy_note": "Project-specific RMSE-based regression score; it is not classification accuracy. The denominator is calculated from the training target range.",
         "results": [
             {
                 "Model": "Random Forest",
-                "MAE": 44.1121,
-                "MSE": 3334.212,
-                "RMSE": 57.7426,
-                "R2": 0.0814,
-                "R2 Percentage": 8.1405,
-                "Accuracy": 81.6703
+                "CV RMSE": 96.856829,
+                "CV RMSE Std": 32.593684,
+                "MAE": 44.11212,
+                "MSE": 3334.212037,
+                "RMSE": 57.742636,
+                "R2": 0.081405,
+                "R2 Percentage": 8.140469,
+                "Accuracy": 85.885067
             },
             {
                 "Model": "Gradient Boosting",
-                "MAE": 49.9655,
-                "MSE": 3751.3304,
-                "RMSE": 61.2481,
-                "R2": -0.0335,
-                "R2 Percentage": -3.3514,
-                "Accuracy": 80.9587
+                "CV RMSE": 109.064674,
+                "CV RMSE Std": 30.646333,
+                "MAE": 49.965482,
+                "MSE": 3751.330377,
+                "RMSE": 61.248105,
+                "R2": -0.033514,
+                "R2 Percentage": -3.35139,
+                "Accuracy": 85.028171
             },
             {
                 "Model": "SVR",
-                "MAE": 48.3578,
-                "MSE": 3838.4878,
-                "RMSE": 61.9555,
-                "R2": -0.0575,
-                "R2 Percentage": -5.7526,
-                "Accuracy": 80.8382
+                "CV RMSE": 93.517377,
+                "CV RMSE Std": 43.527897,
+                "MAE": 48.357808,
+                "MSE": 3838.487764,
+                "RMSE": 61.955531,
+                "R2": -0.057526,
+                "R2 Percentage": -5.752628,
+                "Accuracy": 84.855244
             },
             {
                 "Model": "Ridge",
-                "MAE": 66.2399,
-                "MSE": 5878.8769,
-                "RMSE": 76.6738,
-                "R2": -0.6197,
-                "R2 Percentage": -61.9666,
-                "Accuracy": 74.2675
+                "CV RMSE": 86.906492,
+                "CV RMSE Std": 27.771546,
+                "MAE": 66.239932,
+                "MSE": 5878.876904,
+                "RMSE": 76.673835,
+                "R2": -0.619666,
+                "R2 Percentage": -61.966566,
+                "Accuracy": 81.25742
             },
             {
                 "Model": "Linear Regression",
-                "MAE": 76.0934,
-                "MSE": 7388.1747,
-                "RMSE": 85.9545,
-                "R2": -1.0355,
-                "R2 Percentage": -103.5486,
-                "Accuracy": 71.728
+                "CV RMSE": 94.124386,
+                "CV RMSE Std": 29.687915,
+                "MAE": 76.093365,
+                "MSE": 7388.174657,
+                "RMSE": 85.954492,
+                "R2": -1.035486,
+                "R2 Percentage": -103.54862,
+                "Accuracy": 78.988804
             }
         ],
         "baseline": {
@@ -296,7 +313,7 @@
                 "RMSE": 81.30664380141393,
                 "R2": -0.8213066650911756,
                 "R2 Percentage": -82.13066650911756,
-                "Accuracy": 78.1499697176005
+                "Accuracy": 80.12494987608713
             }
         }
     },
@@ -306,79 +323,83 @@
         "results": [
             {
                 "Feature": "Day of week_4",
-                "Coefficient": -148.5178,
-                "Absolute Coefficient": 148.5178,
+                "Coefficient": -148.51777,
+                "Absolute Coefficient": 148.51777,
                 "Importance Rank": 1
             },
             {
                 "Feature": "Day of week_5",
-                "Coefficient": -143.5734,
-                "Absolute Coefficient": 143.5734,
+                "Coefficient": -143.573435,
+                "Absolute Coefficient": 143.573435,
                 "Importance Rank": 2
             },
             {
                 "Feature": "Day of week_6",
-                "Coefficient": -135.293,
-                "Absolute Coefficient": 135.293,
+                "Coefficient": -135.292974,
+                "Absolute Coefficient": 135.292974,
                 "Importance Rank": 3
             },
             {
                 "Feature": "Day of week_3",
-                "Coefficient": -78.3166,
-                "Absolute Coefficient": 78.3166,
+                "Coefficient": -78.316565,
+                "Absolute Coefficient": 78.316565,
                 "Importance Rank": 4
             },
             {
                 "Feature": "Week of month_2",
-                "Coefficient": -47.763,
-                "Absolute Coefficient": 47.763,
+                "Coefficient": -47.763034,
+                "Absolute Coefficient": 47.763034,
                 "Importance Rank": 5
             },
             {
                 "Feature": "Mean of previous 5 observations",
-                "Coefficient": 26.1691,
-                "Absolute Coefficient": 26.1691,
+                "Coefficient": 26.169111,
+                "Absolute Coefficient": 26.169111,
                 "Importance Rank": 6
             },
             {
                 "Feature": "Week of month_4",
-                "Coefficient": 20.3807,
-                "Absolute Coefficient": 20.3807,
+                "Coefficient": 20.380692,
+                "Absolute Coefficient": 20.380692,
                 "Importance Rank": 7
             },
             {
                 "Feature": "Previous total",
-                "Coefficient": -18.7097,
-                "Absolute Coefficient": 18.7097,
+                "Coefficient": -18.709708,
+                "Absolute Coefficient": 18.709708,
                 "Importance Rank": 8
             },
             {
                 "Feature": "Week of month_3",
-                "Coefficient": -6.7222,
-                "Absolute Coefficient": 6.7222,
+                "Coefficient": -6.722166,
+                "Absolute Coefficient": 6.722166,
                 "Importance Rank": 9
             },
             {
                 "Feature": "Week of month_5",
-                "Coefficient": 5.2139,
-                "Absolute Coefficient": 5.2139,
+                "Coefficient": 5.213886,
+                "Absolute Coefficient": 5.213886,
                 "Importance Rank": 10
             }
-        ]
+        ],
+        "most_influential_feature": "Day of week_4"
     },
-    "model_verification": true,
+    "model_verification": {
+        "all_models_verified": true,
+        "individual_models": {
+            "Linear Regression": true,
+            "Ridge": true,
+            "Random Forest": true,
+            "Gradient Boosting": true,
+            "SVR": true
+        }
+    },
     "output_files": {
         "original_dataset": "DataSets/Daily_Demand_Forecasting_Orders.csv",
         "processed_dataset": "DataSets/Processed/daily_demand_results.csv",
         "metrics": "DataSets/Processed/daily_demand_metrics.csv",
         "feature_columns": "ModelsOutcome/daily_demand_feature_columns.joblib",
-        "metadata_latest": "Metadata/D10_daily_demand.json",
-        "models": {
-            "Linear Regression": "ModelsOutcome/daily_demand_linear_regression.joblib",
-            "Ridge": "ModelsOutcome/daily_demand_ridge.joblib",
-            "Random Forest": "ModelsOutcome/daily_demand_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome/daily_demand_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome/daily_demand_svr.joblib"
-        }
+        "combined_models": "ModelsOutcome/daily_demand_regression_models.joblib",
+        "metadata_latest": "Metadata/D10_daily_demand.json"
     }
 }

@@ -1,6 +1,6 @@
 {
     "id": "D3",
-    "run_timestamp": "2026-11-22 13:55:34.630449",
+    "run_timestamp": "2026-11-23 18:15:02.652078",
     "name": "Real Estate Valuation",
     "level": "Beginner",
     "domain": "Real Estate",
@@ -151,6 +151,9 @@
         "missing_value_method": "Median Imputation"
     },
     "model_evaluation": {
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_target_range": 52.099999999999994,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
         "test_size": 0.2,
         "random_state": 42,
         "metrics": [
@@ -169,7 +172,7 @@
                 "RMSE": 5.4398,
                 "R2": 0.8236,
                 "R2 Percentage": 82.3609,
-                "Accuracy": 88.54
+                "Accuracy": 89.56
             },
             {
                 "Model": "SVR",
@@ -178,7 +181,7 @@
                 "RMSE": 6.0252,
                 "R2": 0.7836,
                 "R2 Percentage": 78.3601,
-                "Accuracy": 87.97
+                "Accuracy": 88.44
             },
             {
                 "Model": "Gradient Boosting",
@@ -187,7 +190,7 @@
                 "RMSE": 6.4648,
                 "R2": 0.7509,
                 "R2 Percentage": 75.0873,
-                "Accuracy": 85.58
+                "Accuracy": 87.59
             },
             {
                 "Model": "Ridge",
@@ -196,7 +199,7 @@
                 "RMSE": 7.2856,
                 "R2": 0.6836,
                 "R2 Percentage": 68.3592,
-                "Accuracy": 83.07
+                "Accuracy": 86.02
             },
             {
                 "Model": "Linear Regression",
@@ -205,12 +208,11 @@
                 "RMSE": 7.3145,
                 "R2": 0.6811,
                 "R2 Percentage": 68.1078,
-                "Accuracy": 82.82
+                "Accuracy": 85.96
             }
         ],
         "recommended_model": "Random Forest",
         "selection_rule": "Lowest RMSE on the held-out test set",
-        "accuracy_definition": "max(0, 100 - MAPE percentage)",
         "hyperparameter_tuning": {
             "method": "GridSearchCV",
             "cv": 5,
@@ -283,18 +285,21 @@
         "most_influential_feature": "X3 distance to the nearest MRT station"
     },
     "model_verification": true,
+    "model_verification_results": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
+    "prediction_postprocessing": {
+        "clip_min": null
+    },
     "output_files": {
         "original_dataset": "DataSets/Real estate valuation data set.xlsx",
         "processed_dataset": "DataSets/Processed/real_estate_regression_results.csv",
         "metrics": "DataSets/Processed/real_estate_metrics.csv",
         "metadata_latest": "Metadata/D3_real_estate.json",
-        "feature_columns": "ModelsOutcome/real_estate_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\real_estate_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\real_estate_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\real_estate_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\real_estate_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\real_estate_svr.joblib"
-        }
+        "model_bundle": "ModelsOutcome/real_estate_regression_models.joblib"
     }
 }

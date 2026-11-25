@@ -28,6 +28,7 @@ PANEL_GAP = 24
 RX = MX + LW + PANEL_GAP     # شروع پنل راست
 RW = MX + CONTENT_W - RX     # عرض پنل راست
 SLIDER_COLS = 2              # تعداد ستون اسلایدرها (۱ = همه زیر هم)
+CLUSTER_PAGE_SIZE = 6
 KNOB_D = 24                  # قطر دستگیرهٔ اسلایدر
 
 DARK_A, DARK_B = "#2a1250", "#5b2352"
@@ -62,6 +63,7 @@ class PredictorModule(DatasetsModule):
         self._sl = {}
         self._counter = None
         self._dirty = True
+        self._cluster_missing = False
 
         # کارهای سنگین (خواندن عکس‌ها، import سنگین sklearn، خواندن مدل‌ها) در پس‌زمینه انجام می‌شوند
         self._pool = ThreadPoolExecutor(max_workers=3, thread_name_prefix="predictor")
@@ -95,7 +97,7 @@ class PredictorModule(DatasetsModule):
     def prewarm(self):
         """تصویرهای ثابت صفحه را در زمان‌های خلوت و مرحله‌به‌مرحله می‌سازد."""
         steps = [self._bg_photo, self._panel_images, self._knob_img,
-                 lambda: self._ring_img(0.5, 124, 14)]
+                 lambda: self._ring_img(0.5, 160, 14)]
 
         def run(i=0):
             if i >= len(steps) or not self.winfo_exists():
@@ -279,6 +281,8 @@ class PredictorModule(DatasetsModule):
         return ranges
 
     def load_dataset(self, ds):
+        self._cluster_page = 0
+        self._cluster_missing = False
         self.ds, self.result, self.notice, self.error, self.bundle = ds, None, None, None, None
         try:
             key = self._sig(ds)
@@ -333,6 +337,7 @@ class PredictorModule(DatasetsModule):
             return
         b = self.bundle
         missing = [f for f in b["features"] if self.vals.get(f) is None]
+        self._cluster_missing = bool(missing)
         if missing:
             self.result = None
             self.notice = f"Set a value for every feature first ({len(missing)} left)."
@@ -344,20 +349,21 @@ class PredictorModule(DatasetsModule):
             w = 1.0 / np.maximum(dist, 1e-9)            # نزدیک‌تر = سهم بیشتر
             self.result = {"label": label, "shares": (w / w.sum()).tolist()}
             self.notice = None
-        self._redraw_result()
+        if missing:
+            self._cluster_page = b["features"].index(missing[0]) // CLUSTER_PAGE_SIZE
+            self._build()
+        else:
+            self._cluster_highlight()
+            self._redraw_result()
 
     def _reset(self):
         if not self.bundle:
             return
-        c = theme.c
-        for f, s in self._sl.items():
-            self.vals[f] = None
-            self.itemconfigure(s["fill"], state="hidden")
-            self.itemconfigure(s["knob"], state="hidden")
-            self.itemconfigure(s["val"], text="—", fill=c("body"))
-        self.result, self.notice = None, None
-        self._update_counter()
-        self._redraw_result()
+        self.vals = dict.fromkeys(self.bundle["features"])
+        self.result = self.notice = None
+        self._cluster_missing = False
+        self._cluster_page = 0
+        self._build()
 
     def _redraw_result(self):
         self.delete("res")
@@ -439,7 +445,8 @@ class PredictorModule(DatasetsModule):
             return self._cache[key]
         S, ss = self.s(d), 4
         big, bw = S * ss, max(4, self.s(stroke)) * ss
-        bbox = (bw / 2, bw / 2, big - bw / 2, big - bw / 2)
+        inset = bw * 0.8
+        bbox = (inset, inset, big - inset, big - inset)
 
         base = Image.new("RGBA", (big, big), (0, 0, 0, 0))
         ImageDraw.Draw(base).ellipse(bbox, outline=_rgb(BAR_TRACK) + (255,), width=bw)
@@ -451,7 +458,7 @@ class PredictorModule(DatasetsModule):
         elif share > 0:
             end = -90 + 360 * share
             md.arc(bbox, start=-90, end=end, fill=255, width=bw)
-            rad, r, c0 = (big - bw) / 2, bw / 2, big / 2
+            rad, r, c0 = big / 2 - inset, bw / 2, big / 2
             for ang in (-90, end):
                 a = math.radians(ang)
                 px, py = c0 + rad * math.cos(a), c0 + rad * math.sin(a)
@@ -467,6 +474,16 @@ class PredictorModule(DatasetsModule):
         grad = Image.fromarray(arr, "RGBA")
         grad.putalpha(mask)
         base.alpha_composite(grad)
+        # Distinct circular markers at both ends of the progress arc.
+        if 0 < share < 0.999:
+            draw = ImageDraw.Draw(base)
+            radius = big / 2 - inset
+            dot = bw * 0.72
+            for angle, color in ((-90, "#d3c0f7"), (-90 + 360 * share, "#f3b3d3")):
+                a = math.radians(angle)
+                px = big / 2 + radius * math.cos(a)
+                py = big / 2 + radius * math.sin(a)
+                draw.ellipse((px-dot, py-dot, px+dot, py+dot), fill=_rgb(color)+(255,))
         photo = ImageTk.PhotoImage(base.resize((S, S), Image.LANCZOS))
         self._cache[key] = photo
         return photo
@@ -488,15 +505,46 @@ class PredictorModule(DatasetsModule):
         if self.ds is not None:
             self._draw_page()
 
+    def _back_to_task_datasets(self):
+        task = getattr(self.ds, "task", None)
+        # MainView already exposes the same filtered navigation used by Algorithms.
+        host = self.master
+        callback = getattr(host, "open_algorithm_datasets", None)
+        if task and callable(callback):
+            callback(task)
+            return
+        datasets = getattr(host, "pages", {}).get("datasets")
+        if task and callable(getattr(datasets, "set_task_filter", None)):
+            datasets.set_task_filter(task)
+        self.on_navigate("datasets")
+
+    def _draw_back_button(self):
+        S = self.s
+        dark = theme.name == "dark"
+        color = "#f1d5fa" if dark else "#ffffff"
+        bg = "#50336f" if dark else "#713b91"
+        edge = "#805ba1" if dark else "#713b91"
+        w, h = 90, 30
+        x, y = MX + 4, 103
+        tag = "predict_back"
+        self.create_image(S(x), S(y), image=self._shape(w, h, 10, bg, border=(edge, 255)), anchor="nw", tags=(tag,))
+        cy = y + h / 2
+        self.create_line(S(x+29), S(cy), S(x+14), S(cy), fill=color, width=max(1,S(2)), capstyle="round", tags=(tag,))
+        self.create_line(S(x+21), S(cy-7), S(x+14), S(cy), S(x+21), S(cy+7), fill=color, width=max(1,S(2)), capstyle="round", joinstyle="round", tags=(tag,))
+        self.text(x+37, cy, "Back", 16, color, True, tags=(tag,))
+        self.hover(tag)
+        self.tag_bind(tag, "<Button-1>", lambda e: self._back_to_task_datasets())
+
     def _draw_page(self):
         c, pal, S = theme.c, self._pal(), self.s
 
         # مسیر (عنوان «Predict the Cluster» داخل پس‌زمینه است)
         crumb_y = 118
-        self.text(MX + 4, crumb_y, "Datasets", 20, c("accent"), True, tags=("crumb",))
-        self.text(MX + 4 + self.text_width("Datasets", 20, True) + 10, crumb_y, f"/  {self.ds.name}", 20, c("body"))
+        self.text(MX + 108, crumb_y, "Datasets", 20, c("accent"), True, tags=("crumb",))
+        self.text(MX + 108 + self.text_width("Datasets", 20, True) + 10, crumb_y, f"/  {self.ds.name}", 20, c("body"))
         self.hover("crumb")
-        self.tag_bind("crumb", "<Button-1>", lambda e: self.on_navigate("datasets"))
+        self.tag_bind("crumb", "<Button-1>", lambda e: self._back_to_task_datasets())
+        self._draw_back_button()
 
         (left, lp), (right, rp) = self._panel_images()
         self.create_image(S(MX) - lp, S(PY) - lp, image=left, anchor="nw")
@@ -512,16 +560,47 @@ class PredictorModule(DatasetsModule):
         self._draw_buttons(MX, pal)
         self._draw_result()
 
+    def _section_icon(self, x, y, kind, color, size=30, tags=()):
+        S = self.s
+        def point(a, b):
+            return S(x + a * size / 32), S(y + b * size / 32)
+        def line(*pts):
+            self.create_line(*[v for p in pts for v in point(*p)], fill=color,
+                             width=max(1, S(2.4)), capstyle="round", joinstyle="round", tags=tags)
+        def circle(a, b, r):
+            self.create_oval(*point(a-r,b-r), *point(a+r,b+r), outline=color,
+                             width=max(1,S(2.2)), tags=tags)
+        if kind == "features":
+            for h, a in ((7,10),(16,22),(25,13)):
+                line((2,h),(a-4,h)); line((a+4,h),(30,h)); circle(a,h,4)
+        elif kind == "algorithm":
+            for a,b in ((5,5),(27,5),(5,27),(27,27)):
+                dx,dy=a-16,b-16
+                line((16+dx*.28,16+dy*.28),(a-dx*.25,b-dy*.25)); circle(a,b,3.5)
+            circle(16,16,4)
+        elif kind == "prediction":
+            circle(14,18,12); circle(14,18,7); circle(14,18,2)
+            line((14,18),(29,3)); line((23,3),(29,3),(29,9))
+
     # ---- پنل چپ ----
     def _draw_sliders(self, px, pw):
         c, S = theme.c, self.s
         ui = self._ui()
         b = self.bundle
         feats = b["features"]
+        clustering = "k" in b
+        pages = max(1, math.ceil(len(feats) / CLUSTER_PAGE_SIZE))
+        if clustering:
+            self._cluster_page = min(getattr(self, "_cluster_page", 0), pages - 1)
+            feats = feats[self._cluster_page * CLUSTER_PAGE_SIZE:(self._cluster_page + 1) * CLUSTER_PAGE_SIZE]
         self._sl = {}
         x0, inner = px + 48, pw - 96
 
-        self.text(x0, PY + 52, "Feature values", 28, c("title"), True)
+        if clustering:
+            self._section_icon(x0, PY + 36, "features", "#f3a4d0" if theme.name == "dark" else "#a3306f", 32)
+            self.text(x0 + 48, PY + 52, "Features", 28, c("title"), True)
+        else:
+            self.text(x0, PY + 52, "Feature values", 28, c("title"), True)
         self._counter = self.create_text(S(px + pw - 48), S(PY + 52), text="", anchor="e", fill=c("body"),
                                          font=(FONT, -S(17)))
         self._update_counter()
@@ -529,12 +608,18 @@ class PredictorModule(DatasetsModule):
         cols = max(1, SLIDER_COLS)
         rows = math.ceil(len(feats) / cols)
         top, bottom = PY + 108, PY + PH - 224
+        clustering = "k" in b
         pitch = min(86, (bottom - top) / max(rows, 1))
         off = min(36, pitch * 0.58)
+        if clustering:
+            top = PY + 108
+            pitch = 100 if pages > 1 else 108
+            off = 30
         gap = 40
         colw = (inner - gap * (cols - 1)) / cols
-        full_fill = self._pill_pil(colw, 12, FILL_A, FILL_B)
-        track_img = self._shape(colw, 12, 6, ui["track"], border=(ui["track_border"], 255))
+        track_h = 14 if clustering else 12
+        full_fill = self._pill_pil(colw, track_h, FILL_A, FILL_B)
+        track_img = self._shape(colw, track_h, track_h // 2, ui["track"], border=(ui["track_border"], 255))
         hit_img, knob_img = self._hit(colw, 34), self._knob_img()
 
         for i, f in enumerate(feats):
@@ -547,7 +632,10 @@ class PredictorModule(DatasetsModule):
             tag = f"sl_{i}"
             state = "hidden" if v is None else "normal"
 
-            self.text(x, y, b["labels"][f], 19, c("body"))
+            if clustering:
+                self.create_image(S(x-10), S(y-19), image=self._shape(colw+20, 88, 15, "#ffffff", alpha=18 if theme.name=="dark" else 65, border=(ui["track_border"], 150)), anchor="nw")
+            label = self._fit(b["labels"][f], 19, True, colw-90) if clustering else b["labels"][f]
+            self.text(x, y, label, 19 if clustering else 19, c("title") if clustering else c("body"), clustering)
             val_id = self.create_text(S(x + colw), S(y), text="—" if v is None else self._fmt_feat(f, v),
                                       anchor="e", fill=c("body") if v is None else c("title"),
                                       font=(FONT, -S(19), "bold"))
@@ -560,10 +648,46 @@ class PredictorModule(DatasetsModule):
             self._sl[f] = dict(x=x, w=colw, ty=ty, lo=lo, hi=hi, val=val_id, fill=fill_id, knob=knob_id,
                                photo=photo, full=full_fill)
 
+            if clustering:
+                range_color = "#e1c9fa" if theme.name == "dark" else "#58377e"
+                self.text(x, ty + 23, self._fmt_feat(f, lo), 16, range_color, True)
+                self.text(x + colw, ty + 23, self._fmt_feat(f, hi), 16, range_color, True, anchor="e")
             self.hover(tag)
             handler = lambda e, name=f: self._drag(name, e)
             self.tag_bind(tag, "<Button-1>", handler)
             self.tag_bind(tag, "<B1-Motion>", handler)
+
+        if clustering:
+            self._cluster_highlight()
+            if pages > 1:
+                y = PY + 420
+                for label, x, delta in (("Previous", x0, -1), ("Next", x0+inner-60, 1)):
+                    tag = "cluster_page_" + str(delta)
+                    self.text(x, y, label, 15, c("accent"), True, tags=(tag,))
+                    self.hover(tag)
+                    self.tag_bind(tag, "<Button-1>", lambda e, d=delta: self._change_cluster_page(d))
+                self.text(x0+inner/2, y, f"{self._cluster_page+1} / {pages}", 15, c("body"), anchor="center")
+
+    def _change_cluster_page(self, delta):
+        last = max(0, math.ceil(len(self.bundle["features"])/CLUSTER_PAGE_SIZE)-1)
+        self._cluster_page = max(0, min(last, self._cluster_page+delta))
+        self._build()
+
+    def _cluster_highlight(self):
+        self.delete("cluster_missing")
+        if not self._cluster_missing:
+            return
+        S = self.s
+        color = "#91efbd" if theme.name == "dark" else "#58c997"
+        for f, slot in self._sl.items():
+            if self.vals.get(f) is not None:
+                continue
+            x, y, w = slot["x"], slot["ty"], slot["w"]
+            l, r, t, b = x-3, x+w+3, y-10, y+10
+            pts = [(l+7,t),(r-7,t),(r,t),(r,t+7),(r,b-7),(r,b),(r-7,b),(l+7,b),(l,b),(l,b-7),(l,t+7),(l,t),(l+7,t)]
+            item = self.create_polygon(*[S(v) for pt in pts for v in pt], smooth=True, fill="", outline=color, width=max(2,S(2.5)), tags=("cluster_missing",))
+            self.tag_bind(item, "<Button-1>", lambda e, name=f: self._drag(name,e))
+            self.tag_bind(item, "<B1-Motion>", lambda e, name=f: self._drag(name,e))
 
     def _drag(self, name, event):
         S, c = self.s, theme.c
@@ -588,6 +712,14 @@ class PredictorModule(DatasetsModule):
             self.itemconfigure(s["val"], fill=c("title"))
             self._update_counter()
 
+        if "k" in self.bundle:
+            self.result = None
+            remaining = sum(v is None for v in self.vals.values())
+            self._cluster_missing = self._cluster_missing and bool(remaining)
+            self.notice = f"Set a value for every feature first ({remaining} left)." if self._cluster_missing else None
+            self._cluster_highlight()
+            self._redraw_result()
+
     def _draw_algorithm(self, px, pw, pal):
         c, S = theme.c, self.s
         dark = theme.name == "dark"
@@ -601,9 +733,10 @@ class PredictorModule(DatasetsModule):
 
         # خط جداکنندهٔ بخش مدل از اسلایدرها
         self.create_line(S(x0), S(top - 52), S(x0 + inner), S(top - 52), fill=pal["sep"], width=max(1, S(1.5)))
-        self.text(x0, top - 24, "Algorithm", 20, c("title"), True)
+        self._section_icon(x0, top - 39, "algorithm", "#f3a4d0" if dark else "#a3306f", 30)
+        self.text(x0 + 42, top - 24, "Algorithm", 22, c("title"), True)
         self.text(x0 + aw + 20, top - 24, "K (clusters)", 20, c("title"), True)
-        for x, w, label in ((x0, aw, f"Clustering: {algo}"), (x0 + aw + 20, kw, str(k))):
+        for x, w, label in ((x0, aw, "Clustering"), (x0 + aw + 20, kw, str(k))):
             self.create_image(S(x), S(top), image=self._shape(w, 52, 26, pal["search_bg"], border=border), anchor="nw")
             self.text(x + 26, top + 26, label, 22, c("title"), True)
 
@@ -661,17 +794,19 @@ class PredictorModule(DatasetsModule):
         width = right - left
         label = res["label"] if res else None
 
-        self.text(left, PY + 52, "Predicted cluster", 22, "#d9c8ee", tags=T)
+        self._section_icon(left, PY + 23, "prediction", "#f3a4d0", 36, tags=T)
+        self.text(left + 48, PY + 41, "Prediction", 28, "white", True, tags=T)
+        self.text(left, PY + 88, "Predicted cluster", 20, "#d9c8ee", tags=T)
         if res:
             share = res["shares"][label]
-            self.text(left, PY + 126, f"Cluster {label}", 72, "#f3b3d3", True, tags=T)
+            self.text(left, PY + 143, f"Cluster {label}", 60, "#f3b3d3", True, tags=T)
             self.text(left, PY + 190, "Closeness to this cluster's centre", 17, "#d9c8ee", tags=T)
-            d = 124
-            self.create_image(S(right - d / 2), S(PY + 124), image=self._ring_img(share, d, 14),
+            d = 160
+            self.create_image(S(right - d / 2), S(PY + 137), image=self._ring_img(share, d, 14),
                               anchor="center", tags=T)
-            self.text(right - d / 2, PY + 124, f"{share * 100:.0f}%", 28, "white", True, anchor="center", tags=T)
+            self.text(right - d / 2, PY + 137, f"{share * 100:.0f}%", 34, "white", True, anchor="center", tags=T)
         else:
-            self.text(left, PY + 126, "—", 72, "#f3b3d3", True, tags=T)
+            self.text(left, PY + 143, "—", 60, "#f3b3d3", True, tags=T)
             if self.notice:
                 self.text(left, PY + 190, self.notice, 18, "#ffb3d1", True, tags=T)
             else:
@@ -717,13 +852,9 @@ class PredictorModule(DatasetsModule):
             self.text(x + 18, ty + 52, value, 28, "white", True, tags=T)
             self.text(x + 18, ty + 77, sub, 14, "#bfa9dd", tags=T)
 
-        # توضیح مدل
-        algo = clu.get("algorithm") or "KMeans"
-        text = f"Model: {algo}, K = {k}. Trained on {self.ds.rows:,} rows and {len(b['features'])} features."
-        if res and str(label) in sizes:
-            pct = pcts.get(str(label))
-            text += f" Cluster {label} holds {sizes[str(label)]:,} records" + (f" ({pct:.1f}%)." if pct is not None else ".")
-        by, bh = PY + PH - 102, 70
-        self.create_image(S(left), S(by), image=self._shape(width, bh, 22, "#ffffff", alpha=34), anchor="nw", tags=T)
-        for i, line in enumerate(self._wrap(text, 17, False, width - 40, 2)):
-            self.text(left + 20, by + 24 + i * 24, line, 17, "#eadcf6", tags=T)
+        # Learning type footer, matching the Regression result panel.
+        fy = PY + PH - 72
+        self.create_line(S(left), S(fy - 24), S(right), S(fy - 24), fill="#795184", width=max(1,S(1)), tags=T)
+        self.text(left, fy, "Learning Type", 19, "white", True, tags=T)
+        self.text(right, fy, "Unsupervised Learning", 18, "#e1c9ed", True, anchor="e", tags=T)
+

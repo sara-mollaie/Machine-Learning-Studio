@@ -1,6 +1,6 @@
 {
     "id": "D1",
-    "run_timestamp": "2026-11-23 05:31:56.675999",
+    "run_timestamp": "2026-11-25 04:21:23.932450",
     "name": "Abalone",
     "level": "Beginner",
     "domain": "Environment",
@@ -163,6 +163,10 @@
         "missing_value_method": "Median for numeric features, mode for Sex",
         "age_formula": "Age = Rings + 1.5"
     },
+    "prediction_postprocessing": {
+        "round_decimals": 0,
+        "rounding_method": "nearest_even"
+    },
     "model_evaluation": {
         "test_size": 0.2,
         "random_state": 42,
@@ -177,48 +181,48 @@
         "results": [
             {
                 "Model": "SVR",
-                "MAE": 1.4931,
-                "MSE": 4.7984,
-                "RMSE": 2.1905,
-                "Accuracy": 89.05,
-                "R2": 0.5567,
-                "R2 Percentage": 55.6741
-            },
-            {
-                "Model": "Ridge",
-                "MAE": 1.5939,
-                "MSE": 4.8911,
-                "RMSE": 2.2116,
+                "MAE": 1.5478,
+                "MSE": 4.8959,
+                "RMSE": 2.2127,
                 "Accuracy": 88.94,
-                "R2": 0.5482,
-                "R2 Percentage": 54.8173
+                "R2": 0.5477,
+                "R2 Percentage": 54.7729
             },
             {
                 "Model": "Linear Regression",
-                "MAE": 1.5931,
-                "MSE": 4.8912,
-                "RMSE": 2.2116,
-                "Accuracy": 88.94,
-                "R2": 0.5482,
-                "R2 Percentage": 54.8163
+                "MAE": 1.628,
+                "MSE": 4.9605,
+                "RMSE": 2.2272,
+                "Accuracy": 88.86,
+                "R2": 0.5418,
+                "R2 Percentage": 54.1762
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 1.6292,
+                "MSE": 4.9653,
+                "RMSE": 2.2283,
+                "Accuracy": 88.86,
+                "R2": 0.5413,
+                "R2 Percentage": 54.132
             },
             {
                 "Model": "Random Forest",
-                "MAE": 1.574,
-                "MSE": 4.9951,
-                "RMSE": 2.235,
-                "Accuracy": 88.83,
-                "R2": 0.5386,
-                "R2 Percentage": 53.8569
+                "MAE": 1.6089,
+                "MSE": 5.1041,
+                "RMSE": 2.2592,
+                "Accuracy": 88.7,
+                "R2": 0.5285,
+                "R2 Percentage": 52.8502
             },
             {
                 "Model": "Gradient Boosting",
-                "MAE": 1.5738,
-                "MSE": 5.0708,
-                "RMSE": 2.2518,
-                "Accuracy": 88.74,
-                "R2": 0.5316,
-                "R2 Percentage": 53.1572
+                "MAE": 1.5993,
+                "MSE": 5.1041,
+                "RMSE": 2.2592,
+                "Accuracy": 88.7,
+                "R2": 0.5285,
+                "R2 Percentage": 52.8502
             }
         ],
         "recommended_model": "SVR",
@@ -302,13 +306,14 @@
         "processed_dataset": "Datasets/Processed/abalone_regression_results.csv",
         "metrics": "Datasets/Processed/abalone_metrics.csv",
         "metadata_latest": "Metadata/D1_abalone.json",
-        "feature_columns": "ModelsOutcome/abalone_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\abalone_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\abalone_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\abalone_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\abalone_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\abalone_svr.joblib"
-        }
+        "model_bundle": "ModelsOutcome/abalone_regression_models.joblib",
+        "models_included": [
+            "Linear Regression",
+            "Ridge",
+            "Random Forest",
+            "Gradient Boosting",
+            "SVR"
+        ],
+        "recommended_model": "SVR"
     }
 }

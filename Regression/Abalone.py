@@ -9,7 +9,7 @@ import pandas as pd
 import seaborn as sns
 
 from matplotlib.patches import Patch
-from sklearn.compose import ColumnTransformer
+from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
@@ -303,7 +303,10 @@ records = []
 for model_name, estimator in models.items():
     model_pipeline = Pipeline([
         ("preprocessor", create_preprocessor()),
-        ("model", estimator),
+        ("model", TransformedTargetRegressor(
+            regressor=estimator, func=np.copy, inverse_func=np.rint,
+            check_inverse=False,
+        )),
     ])
     model_pipeline.fit(x_train, y_train)
     prediction = model_pipeline.predict(x_test)
@@ -347,7 +350,7 @@ print("Selection Rule: Lowest RMSE on the held-out test set")
 # provides the names of the transformed numeric and one-hot encoded features.
 coefficient_model = trained_models["Linear Regression"]
 coefficient_preprocessor = coefficient_model.named_steps["preprocessor"]
-linear_estimator = coefficient_model.named_steps["model"]
+linear_estimator = coefficient_model.named_steps["model"].regressor_
 transformed_features = coefficient_preprocessor.get_feature_names_out()
 
 coefficient_df = pd.DataFrame({
@@ -548,7 +551,7 @@ output_folder = BASE_DIR / "Datasets" / "Processed"
 output_folder.mkdir(parents=True, exist_ok=True)
 processed_df = abalone_df.copy()
 predicted_age = pd.Series(pd.NA, index=processed_df.index, dtype="Int64")
-predicted_age.loc[y_test.index] = np.round(best_prediction).astype(int)
+predicted_age.loc[y_test.index] = best_prediction.astype(int)
 processed_df["Predicted_Age"] = predicted_age
 processed_path = output_folder / "abalone_regression_results.csv"
 processed_df.to_csv(processed_path, index=False)
@@ -567,35 +570,59 @@ print("Metrics:", metrics_path)
 
 model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-model_paths = {}
 
-feature_columns_path = model_folder / "abalone_feature_columns.joblib"
-joblib.dump(FEATURES, feature_columns_path)
-print("Saved Feature Columns:", feature_columns_path)
+# All five trained pipelines are stored together in one Joblib bundle.
+model_bundle_path = model_folder / "abalone_regression_models.joblib"
 
-for model_name, model_pipeline in trained_models.items():
-    model_file_name = model_name.lower().replace(" ", "_") + ".joblib"
-    model_path = model_folder / f"abalone_{model_file_name}"
-    joblib.dump(
-        {
-            "model": model_pipeline,
-            "model_name": model_name,
-            "target_column": TARGET,
-            "raw_target_column": RAW_TARGET,
-            "feature_columns": FEATURES,
-            "age_formula": "Age = Rings + 1.5",
-        },
-        model_path,
+model_bundle = {
+    "dataset_name": "Abalone",
+    "task": "Regression",
+    "models": trained_models,
+    "best_model_name": best_model_name,
+    "best_model": trained_models[best_model_name],
+    "target_column": TARGET,
+    "raw_target_column": RAW_TARGET,
+    "feature_columns": FEATURES,
+    "age_formula": "Age = Rings + 1.5",
+    "prediction_postprocessing": {"round_decimals": 0, "rounding_method": "nearest_even"},
+    "metrics": metrics_df.to_dict(orient="records"),
+}
+
+joblib.dump(model_bundle, model_bundle_path)
+
+print("\\nAll Regression Models Saved Successfully!")
+print("Model Bundle:", model_bundle_path)
+print("Models Included:", list(trained_models.keys()))
+print("Recommended Model:", best_model_name)
+
+# Reload the bundle and verify that every saved model returns
+# the same predictions as the corresponding model before saving.
+loaded_bundle = joblib.load(model_bundle_path)
+model_verification_results = {}
+
+for model_name, original_prediction in predictions.items():
+    loaded_prediction = loaded_bundle["models"][model_name].predict(x_test)
+
+    model_verification_results[model_name] = bool(
+        np.array_equal(original_prediction, loaded_prediction)
+        and np.all(loaded_prediction == np.rint(loaded_prediction))
     )
-    model_paths[model_name] = model_path
-    print("Saved Model:", model_path)
 
-best_bundle = joblib.load(model_paths[best_model_name])
-prediction_verification = best_bundle["model"].predict(x_test)
-model_verification = bool(np.allclose(best_prediction, prediction_verification))
+model_verification = all(model_verification_results.values())
 
-print("\nModels Loaded Successfully!")
-print("Model Verification:", model_verification)
+print("\\nModel Verification Results:")
+for model_name, verified in model_verification_results.items():
+    print(f"{model_name}: {verified}")
+
+print("Overall Model Verification:", model_verification)
+
+if not model_verification:
+    raise RuntimeError(
+        "One or more saved models failed verification. "
+        "The model bundle should not be used for prediction."
+    )
+
+print("\\nModel Bundle Verification Completed Successfully!")
 
 # endregion
 
@@ -645,6 +672,7 @@ metadata = {
         "missing_value_method": "Median for numeric features, mode for Sex",
         "age_formula": "Age = Rings + 1.5",
     },
+    "prediction_postprocessing": {"round_decimals": 0, "rounding_method": "nearest_even"},
     "model_evaluation": {
         "test_size": TEST_SIZE,
         "random_state": RANDOM_STATE,
@@ -670,8 +698,9 @@ metadata = {
         "processed_dataset": "Datasets/Processed/abalone_regression_results.csv",
         "metrics": "Datasets/Processed/abalone_metrics.csv",
         "metadata_latest": "Metadata/D1_abalone.json",
-        "feature_columns": "ModelsOutcome/abalone_feature_columns.joblib",
-        "models": {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "model_bundle": "ModelsOutcome/abalone_regression_models.joblib",
+        "models_included": list(trained_models.keys()),
+        "recommended_model": best_model_name,
     },
 }
 
@@ -696,3 +725,4 @@ print("Model Verification:", saved_metadata["model_verification"])
 print("\nMetadata Process Completed Successfully!")
 
 # endregion
+

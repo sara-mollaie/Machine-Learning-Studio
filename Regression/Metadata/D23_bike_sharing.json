@@ -1,6 +1,6 @@
 {
     "id": "D23",
-    "run_timestamp": "2026-11-23 05:16:07.769983",
+    "run_timestamp": "2026-11-23 15:00:08.222383",
     "name": "Bike Sharing",
     "level": "Intermediate",
     "domain": "Social",
@@ -289,7 +289,7 @@
                 "RMSE": 69.62134,
                 "R2": 0.900293,
                 "R2 Percentage": 90.02926,
-                "Accuracy": 81.958421
+                "Accuracy": 72.012039
             },
             {
                 "Model": "Gradient Boosting",
@@ -298,7 +298,7 @@
                 "RMSE": 107.437746,
                 "R2": 0.762559,
                 "R2 Percentage": 76.255862,
-                "Accuracy": 70.405971
+                "Accuracy": 56.809745
             },
             {
                 "Model": "SVR",
@@ -307,7 +307,7 @@
                 "RMSE": 177.586794,
                 "R2": 0.35127,
                 "R2 Percentage": 35.127004,
-                "Accuracy": 54.085233
+                "Accuracy": 28.609645
             },
             {
                 "Model": "Linear Regression",
@@ -316,7 +316,7 @@
                 "RMSE": 183.277847,
                 "R2": 0.309025,
                 "R2 Percentage": 30.902462,
-                "Accuracy": 44.406354
+                "Accuracy": 26.321827
             },
             {
                 "Model": "Ridge",
@@ -325,13 +325,14 @@
                 "RMSE": 183.279256,
                 "R2": 0.309014,
                 "R2 Percentage": 30.9014,
-                "Accuracy": 44.406345
+                "Accuracy": 26.32126
             }
         ],
         "recommended_model": "Random Forest",
-        "selection_rule": "Highest WAPE-based Accuracy, lowest RMSE as tie-breaker",
-        "accuracy_definition": "max(0, 100 * (1 - sum(abs(actual-predicted))/sum(abs(actual))))",
-        "accuracy_caveat": "Descriptive regression score, not classification accuracy."
+        "selection_rule": "Highest RMSE-based Accuracy, lowest RMSE as tie-breaker",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / mean(abs(actual))))",
+        "accuracy_reference_value": 248.75460299194475,
+        "accuracy_caveat": "Custom descriptive regression score, not classification accuracy."
     },
     "feature_importance": {
         "method": "Standardized Linear Regression Coefficients",
@@ -413,18 +414,18 @@
         "most_influential_feature": "hr"
     },
     "model_verification": true,
+    "individual_model_verification": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
     "output_files": {
         "original_dataset": "DataSets\\hour.csv",
         "processed_dataset": "DataSets\\Processed\\bike_sharing_regression_results.csv",
         "metrics": "DataSets\\Processed\\bike_sharing_metrics.csv",
-        "feature_columns": "ModelsOutcome\\bike_sharing_feature_columns.joblib",
-        "models": {
-            "Linear Regression": "ModelsOutcome\\bike_sharing_linear_regression.joblib",
-            "Ridge": "ModelsOutcome\\bike_sharing_ridge.joblib",
-            "Random Forest": "ModelsOutcome\\bike_sharing_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome\\bike_sharing_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome\\bike_sharing_svr.joblib"
-        },
+        "models_bundle": "ModelsOutcome\\bike_sharing_regression_models.joblib",
         "metadata_latest": "Metadata/D23_bike_sharing.json"
     }
 }

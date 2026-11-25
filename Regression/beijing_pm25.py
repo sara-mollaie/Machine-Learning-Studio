@@ -14,7 +14,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import (
     mean_absolute_error,
-    mean_absolute_percentage_error,
     mean_squared_error,
     r2_score,
 )
@@ -192,6 +191,8 @@ print("-" * 60)
 
 # region Model Evaluation
 
+# Keep the chronological split: earlier observations train the models and
+# later observations evaluate one-hour-ahead forecasting performance.
 x_train, x_test, y_train, y_test = train_test_split(
     X,
     y,
@@ -217,6 +218,20 @@ models = {
     "SVR": SVR(kernel="rbf", C=100.0, epsilon=0.1),
 }
 
+# RMSE-based score used consistently for model comparison and the chart.
+# This is a custom normalized score, not a standard regression accuracy metric.
+accuracy_reference_mean = float(y_test.mean())
+if not np.isfinite(accuracy_reference_mean) or accuracy_reference_mean <= 0:
+    raise ValueError(
+        "The mean of the test target must be positive to calculate "
+        "the RMSE-based accuracy score."
+    )
+
+
+def calculate_rmse_accuracy(rmse_value, reference_mean):
+    return max(0.0, (1.0 - float(rmse_value) / float(reference_mean)) * 100.0)
+
+
 trained_models = {}
 predictions = {}
 records = []
@@ -228,28 +243,29 @@ for model_name, estimator in models.items():
     ])
     model_pipeline.fit(x_train, y_train)
     prediction = model_pipeline.predict(x_test)
+
     trained_models[model_name] = model_pipeline
     predictions[model_name] = prediction
 
     mse = mean_squared_error(y_test, prediction)
-    positive = y_test.to_numpy() > 0
-    mape_percentage = (mean_absolute_percentage_error(y_test.to_numpy()[positive], prediction[positive]) * 100
-                       if positive.any() else np.nan)
+    rmse = float(np.sqrt(mse))
+    r2_value = r2_score(y_test, prediction)
+
     records.append({
         "Model": model_name,
         "MAE": mean_absolute_error(y_test, prediction),
         "MSE": mse,
-        "RMSE": np.sqrt(mse),
-        "R2": r2_score(y_test, prediction),
-        "R2 Percentage": r2_score(y_test, prediction) * 100,
-        "Accuracy": max(0.0, 100.0 - mape_percentage) if np.isfinite(mape_percentage) else np.nan,
+        "RMSE": rmse,
+        "R2": r2_value,
+        "R2 Percentage": r2_value * 100.0,
+        "Accuracy": calculate_rmse_accuracy(rmse, accuracy_reference_mean),
     })
 
-# Select the recommended model using the same metric shown in the Accuracy chart.
-# Higher Accuracy (100 - MAPE%) is better.
+# Lowest RMSE is the primary selection rule. Since the reference mean is
+# identical for all models, this also gives the highest RMSE-based score.
 metrics_df = (
     pd.DataFrame(records)
-    .sort_values("Accuracy", ascending=False, na_position="last")
+    .sort_values(["RMSE", "Model"], ascending=[True, True])
     .reset_index(drop=True)
 )
 best_model_name = metrics_df.iloc[0]["Model"]
@@ -258,8 +274,9 @@ best_prediction = predictions[best_model_name]
 print("\nRegression Metrics:")
 print(metrics_df.round(4).to_string(index=False))
 print("-" * 60)
+print("RMSE Accuracy Reference Mean:", round(accuracy_reference_mean, 4))
 print("Recommended Model:", best_model_name)
-print("Selection Rule: Highest Accuracy (100 - MAPE%) on the chronological test set")
+print("Selection Rule: Lowest RMSE on the chronological test set")
 
 # endregion
 
@@ -387,12 +404,15 @@ for text in legend.get_texts():
     text.set_color(TEXT_COLOR)
 display_figure()
 
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+# RMSE-based accuracy comparison, styled to match the Abalone chart.
+accuracy_plot = (
+    metrics_df.set_index("Model")[["Accuracy"]]
+    .sort_values("Accuracy", ascending=False)
+)
+plt.figure(figsize=(14, 8), dpi=110, facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, "Beijing PM2.5 - Regression Model Accuracy")
-accuracy_plot = metrics_df.set_index("Model")[["Accuracy"]]
-accuracy_plot = accuracy_plot.sort_values("Accuracy", ascending=False)
+set_chart_title(ax, "Beijing PM2.5 - Regression Model Accuracy (RMSE-based)")
 accuracy_bar_colors = [
     MODEL_COLORS[index % len(MODEL_COLORS)]
     for index in range(len(accuracy_plot))
@@ -403,6 +423,7 @@ accuracy_bars = ax.bar(
     color=accuracy_bar_colors,
     edgecolor="white",
     linewidth=0.8,
+    width=0.78,
 )
 for bar in accuracy_bars:
     value = bar.get_height()
@@ -412,17 +433,18 @@ for bar in accuracy_bars:
         f"{value:.2f}%",
         ha="center",
         va="bottom",
-        fontsize=10,
+        fontsize=11,
         color=TITLE_COLOR,
         fontweight="bold",
+        clip_on=False,
     )
-ax.set_xlabel("Model", fontsize=12, color=TEXT_COLOR)
-ax.set_ylabel("Accuracy (%)", fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+ax.set_xlabel("Model", fontsize=13, color=TEXT_COLOR, labelpad=12)
+ax.set_ylabel("Accuracy (%)", fontsize=13, color=TEXT_COLOR)
+ax.set_ylim(0, max(100.0, float(accuracy_plot["Accuracy"].max()) + 7.0))
 ax.margins(x=0.08)
-ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
-ax.tick_params(axis="y", colors=TEXT_COLOR)
-display_figure()
+ax.tick_params(axis="x", rotation=20, labelsize=11, colors=TEXT_COLOR)
+ax.tick_params(axis="y", labelsize=11, colors=TEXT_COLOR)
+display_figure(rect=(0.02, 0.04, 0.98, 0.93))
 
 plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
 ax = plt.gca()
@@ -463,35 +485,64 @@ print("Metrics:", metrics_path)
 
 model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-model_paths = {}
 
-feature_columns_path = model_folder / "beijing_pm25_feature_columns.joblib"
-joblib.dump(FEATURES, feature_columns_path)
-print("Saved Feature Columns:", feature_columns_path)
+# Store all five trained pipelines and their prediction schema in one bundle.
+# This keeps the ModelsOutcome folder compact and ready for the future UI.
+model_bundle_path = model_folder / "beijing_pm25_regression_models.joblib"
 
-for model_name, model_pipeline in trained_models.items():
-    model_file_name = model_name.lower().replace(" ", "_") + ".joblib"
-    model_path = model_folder / f"beijing_pm25_{model_file_name}"
-    joblib.dump(
-        {
-            "model": model_pipeline,
-            "model_name": model_name,
-            "target_column": TARGET,
-            "raw_target_column": RAW_TARGET,
-            "feature_columns": FEATURES,
-            "forecast_horizon_hours": 1,
-        },
-        model_path,
+model_bundle = {
+    "dataset_name": "Beijing PM2.5",
+    "models": trained_models,
+    "model_names": list(trained_models.keys()),
+    "feature_columns": FEATURES,
+    "numeric_features": numeric_features,
+    "categorical_features": categorical_features,
+    "target_column": TARGET,
+    "raw_target_column": RAW_TARGET,
+    "forecast_horizon_hours": 1,
+    "recommended_model": best_model_name,
+    "metrics": metrics_df.to_dict(orient="records"),
+    "recommended_model_metrics": metrics_df.iloc[0].to_dict(),
+    "accuracy_definition": (
+        "max(0, (1 - RMSE / mean(y_test)) * 100); "
+        "custom normalized score, not standard regression accuracy"
+    ),
+    "accuracy_reference_mean": accuracy_reference_mean,
+    "evaluation": {
+        "test_size": TEST_SIZE,
+        "random_state": RANDOM_STATE,
+        "split_method": "Chronological; first 80% train, last 20% test",
+        "forecast_mode": "Rolling one-hour-ahead using observed history",
+    },
+}
+
+joblib.dump(model_bundle, model_bundle_path)
+print("\nSaved Combined Model Bundle:", model_bundle_path)
+
+# Reload the saved bundle and verify all five pipelines, not just the winner.
+loaded_bundle = joblib.load(model_bundle_path)
+verification_results = {}
+
+for model_name, saved_pipeline in loaded_bundle["models"].items():
+    reloaded_prediction = saved_pipeline.predict(x_test)
+    verification_results[model_name] = bool(
+        np.allclose(
+            predictions[model_name],
+            reloaded_prediction,
+            rtol=1e-8,
+            atol=1e-8,
+        )
     )
-    model_paths[model_name] = model_path
-    print("Saved Model:", model_path)
 
-best_bundle = joblib.load(model_paths[best_model_name])
-prediction_verification = best_bundle["model"].predict(x_test)
-model_verification = bool(np.allclose(best_prediction, prediction_verification))
+model_verification = all(verification_results.values())
+loaded_bundle["model_verification"] = model_verification
+loaded_bundle["model_verification_details"] = verification_results
+joblib.dump(loaded_bundle, model_bundle_path)
 
 print("\nModels Loaded Successfully!")
 print("Model Verification:", model_verification)
+print("Verification Details:", verification_results)
+print("Saved Model Bundle:", model_bundle_path)
 
 # endregion
 
@@ -512,6 +563,7 @@ feature_importance_metadata = json.loads(coefficient_df.round(4).to_json(orient=
 run_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
 
 metadata = {
+    "correlation_matrix": json.loads((samples[numeric_features + [TARGET]].corr()).to_json()),
     "id": "D12",
     "run_timestamp": run_timestamp,
     "name": "Beijing PM2.5",
@@ -549,8 +601,9 @@ metadata = {
         "metrics": ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"],
         "results": metrics_metadata,
         "recommended_model": best_model_name,
-        "selection_rule": "Highest Accuracy (100 - MAPE%) on the chronological test set",
-        "accuracy_definition": "Custom score, not standard regression accuracy: max(0, 100 - MAPE percentage), computed on positive actual targets only",
+        "selection_rule": "Lowest RMSE on the chronological test set",
+        "accuracy_definition": "Custom normalized score, not standard regression accuracy: max(0, (1 - RMSE / mean(y_test)) * 100)",
+        "accuracy_reference_mean": accuracy_reference_mean,
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",
@@ -559,13 +612,13 @@ metadata = {
         "most_influential_feature": coefficient_df.iloc[0]["Feature"],
     },
     "model_verification": model_verification,
+    "model_verification_details": verification_results,
     "output_files": {
         "original_dataset": "Datasets/PRSA_data_2010.1.1-2014.12.31.csv",
         "processed_dataset": "Datasets/Processed/beijing_pm25_regression_results.csv",
         "metrics": "Datasets/Processed/beijing_pm25_metrics.csv",
         "metadata_latest": "Metadata/D12_beijing_pm25.json",
-        "feature_columns": "ModelsOutcome/beijing_pm25_feature_columns.joblib",
-        "models": {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "model_bundle": "ModelsOutcome/beijing_pm25_regression_models.joblib",
     },
 }
 

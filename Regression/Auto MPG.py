@@ -15,7 +15,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.metrics import (
     mean_absolute_error,
-    mean_absolute_percentage_error,
     mean_squared_error,
     r2_score,
 )
@@ -268,20 +267,24 @@ for model_name, estimator in models.items():
     predictions[model_name] = prediction
 
     mse = mean_squared_error(y_test, prediction)
-    mape_percentage = mean_absolute_percentage_error(y_test, prediction) * 100
+    rmse = float(np.sqrt(mse))
+    target_mean = float(np.mean(np.abs(y_test)))
+    rmse_accuracy = max(0.0, (1.0 - rmse / target_mean) * 100.0) if target_mean else 0.0
+
     records.append({
         "Model": model_name,
         "MAE": mean_absolute_error(y_test, prediction),
         "MSE": mse,
-        "RMSE": np.sqrt(mse),
+        "RMSE": rmse,
         "R2": r2_score(y_test, prediction),
         "R2 Percentage": r2_score(y_test, prediction) * 100,
-        "Accuracy": max(0.0, 100.0 - mape_percentage),
+        "Accuracy": rmse_accuracy,
     })
 
-# Select the model with the highest MAPE-based score, matching the Accuracy chart.
+# All models use the same test target, so the highest RMSE-based score
+# is equivalent to the lowest RMSE.
 metrics_df = pd.DataFrame(records).sort_values(
-    "Accuracy", ascending=False
+    "RMSE", ascending=True
 ).reset_index(drop=True)
 best_model_name = metrics_df.iloc[0]["Model"]
 best_prediction = predictions[best_model_name]
@@ -290,7 +293,8 @@ print("\nRegression Metrics:")
 print(metrics_df.round(4).to_string(index=False))
 print("-" * 60)
 print("Recommended Model:", best_model_name)
-print("Selection Rule: Highest MAPE-based score on the held-out test set")
+print("Selection Rule: Lowest RMSE on the held-out test set")
+print("Accuracy Definition: max(0, (1 - RMSE / mean(abs(y_test))) * 100)")
 
 # endregion
 
@@ -449,19 +453,22 @@ for text in legend.get_texts():
     text.set_color(TEXT_COLOR)
 display_figure()
 
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+plt.figure(figsize=(12, 7.5), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, "Auto MPG - Regression Model Accuracy")
-accuracy_plot = metrics_df.set_index("Model")[["Accuracy"]]
-accuracy_plot = accuracy_plot.sort_values("Accuracy", ascending=False)
+set_chart_title(ax, "Auto MPG - Regression Model Accuracy (RMSE-based)")
+
+accuracy_plot = metrics_df.sort_values("Accuracy", ascending=False).set_index("Model")
+bar_colors = MODEL_COLORS[:len(accuracy_plot)]
 accuracy_bars = ax.bar(
     accuracy_plot.index,
     accuracy_plot["Accuracy"],
-    color=MODEL_COLORS[:len(accuracy_plot)],
+    color=bar_colors,
     edgecolor="white",
     linewidth=0.8,
+    width=0.78,
 )
+
 for bar in accuracy_bars:
     value = bar.get_height()
     ax.text(
@@ -470,16 +477,18 @@ for bar in accuracy_bars:
         f"{value:.2f}%",
         ha="center",
         va="bottom",
-        fontsize=10,
+        fontsize=11,
         color=TITLE_COLOR,
         fontweight="bold",
+        clip_on=False,
     )
-ax.set_xlabel("Model", fontsize=12, color=TEXT_COLOR)
-ax.set_ylabel("Accuracy (%)", fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+
+ax.set_xlabel("Model", fontsize=13, color=TEXT_COLOR, labelpad=12)
+ax.set_ylabel("Accuracy (%)", fontsize=13, color=TEXT_COLOR, labelpad=10)
+ax.set_ylim(0, min(110, max(100, float(accuracy_plot["Accuracy"].max()) + 8)))
 ax.margins(x=0.08)
-ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
-ax.tick_params(axis="y", colors=TEXT_COLOR)
+ax.tick_params(axis="x", rotation=20, labelsize=11, colors=TEXT_COLOR)
+ax.tick_params(axis="y", labelsize=11, colors=TEXT_COLOR)
 display_figure()
 
 plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
@@ -521,33 +530,46 @@ print("Metrics:", metrics_path)
 
 model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-model_paths = {}
 
-feature_columns_path = model_folder / "auto_mpg_feature_columns.joblib"
-joblib.dump(FEATURES, feature_columns_path)
-print("Saved Feature Columns:", feature_columns_path)
+# Save all five trained pipelines, their feature columns, and evaluation
+# results in one bundle. The preprocessing steps are already inside each
+# Pipeline, so the UI only needs to provide the original feature values.
+model_bundle = {
+    "dataset_name": "Auto MPG",
+    "task": "Regression",
+    "models": trained_models,
+    "feature_columns": FEATURES,
+    "target_column": TARGET,
+    "metrics": metrics_df.to_dict(orient="records"),
+    "recommended_model": best_model_name,
+    "accuracy_definition": (
+        "max(0, (1 - RMSE / mean(abs(y_test))) * 100)"
+    ),
+    "test_size": TEST_SIZE,
+    "random_state": RANDOM_STATE,
+}
 
-for model_name, model_pipeline in trained_models.items():
-    model_file_name = model_name.lower().replace(" ", "_") + ".joblib"
-    model_path = model_folder / f"auto_mpg_{model_file_name}"
-    joblib.dump(
-        {
-            "model": model_pipeline,
-            "model_name": model_name,
-            "target_column": TARGET,
-            "feature_columns": FEATURES,
-        },
-        model_path,
+bundle_path = model_folder / "auto_mpg_regression_models.joblib"
+joblib.dump(model_bundle, bundle_path)
+print("\nSaved Combined Regression Models:", bundle_path)
+
+# Load the saved bundle and verify every model against its original prediction.
+loaded_bundle = joblib.load(bundle_path)
+model_verification_results = {}
+
+for model_name, original_prediction in predictions.items():
+    loaded_prediction = loaded_bundle["models"][model_name].predict(x_test)
+    model_verification_results[model_name] = bool(
+        np.allclose(original_prediction, loaded_prediction)
     )
-    model_paths[model_name] = model_path
-    print("Saved Model:", model_path)
 
-best_bundle = joblib.load(model_paths[best_model_name])
-prediction_verification = best_bundle["model"].predict(x_test)
-model_verification = bool(np.allclose(best_prediction, prediction_verification))
+model_verification = all(model_verification_results.values())
 
 print("\nModels Loaded Successfully!")
-print("Model Verification:", model_verification)
+print("Model Verification Results:", model_verification_results)
+print("All Models Verification:", model_verification)
+print("Models Included:", list(loaded_bundle["models"].keys()))
+print("Feature Columns Included:", loaded_bundle["feature_columns"])
 
 # endregion
 
@@ -601,8 +623,8 @@ metadata = {
         "metrics": ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Accuracy"],
         "results": metrics_metadata,
         "recommended_model": best_model_name,
-        "selection_rule": "Highest MAPE-based score on the held-out test set",
-        "accuracy_definition": "MAPE-based score: max(0, 100 - MAPE percentage); this is not a standard regression accuracy metric",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_definition": "RMSE-based normalized score: max(0, (1 - RMSE / mean(abs(y_test))) * 100); this is not a standard regression accuracy metric",
     },
     "feature_importance": {
         "method": "Linear Regression Coefficients",
@@ -611,13 +633,13 @@ metadata = {
         "most_influential_feature": coefficient_df.iloc[0]["Feature"],
     },
     "model_verification": model_verification,
+    "model_verification_results": model_verification_results,
     "output_files": {
         "original_dataset": "DataSets/auto-mpg.data",
         "processed_dataset": "DataSets/Processed/auto_mpg_regression_results.csv",
         "metrics": "DataSets/Processed/auto_mpg_metrics.csv",
         "metadata_latest": "Metadata/D8_auto_mpg.json",
-        "feature_columns": "ModelsOutcome/auto_mpg_feature_columns.joblib",
-        "models": {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "combined_models": "ModelsOutcome/auto_mpg_regression_models.joblib",
     },
 }
 
@@ -642,4 +664,3 @@ print("Model Verification:", saved_metadata["model_verification"])
 print("\nMetadata Process Completed Successfully!")
 
 # endregion
-

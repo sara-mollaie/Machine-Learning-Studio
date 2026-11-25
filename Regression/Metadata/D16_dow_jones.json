@@ -1,6 +1,71 @@
 {
+    "correlation_matrix": {
+        "percent_change_price": {
+            "percent_change_price": 1.0,
+            "percent_change_volume_over_last_wk": -0.3142981465,
+            "volume": -0.1354747134,
+            "previous_weeks_volume": -0.0450384768,
+            "weekly_range_pct": -0.1497320257,
+            "close_vs_open_pct": 1.0,
+            "percent_change_next_weeks_price": -0.0247251051
+        },
+        "percent_change_volume_over_last_wk": {
+            "percent_change_price": -0.3142981465,
+            "percent_change_volume_over_last_wk": 1.0,
+            "volume": 0.2143663232,
+            "previous_weeks_volume": -0.127189223,
+            "weekly_range_pct": 0.5702884381,
+            "close_vs_open_pct": -0.3142979436,
+            "percent_change_next_weeks_price": 0.0355312589
+        },
+        "volume": {
+            "percent_change_price": -0.1354747134,
+            "percent_change_volume_over_last_wk": 0.2143663232,
+            "volume": 1.0,
+            "previous_weeks_volume": 0.8666637414,
+            "weekly_range_pct": 0.378757539,
+            "close_vs_open_pct": -0.1354746888,
+            "percent_change_next_weeks_price": -0.0682423882
+        },
+        "previous_weeks_volume": {
+            "percent_change_price": -0.0450384768,
+            "percent_change_volume_over_last_wk": -0.127189223,
+            "volume": 0.8666637414,
+            "previous_weeks_volume": 1.0,
+            "weekly_range_pct": 0.173211109,
+            "close_vs_open_pct": -0.0450385209,
+            "percent_change_next_weeks_price": -0.1507590535
+        },
+        "weekly_range_pct": {
+            "percent_change_price": -0.1497320257,
+            "percent_change_volume_over_last_wk": 0.5702884381,
+            "volume": 0.378757539,
+            "previous_weeks_volume": 0.173211109,
+            "weekly_range_pct": 1.0,
+            "close_vs_open_pct": -0.1497318653,
+            "percent_change_next_weeks_price": -0.0158405236
+        },
+        "close_vs_open_pct": {
+            "percent_change_price": 1.0,
+            "percent_change_volume_over_last_wk": -0.3142979436,
+            "volume": -0.1354746888,
+            "previous_weeks_volume": -0.0450385209,
+            "weekly_range_pct": -0.1497318653,
+            "close_vs_open_pct": 1.0,
+            "percent_change_next_weeks_price": -0.024725178
+        },
+        "percent_change_next_weeks_price": {
+            "percent_change_price": -0.0247251051,
+            "percent_change_volume_over_last_wk": 0.0355312589,
+            "volume": -0.0682423882,
+            "previous_weeks_volume": -0.1507590535,
+            "weekly_range_pct": -0.0158405236,
+            "close_vs_open_pct": -0.024725178,
+            "percent_change_next_weeks_price": 1.0
+        }
+    },
     "id": "D16",
-    "run_timestamp": "2026-11-23T05:12:53",
+    "run_timestamp": "2026-11-25T15:53:49",
     "name": "Dow Jones Index",
     "level": "Intermediate",
     "domain": "Business/Finance",
@@ -267,6 +332,7 @@
             "MAE",
             "MSE",
             "RMSE",
+            "Accuracy",
             "R2",
             "R2 Percentage",
             "Direction Accuracy"
@@ -277,6 +343,7 @@
                 "MAE": 1.8771337026,
                 "MSE": 6.594005242,
                 "RMSE": 2.5678795225,
+                "Accuracy": 86.3606040789,
                 "R2": 0.0390836261,
                 "R2 Percentage": 3.9083626067,
                 "Direction Accuracy": 56.6666666667
@@ -286,6 +353,7 @@
                 "MAE": 1.8407710336,
                 "MSE": 6.7344617561,
                 "RMSE": 2.595084152,
+                "Accuracy": 86.216105589,
                 "R2": 0.0186154949,
                 "R2 Percentage": 1.8615494896,
                 "Direction Accuracy": 65.0
@@ -295,6 +363,7 @@
                 "MAE": 1.958628651,
                 "MSE": 7.1524977025,
                 "RMSE": 2.6744153945,
+                "Accuracy": 85.7947344865,
                 "R2": -0.0423031078,
                 "R2 Percentage": -4.230310784,
                 "Direction Accuracy": 52.5
@@ -304,6 +373,7 @@
                 "MAE": 1.9322538902,
                 "MSE": 7.3832758486,
                 "RMSE": 2.7172184028,
+                "Accuracy": 85.5673845773,
                 "R2": -0.0759334268,
                 "R2 Percentage": -7.5933426762,
                 "Direction Accuracy": 55.8333333333
@@ -313,13 +383,16 @@
                 "MAE": 2.0127929857,
                 "MSE": 7.5552238863,
                 "RMSE": 2.7486767519,
+                "Accuracy": 85.4002922841,
                 "R2": -0.1009906839,
                 "R2 Percentage": -10.0990683902,
                 "Direction Accuracy": 54.1666666667
             }
         ],
         "recommended_model": "SVR",
-        "selection_rule": "Lowest validation RMSE",
+        "selection_rule": "Lowest validation RMSE (equivalent to highest RMSE-based Accuracy)",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_validation) - min(y_validation))))",
+        "accuracy_calculation_note": "The same validation target range is used for all five models, so higher Accuracy corresponds exactly to lower RMSE.",
         "split_method": "Chronological whole-week 60/20/20 with one-week boundary gaps",
         "train_rows": 420,
         "validation_rows": 120,
@@ -329,6 +402,7 @@
             "MAE": 2.6972239537612714,
             "MSE": 10.96302584702366,
             "RMSE": 3.3110460351713114,
+            "Accuracy": 77.44179447197901,
             "R2": -0.017201051171458648,
             "R2 Percentage": -1.7201051171458648,
             "Direction Accuracy": 45.33333333333333
@@ -337,6 +411,7 @@
             "MAE": 2.5985358780000003,
             "MSE": 10.77906785893902,
             "RMSE": 3.283149076563387,
+            "Accuracy": 77.63185686289702,
             "R2": -0.00013256465485689262,
             "R2 Percentage": -0.013256465485689262,
             "Direction Accuracy": 0.6666666666666667
@@ -346,6 +421,13 @@
             "mean_weekly_spearman": 0.13601779755283647,
             "mean_actual_top_pick_return_pct": -0.27005200000000007,
             "test_weeks": 5
+        },
+        "model_verification_results": {
+            "Linear Regression": true,
+            "Ridge": true,
+            "Random Forest": true,
+            "Gradient Boosting": true,
+            "SVR": true
         }
     },
     "feature_importance": {
@@ -571,16 +653,9 @@
     },
     "model_verification": true,
     "output_files": {
-        "models": {
-            "Linear Regression": "ModelsOutcome/dow_jones_linear_regression.joblib",
-            "Ridge": "ModelsOutcome/dow_jones_ridge.joblib",
-            "Random Forest": "ModelsOutcome/dow_jones_random_forest.joblib",
-            "Gradient Boosting": "ModelsOutcome/dow_jones_gradient_boosting.joblib",
-            "SVR": "ModelsOutcome/dow_jones_svr.joblib"
-        },
+        "models": "ModelsOutcome/dow_jones_regression_models.joblib",
         "original_dataset": "DataSets/dow_jones_index.data",
         "metadata_latest": "Metadata/D16_dow_jones.json",
-        "feature_columns": "ModelsOutcome/dow_jones_feature_columns.joblib",
         "metrics": "DataSets/Processed/dow_jones_metrics.csv",
         "rankings": "DataSets/Processed/dow_jones_weekly_rankings.csv"
     }

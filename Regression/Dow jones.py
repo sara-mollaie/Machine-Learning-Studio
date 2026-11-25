@@ -29,7 +29,7 @@ FEATURES = [
 ]
 # endregion
 
-METRICS = ["MAE", "MSE", "RMSE", "R2", "R2 Percentage", "Direction Accuracy"]
+METRICS = ["MAE", "MSE", "RMSE", "Accuracy", "R2", "R2 Percentage", "Direction Accuracy"]
 # region Chart Colors
 
 BG_COLOR = "#FFFFFF"
@@ -132,13 +132,29 @@ def create_preprocessor():
 # endregion
 
 def evaluate(actual, predicted):
-    mse = mean_squared_error(actual, predicted)
-    r2 = r2_score(actual, predicted)
+    actual_values = np.asarray(actual, dtype=float)
+    predicted_values = np.asarray(predicted, dtype=float)
+    mse = mean_squared_error(actual_values, predicted_values)
+    rmse = float(np.sqrt(mse))
+    target_range = float(np.max(actual_values) - np.min(actual_values))
+
+    # Same RMSE-based accuracy convention used for the Abalone dataset.
+    if target_range > 0:
+        accuracy = max(0.0, 100.0 * (1.0 - rmse / target_range))
+    else:
+        accuracy = 100.0 if rmse == 0 else 0.0
+
+    r2 = r2_score(actual_values, predicted_values)
     return {
-        "MAE": float(mean_absolute_error(actual, predicted)),
-        "MSE": float(mse), "RMSE": float(np.sqrt(mse)),
-        "R2": float(r2), "R2 Percentage": float(100 * r2),
-        "Direction Accuracy": float(100 * np.mean(np.sign(actual) == np.sign(predicted))),
+        "MAE": float(mean_absolute_error(actual_values, predicted_values)),
+        "MSE": float(mse),
+        "RMSE": rmse,
+        "Accuracy": float(accuracy),
+        "R2": float(r2),
+        "R2 Percentage": float(100 * r2),
+        "Direction Accuracy": float(
+            100 * np.mean(np.sign(actual_values) == np.sign(predicted_values))
+        ),
     }
 
 
@@ -207,7 +223,8 @@ metrics_df = pd.DataFrame(records).sort_values("RMSE", kind="stable").reset_inde
 best = metrics_df.iloc[0]["Model"]
 print("Validation metrics:\n", metrics_df.to_string(index=False, float_format="{:.4f}".format))
 print("Recommended Model:", best)
-print("Selection rule: lowest validation RMSE")
+print("Selection rule: lowest validation RMSE / highest RMSE-based Accuracy")
+print("Accuracy definition: max(0, 100 * (1 - RMSE / validation target range)))")
 # Refit all model bundles on the same pre-test period after selection.
 pretest = df[df["date"].isin(weeks[:test_start - 1])]
 for pipeline in trained_models.values():
@@ -336,13 +353,36 @@ display_figure()
 # region Data Visualization
 
 
-direction = metrics_df.sort_values("Direction Accuracy", ascending=False)
-fig, ax = chart("Dow Jones - Direction Accuracy")
-bars = ax.bar(direction["Model"], direction["Direction Accuracy"], color=MODEL_COLORS, edgecolor="white")
-ax.bar_label(bars, fmt="%.2f%%", padding=4, color=TITLE_COLOR, fontweight="bold")
-ax.set_ylabel("Direction Accuracy (%)", color=TEXT_COLOR)
+# Match the Abalone chart: highest RMSE-based accuracy appears first.
+accuracy_chart_df = metrics_df.sort_values(
+    "RMSE",
+    ascending=True,
+    kind="stable",
+).reset_index(drop=True)
+
+fig, ax = chart(
+    "Dow Jones - Regression Model Accuracy (RMSE-based)",
+    (11.5, 6.5),
+)
+bars = ax.bar(
+    accuracy_chart_df["Model"],
+    accuracy_chart_df["Accuracy"],
+    color=MODEL_COLORS[:len(accuracy_chart_df)],
+    edgecolor="white",
+)
+ax.bar_label(
+    bars,
+    fmt="%.2f%%",
+    padding=6,
+    color=TITLE_COLOR,
+    fontweight="bold",
+    fontsize=11,
+)
+ax.set_ylabel("Accuracy (%)", color=TEXT_COLOR)
+ax.set_xlabel("Model", color=TEXT_COLOR)
 ax.set_ylim(0, 105)
-ax.tick_params(axis="x", rotation=20)
+ax.tick_params(axis="x", rotation=20, labelsize=10)
+ax.tick_params(axis="y", labelsize=10)
 display_figure()
 
 fig, ax = chart(f"Dow Jones - Actual vs Predicted ({best})")
@@ -374,22 +414,58 @@ ranking.to_csv(output / "dow_jones_weekly_rankings.csv", index=False)
 # endregion
 
 # region Training Models
-joblib.dump(FEATURES, model_dir / "dow_jones_feature_columns.joblib")
-paths = {}
-for name, pipeline in trained_models.items():
-    path = model_dir / ("dow_jones_" + name.lower().replace(" ", "_") + ".joblib")
-    joblib.dump({"model": pipeline, "model_name": name, "feature_columns": FEATURES,
-                 "target_column": TARGET, "feature_formulas": {
-                     "weekly_range_pct": "100 * (high - low) / open",
-                     "close_vs_open_pct": "100 * (close - open) / open",
-                 }}, path)
-    paths[name] = path.relative_to(BASE_DIR).as_posix()
-restored = joblib.load(BASE_DIR / paths[best])
-verified = bool(np.allclose(restored["model"].predict(test[FEATURES]), best_prediction))
+# Store all five trained pipelines and their evaluation information in one bundle.
+model_bundle_path = model_dir / "dow_jones_regression_models.joblib"
+model_bundle = {
+    "dataset_name": "Dow Jones Index",
+    "models": trained_models,
+    "model_names": list(trained_models.keys()),
+    "best_model_name": best,
+    "feature_columns": FEATURES,
+    "target_column": TARGET,
+    "feature_formulas": {
+        "weekly_range_pct": "100 * (high - low) / open",
+        "close_vs_open_pct": "100 * (close - open) / open",
+    },
+    "evaluation": {
+        "selection_metric": "RMSE",
+        "selection_rule": "Lowest validation RMSE",
+        "accuracy_definition": (
+            "max(0, 100 * (1 - RMSE / (max(y_validation) - min(y_validation))))"
+        ),
+        "validation_target_min": float(validation[TARGET].min()),
+        "validation_target_max": float(validation[TARGET].max()),
+        "validation_target_range": float(validation[TARGET].max() - validation[TARGET].min()),
+        "validation_metrics": metrics_df.to_dict(orient="records"),
+        "test_metrics_for_best_model": test_metrics,
+        "baseline_test_metrics": baseline_metrics,
+        "split_method": "Chronological whole-week 60/20/20 with one-week boundary gaps",
+    },
+    "training_settings": {
+        "random_state": RANDOM_STATE,
+        "numeric_preprocessing": "Median imputation + StandardScaler",
+        "categorical_preprocessing": "OneHotEncoder(handle_unknown='ignore')",
+    },
+}
+joblib.dump(model_bundle, model_bundle_path)
+
+# Reload the saved bundle and verify that all five models reproduce their predictions.
+restored_bundle = joblib.load(model_bundle_path)
+verification_results = {}
+for model_name, original_pipeline in trained_models.items():
+    restored_prediction = restored_bundle["models"][model_name].predict(test[FEATURES])
+    original_prediction = original_pipeline.predict(test[FEATURES])
+    verification_results[model_name] = bool(
+        np.allclose(restored_prediction, original_prediction)
+    )
+verified = bool(all(verification_results.values()))
+print("Saved model bundle:", model_bundle_path)
+print("All model verification results:", verification_results)
 # endregion
 
 # region Save Metadata
 metadata = {
+    "correlation_matrix": json.loads((train[FEATURES[1:] + [TARGET]].corr()).to_json()),
     "id": "D16", "run_timestamp": datetime.now().isoformat(timespec="seconds"), "name": "Dow Jones Index", "level": "Intermediate",
     "domain": "Business/Finance", "task": "Regression",
     "description": "Predict next-week stock returns and rank stocks within each week.",
@@ -410,24 +486,38 @@ metadata = {
     "feature_selection": {"selected_features": FEATURES, "target_column": TARGET,
                           "excluded_future_columns": ["next_weeks_open", "next_weeks_close"]},
     "model_evaluation": {
-        "metrics": METRICS, "results": json.loads(metrics_df.to_json(orient="records")),
-        "recommended_model": best, "selection_rule": "Lowest validation RMSE",
+        "metrics": METRICS,
+        "results": json.loads(metrics_df.to_json(orient="records")),
+        "recommended_model": best,
+        "selection_rule": "Lowest validation RMSE (equivalent to highest RMSE-based Accuracy)",
+        "accuracy_definition": (
+            "max(0, 100 * (1 - RMSE / (max(y_validation) - min(y_validation))))"
+        ),
+        "accuracy_calculation_note": (
+            "The same validation target range is used for all five models, "
+            "so higher Accuracy corresponds exactly to lower RMSE."
+        ),
         "split_method": "Chronological whole-week 60/20/20 with one-week boundary gaps",
-        "train_rows": len(train), "validation_rows": len(validation), "test_rows": len(test),
-        "refit_rows": len(pretest), "test_results": test_metrics,
+        "train_rows": len(train),
+        "validation_rows": len(validation),
+        "test_rows": len(test),
+        "refit_rows": len(pretest),
+        "test_results": test_metrics,
         "baseline_test_results": baseline_metrics,
         "direction_accuracy_definition": "100 * mean(sign(actual) == sign(predicted)); zero is a separate direction",
         "ranking": ranking_summary,
+        "model_verification_results": verification_results,
     },
     "feature_importance": {"method": "Linear Regression coefficients after preprocessing",
                           "results": json.loads(coefficient_df.to_json(orient="records"))},
     "model_verification": verified,
-    "output_files": {"models": paths,
-                     "original_dataset": "DataSets/dow_jones_index.data",
-                     "metadata_latest": "Metadata/D16_dow_jones.json",
-                     "feature_columns": "ModelsOutcome/dow_jones_feature_columns.joblib",
-                     "metrics": "DataSets/Processed/dow_jones_metrics.csv",
-                     "rankings": "DataSets/Processed/dow_jones_weekly_rankings.csv"},
+    "output_files": {
+        "models": "ModelsOutcome/dow_jones_regression_models.joblib",
+        "original_dataset": "DataSets/dow_jones_index.data",
+        "metadata_latest": "Metadata/D16_dow_jones.json",
+        "metrics": "DataSets/Processed/dow_jones_metrics.csv",
+        "rankings": "DataSets/Processed/dow_jones_weekly_rankings.csv",
+    },
 }
 with (metadata_dir / "D16_dow_jones.json").open("w", encoding="utf-8") as file:
     json.dump(metadata, file, ensure_ascii=False, indent=4, allow_nan=False)

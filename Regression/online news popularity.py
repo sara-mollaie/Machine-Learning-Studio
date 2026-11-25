@@ -14,7 +14,7 @@ from matplotlib.patches import Patch
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
@@ -179,6 +179,15 @@ models = {
     'SVR': SVR(kernel='rbf', C=100.0, epsilon=0.1),
 }
 trained_models, predictions, records = {}, {}, []
+ACCURACY_DEFINITION = "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))"
+accuracy_target_range = float(y_test.max() - y_test.min())
+if not np.isfinite(accuracy_target_range) or accuracy_target_range <= 0:
+    raise ValueError("Test target range must be finite and positive for the RMSE-based score.")
+
+def rmse_accuracy(rmse):
+    """Custom normalized RMSE score, not standard regression accuracy."""
+    return float(np.clip(100.0 * (1.0 - float(rmse) / accuracy_target_range), 0.0, 100.0))
+
 for name, estimator in models.items():
     pipeline = Pipeline([('preprocessor', create_preprocessor()), ('model', estimator)])
     pipeline.fit(x_train, y_train)
@@ -186,18 +195,16 @@ for name, estimator in models.items():
     trained_models[name] = pipeline
     predictions[name] = prediction
     mse = mean_squared_error(y_test, prediction)
-    mape_percentage = mean_absolute_percentage_error(y_test, prediction) * 100
     records.append({'Model': name, 'MAE': mean_absolute_error(y_test, prediction),
                     'MSE': mse, 'RMSE': np.sqrt(mse), 'R2': r2_score(y_test, prediction),
                     'R2 Percentage': r2_score(y_test, prediction) * 100,
-                    'Accuracy': max(0.0, 100.0 - mape_percentage)})
-metrics_df = pd.DataFrame(records).sort_values(['Accuracy', 'RMSE'],
-                                                 ascending=[False, True], kind='stable').reset_index(drop=True)
+                    'Accuracy': rmse_accuracy(np.sqrt(mse))})
+metrics_df = pd.DataFrame(records).sort_values('RMSE', kind='stable').reset_index(drop=True)
 best_model_name = str(metrics_df.iloc[0]['Model'])
 best_prediction = predictions[best_model_name]
 print('\nRegression Metrics:\n', metrics_df.round(4).to_string(index=False))
 print('Recommended Model:', best_model_name)
-print('Selection Rule: Highest Concrete-style MAPE-based Accuracy, lowest RMSE as tie-breaker')
+print('Selection Rule: Lowest RMSE on the held-out test set')
 print('Note: This is a descriptive regression score, not classification accuracy.')
 # endregion
 
@@ -208,7 +215,7 @@ coefficient_df['Absolute Coefficient'] = coefficient_df['Coefficient'].abs()
 coefficient_df = coefficient_df.sort_values('Absolute Coefficient', ascending=False).reset_index(drop=True)
 coefficient_df['Importance Rank'] = np.arange(1, len(coefficient_df) + 1)
 print('\nLinear Regression Coefficients:\n', coefficient_df.round(4).to_string(index=False))
-plot_df = coefficient_df.head(10).iloc[::-1]
+plot_df = coefficient_df.head(10).sort_values('Coefficient', ascending=True, kind='stable')
 plt.figure(figsize=(12, 7), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
@@ -277,23 +284,24 @@ ax.tick_params(colors=TEXT_COLOR)
 ax.legend(facecolor=BG_COLOR, edgecolor=LAVENDER)
 display_figure()
 
-plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
+plt.figure(figsize=(14, 8.5), facecolor=BG_COLOR)
 ax = plt.gca()
 style_axes(ax)
-set_chart_title(ax, 'Online News - Regression Model Accuracy')
-accuracy_plot = metrics_df.sort_values(['Accuracy', 'RMSE'], ascending=[False, True], kind='stable')
-bars = ax.bar(accuracy_plot['Model'], accuracy_plot['Accuracy'],
-              color=MODEL_COLORS[:len(accuracy_plot)], edgecolor='white', linewidth=0.8)
+set_chart_title(ax, "Online News - Regression Model Accuracy (RMSE-based)")
+accuracy_plot = metrics_df.sort_values("RMSE", ascending=True, kind="stable")
+bars = ax.bar(accuracy_plot["Model"], accuracy_plot["Accuracy"],
+              color=MODEL_COLORS[:len(accuracy_plot)], edgecolor="white", linewidth=0.8)
 for bar in bars:
-    value = bar.get_height()
-    ax.text(bar.get_x() + bar.get_width() / 2, value + 1.0, f'{value:.2f}%',
-            ha='center', va='bottom', fontsize=10, color=TITLE_COLOR, fontweight='bold')
-ax.set_xlabel('Model', fontsize=12, color=TEXT_COLOR)
-ax.set_ylabel('Accuracy (%)', fontsize=12, color=TEXT_COLOR)
-ax.set_ylim(0, 100)
+    value = float(bar.get_height())
+    ax.text(bar.get_x() + bar.get_width()/2, value + 1.0, f"{value:.2f}%",
+            ha="center", va="bottom", fontsize=11, color=TITLE_COLOR, fontweight="bold")
+ax.set_xlabel("Model", fontsize=13, color=TEXT_COLOR)
+ax.set_ylabel("Accuracy (%)", fontsize=13, color=TEXT_COLOR)
+ax.set_ylim(0, 105)
+ax.set_yticks(np.arange(0, 101, 20))
 ax.margins(x=0.08)
-ax.tick_params(axis='x', rotation=20, colors=TEXT_COLOR)
-ax.tick_params(axis='y', colors=TEXT_COLOR)
+ax.tick_params(axis="x", rotation=20, colors=TEXT_COLOR)
+ax.tick_params(axis="y", colors=TEXT_COLOR)
 display_figure()
 
 plt.figure(figsize=(11, 7), facecolor=BG_COLOR)
@@ -325,20 +333,36 @@ print('Metrics:', metrics_path)
 # endregion
 
 # region Training Models
-model_folder = BASE_DIR / 'ModelsOutcome'
+model_folder = BASE_DIR / "ModelsOutcome"
 model_folder.mkdir(parents=True, exist_ok=True)
-feature_columns_path = model_folder / 'online_news_popularity_feature_columns.joblib'
-joblib.dump(FEATURES, feature_columns_path)
-model_paths = {}
-for name, pipeline in trained_models.items():
-    path = model_folder / ('online_news_popularity_' + name.lower().replace(' ', '_') + '.joblib')
-    joblib.dump({'model': pipeline, 'model_name': name, 'target_column': TARGET,
-                 'feature_columns': FEATURES, 'dataset_id': DATASET_ID}, path)
-    model_paths[name] = path
-    print('Saved Model:', path)
-best_bundle = joblib.load(model_paths[best_model_name])
-model_verification = bool(np.allclose(best_prediction, np.maximum(0.0, best_bundle['model'].predict(x_test))))
-print('Model Verification:', model_verification)
+model_bundle_path = model_folder / "online_news_popularity_regression_models.joblib"
+model_bundle = {
+    "schema_version": 1, "dataset_id": "D31", "dataset_name": "Online News",
+    "models": trained_models, "model_names": list(trained_models),
+    "best_model_name": str(best_model_name), "recommended_model": str(best_model_name),
+    "feature_columns": list(FEATURES), "target_column": TARGET,
+    "metrics": metrics_df.to_dict(orient="records"),
+    "accuracy_definition": ACCURACY_DEFINITION,
+    "accuracy_target_range": accuracy_target_range,
+    "accuracy_reference_partition": "test", "selection_rule": "Lowest test RMSE",
+    "prediction_postprocessing": {"clip_min": 0.0},
+    "random_state": RANDOM_STATE,
+}
+joblib.dump(model_bundle, model_bundle_path, compress=3)
+loaded_bundle = joblib.load(model_bundle_path)
+model_verification_results = {}
+for name, pipeline in loaded_bundle["models"].items():
+    restored_prediction = pipeline.predict(x_test)
+    clip_min = loaded_bundle["prediction_postprocessing"]["clip_min"]
+    if clip_min is not None:
+        restored_prediction = np.maximum(clip_min, restored_prediction)
+    model_verification_results[name] = bool(np.allclose(
+        predictions[name], restored_prediction, rtol=1e-7, atol=1e-8))
+model_verification = len(model_verification_results) == 5 and all(model_verification_results.values())
+if not model_verification:
+    raise RuntimeError("Saved models failed prediction verification.")
+print("Saved Model Bundle:", model_bundle_path)
+print("Model Verification:", model_verification_results)
 # endregion
 
 # region Save Metadata
@@ -370,12 +394,14 @@ metadata = {
         'split_method': 'Original article order 80/20, no shuffling',
     },
     'model_evaluation': {
+        "accuracy_definition": ACCURACY_DEFINITION,
+        "accuracy_target_range": accuracy_target_range,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
         'test_size': TEST_SIZE, 'training_rows': len(y_train), 'test_rows': len(y_test),
         'metrics': ['MAE', 'MSE', 'RMSE', 'R2', 'R2 Percentage', 'Accuracy'],
         'results': json.loads(metrics_df.round(6).to_json(orient='records')),
         'recommended_model': best_model_name,
-        'selection_rule': 'Highest Concrete-style MAPE-based Accuracy, lowest RMSE as tie-breaker',
-        'accuracy_definition': 'max(0, 100 - 100 * mean_absolute_percentage_error(actual, predicted))',
+        'selection_rule': 'Lowest RMSE on the held-out test set',
         'accuracy_caveat': 'Descriptive regression score, not classification accuracy.',
     },
     'feature_importance': {
@@ -385,12 +411,13 @@ metadata = {
         'most_influential_feature': str(coefficient_df.iloc[0]['Feature']),
     },
     'model_verification': model_verification,
+    "model_verification_results": model_verification_results,
+    "prediction_postprocessing": model_bundle["prediction_postprocessing"],
     'output_files': {
         'original_dataset': str(dataset_path.relative_to(BASE_DIR)),
         'processed_dataset': str(processed_path.relative_to(BASE_DIR)),
         'metrics': str(metrics_path.relative_to(BASE_DIR)),
-        'feature_columns': str(feature_columns_path.relative_to(BASE_DIR)),
-        'models': {name: str(path.relative_to(BASE_DIR)) for name, path in model_paths.items()},
+        "model_bundle": model_bundle_path.relative_to(BASE_DIR).as_posix(),
         'metadata_latest': 'Metadata/D31_online_news_popularity.json',
     },
 }

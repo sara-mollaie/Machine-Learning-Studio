@@ -1,11 +1,20 @@
 import json
 import math
 import tkinter as tk
+from pathlib import Path
 from types import SimpleNamespace
 
+import matplotlib
 import numpy as np
 import pandas as pd
-from PIL import Image, ImageDraw, ImageTk
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import LinearSegmentedColormap, Normalize
+from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
+from matplotlib.patches import FancyBboxPatch
+from matplotlib.ticker import FuncFormatter
+from PIL import Image, ImageTk
 
 from UserInterface.Datasets import (
     DatasetsModule, BG_LIGHT, BG_DARK, DESIGN_W, DESIGN_H, MX, BTN_DARK, BTN_LIGHT, CONTENT_W,
@@ -39,6 +48,23 @@ CLUSTER_COLORS = [
 ]
 
 MAX_POINTS = 6000
+
+# ---- پالت نمودارها: دقیقاً همان پالت RegressionVisualization ----
+PALETTE = {
+    "light": dict(fg="#2b1a52", muted="#65567f", grid="#a897c8", purple="#7547e8", purple_soft="#a98bf2",
+                  pink="#e03a8c", card="#7547e8", pt_face="#7547e8", pt_edge="#ffffff", line="#e03a8c",
+                  card_fill="#ffffff", card_fill_a=.58, card_edge="#c4b0ec", card_edge_a=.95),
+    "dark": dict(fg="#f8efff", muted="#dccbf3", grid="#c4aee6", purple="#ad90ff", purple_soft="#8a6bd8",
+                 pink="#ff7cb8", card="#c9b0ff", pt_face="#cfb8ff", pt_edge="#ffffff", line="#ff7cb8",
+                 card_fill="#c9b0ff", card_fill_a=.12, card_edge="#dccbf3", card_edge_a=.45),
+}
+
+# گیره‌های انتخاب‌شده در تم روشن: گرادیان بنفش ← رز، و حاشیهٔ لیلکی برای گیره‌های غیرفعال
+PILL_ON_LIGHT = ("#6d3ee8", "#e0408f")
+PILL_BORDER_LIGHT = ("#cbb8ee", 255)
+
+CARD_RECT = [0.685, 0.06, 0.295, 0.74]       # کادر خلاصهٔ سمت راست
+_FONTS_READY = False
 
 
 # =====================================================
@@ -89,18 +115,17 @@ def _fmt_tick(v):
 
 def _corr_color(v, dark):
     """
-    هرچه همبستگی بزرگ‌تر باشد رنگ تیره‌تر و هرچه کوچک‌تر باشد روشن‌تر.
-    مقدارهای مثبت بنفش و مقدارهای منفی (اگر باشند) صورتی هستند؛ در هر دو،
-    قدر مطلق بزرگ‌تر یعنی تیره‌تر.
+    هرچه قدر مطلق همبستگی بزرگ‌تر باشد رنگ پررنگ‌تر؛ مثبت = بنفش، منفی = صورتی.
+    در تم روشن رنگ سه‌مرحله‌ای است (لیلکی روشن ← بنفش میانی ← بنفش عمیق) تا میانه‌ها گل‌آلود نشوند.
     """
     t = min(1.0, abs(v))
-    # سر روشن عمداً سفید نیست تا روی کارت گم نشود (لیلکی/صورتی واقعی)
-    lo = "#b9a0ec" if dark else "#c6aaf0"                 # شروع مشترک = نوار رنگ بدون پرش
-    if v >= 0:
-        hi = "#5a2ea6" if dark else "#2f1366"
-    else:
-        hi = "#a3305f" if dark else "#8a1f4f"
-    return _mix(lo, hi, t)
+    if dark:
+        lo = "#b9a0ec"
+        hi = "#5a2ea6" if v >= 0 else "#a3305f"
+        return _mix(lo, hi, t)
+    lo, mid = "#e6dcfa", ("#a98bf2" if v >= 0 else "#f08ab8")
+    hi = "#4a1d9e" if v >= 0 else "#b3195f"
+    return _mix(lo, mid, t * 2) if t < .5 else _mix(mid, hi, (t - .5) * 2)
 
 
 def _pretty(name, labels):
@@ -110,85 +135,144 @@ def _pretty(name, labels):
     return text.upper() if text.islower() and len(text) <= 4 else (text.title() if text.islower() else text)
 
 
-# ---------- PIL drawings (supersampled, transparent background) ----------
-
-SS = 3
-
-
-def _scatter_img(w, h, gx, gy, pts, cols, centers, r, grid_col, frame_col,
-                 edge_col, ctr_fill, ctr_edge, k):
-    img = Image.new("RGBA", (w * SS, h * SS), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img, "RGBA")
-
-    for x in gx:
-        d.line([(x * SS, 0), (x * SS, h * SS)], fill=grid_col, width=SS)
-    for y in gy:
-        d.line([(0, y * SS), (w * SS, y * SS)], fill=grid_col, width=SS)
-    d.rectangle((0, 0, w * SS - 1, h * SS - 1), outline=frame_col, width=SS)
-
-    for (x, y), col in zip(pts, cols):
-        rr = r * SS
-        d.ellipse((x * SS - rr, y * SS - rr, x * SS + rr, y * SS + rr),
-                  fill=_rgb(col) + (217,), outline=edge_col, width=max(1, int(0.8 * SS)))
-
-    for x, y in centers:
-        a = 9 * k * SS
-        for width, color in ((int(5.5 * k * SS), ctr_edge), (int(3 * k * SS), ctr_fill)):
-            d.line([(x * SS - a, y * SS - a), (x * SS + a, y * SS + a)], fill=color, width=width)
-            d.line([(x * SS - a, y * SS + a), (x * SS + a, y * SS - a)], fill=color, width=width)
-
-    return img.resize((w, h), Image.Resampling.LANCZOS)
+def _pill_on():
+    return (BTN_DARK, BTN_LIGHT) if theme.name == "dark" else PILL_ON_LIGHT
 
 
-def _bars_img(w, h, bars, grid_y=(), grid_col=None, radius=10):
-    """bars = [(x_left, bar_w, bar_h, color)] با پایهٔ صاف و سر گرد"""
-    img = Image.new("RGBA", (w * SS, h * SS), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img, "RGBA")
-
-    for y in grid_y:
-        d.line([(0, y * SS), (w * SS, y * SS)], fill=grid_col, width=SS)
-
-    for x, bw, bh, color in bars:
-        if bh <= 0:
-            continue
-        x0, x1 = x * SS, (x + bw) * SS
-        y0, y1 = (h - bh) * SS, h * SS
-        rr = min(radius * SS, (x1 - x0) / 2, (y1 - y0))
-        d.rounded_rectangle((x0, y0, x1, y1 + rr), radius=rr, fill=color)
-        d.rectangle((x0, y1 - rr, x1, y1), fill=color)
-
-    return img.resize((w, h), Image.Resampling.LANCZOS)
+def _pill_border(c):
+    border = c("card_border") if theme.name == "dark" else PILL_BORDER_LIGHT
+    if isinstance(border, str):
+        return (border, 255)
+    return tuple(border) if border else None
 
 
-def _heat_img(size, tiles, gap, radius):
-    """tiles = [(col, row, color)] روی شبکه‌ای با اندازهٔ کاشی ثابت"""
-    n_c = max(c for c, _, _ in tiles) + 1
-    n_r = max(r for _, r, _ in tiles) + 1
-    w = n_c * size + (n_c - 1) * gap
-    h = n_r * size + (n_r - 1) * gap
-    img = Image.new("RGBA", (w * SS, h * SS), (0, 0, 0, 0))
-    d = ImageDraw.Draw(img, "RGBA")
+# ---------- matplotlib helpers (هم‌ظاهر با RegressionVisualization) ----------
 
-    for c, r, color in tiles:
-        x0, y0 = c * (size + gap) * SS, r * (size + gap) * SS
-        d.rounded_rectangle((x0, y0, x0 + size * SS - 1, y0 + size * SS - 1),
-                            radius=radius * SS, fill=color)
+def _font_family():
+    """فونت برنامه برای نمودارها (فایل‌های assets/fonts هم به matplotlib معرفی می‌شوند)."""
+    global _FONTS_READY
+    from matplotlib import font_manager as fm
+    if not _FONTS_READY:
+        _FONTS_READY = True
+        try:
+            for pattern in ("*.ttf", "*.otf"):
+                for path in (Path(BASE) / "assets" / "fonts").rglob(pattern):
+                    fm.fontManager.addfont(str(path))
+        except Exception:
+            pass
+    try:
+        fm.findfont(FONT, fallback_to_default=False)
+        return FONT
+    except Exception:
+        return "DejaVu Sans"
 
-    return img.resize((w, h), Image.Resampling.LANCZOS)
+
+def _short_label(name, limit=16):
+    """نام بلند را کوتاه می‌کند (وسط را با … حذف می‌کند) تا از کادر بیرون نزند."""
+    name = str(name)
+    if len(name) <= limit:
+        return name
+    keep = (limit - 1) // 2
+    return name[:keep + 1] + "…" + name[-keep:]
 
 
-def _gradient_bar(w, h, dark):
-    img = Image.new("RGBA", (w, h))
-    px = img.load()
-    for y in range(h):
-        v = 1 - 2 * y / max(h - 1, 1)                       # بالا = +1 (تیره)، وسط = 0 (روشن)، پایین = -1
-        col = _rgb(_corr_color(v, dark)) + (255,)
-        for x in range(w):
-            px[x, y] = col
-    mask = Image.new("L", (w * 4, h * 4), 0)
-    ImageDraw.Draw(mask).rounded_rectangle((0, 0, w * 4 - 1, h * 4 - 1), w * 2, fill=255)
-    img.putalpha(mask.resize((w, h), Image.Resampling.LANCZOS))
-    return img
+def _mpl_style_axes(ax, pal, grid="y"):
+    ax.set_facecolor("none")
+    ax.tick_params(colors=pal["fg"], labelsize=12.5, length=0)
+    ax.xaxis.label.set_color(pal["fg"])
+    ax.yaxis.label.set_color(pal["fg"])
+    ax.xaxis.label.set_size(13.5)
+    ax.yaxis.label.set_size(13.5)
+    ax.xaxis.label.set_weight("bold")
+    ax.yaxis.label.set_weight("bold")
+    for name, spine in ax.spines.items():
+        spine.set_visible(name in ("left", "bottom"))
+        spine.set_color(pal["muted"])
+        spine.set_alpha(.65)
+    ax.set_axisbelow(True)
+    if grid:
+        ax.grid(axis=grid, alpha=.30, color=pal["grid"], linewidth=.9)
+
+
+def _mpl_measure(ctx, text, size, weight="normal"):
+    """عرض واقعی متن (به پیکسل طراحی)."""
+    t = ctx.fig.text(0, 0, text, fontsize=size, fontweight=weight)
+    w = t.get_window_extent(ctx.fig.canvas.get_renderer()).width / ctx.k
+    t.remove()
+    return w
+
+
+def _mpl_wrap(ctx, text, size, max_px, weight="normal"):
+    lines, cur = [], ""
+    for word in text.split():
+        trial = (cur + " " + word).strip()
+        if _mpl_measure(ctx, trial, size, weight) <= max_px or not cur:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = word
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def _mpl_card(ctx, rect, heading, entries, note=""):
+    """کادر خلاصهٔ سمت راست؛ مقدارهای بلند به خط بعد می‌روند و از لبه بیرون نمی‌زنند."""
+    pal = ctx.pal
+    pw, ph = rect[2] * ctx.W, rect[3] * ctx.H
+    pad = 30
+    inner = pw - 2 * pad
+    ax = ctx.fig.add_axes(rect)
+    ax.set_xlim(0, pw)
+    ax.set_ylim(0, ph)
+    ax.axis("off")
+    ax.add_patch(FancyBboxPatch((1, 1), pw - 2, ph - 2, boxstyle="round,pad=0,rounding_size=24",
+                                facecolor=pal["card_fill"], alpha=pal["card_fill_a"], edgecolor="none"))
+    ax.add_patch(FancyBboxPatch((1, 1), pw - 2, ph - 2, boxstyle="round,pad=0,rounding_size=24",
+                                facecolor="none", edgecolor=pal["card_edge"], alpha=pal["card_edge_a"], linewidth=1.3))
+    size = 15
+    while _mpl_measure(ctx, heading, size, "bold") > inner and size > 11:
+        size -= 1
+    ax.text(pad, ph - 38, heading, color=pal["pink"], fontsize=size, fontweight="bold", va="center")
+    ax.plot([pad, pw - pad], [ph - 64, ph - 64], color=pal["card_edge"], alpha=min(1, pal["card_edge_a"] + .1),
+            linewidth=1.1)
+
+    note_lines = _mpl_wrap(ctx, note, 11, inner) if note else []
+    note_h = len(note_lines) * 20 + 22 if note_lines else 10
+    top = ph - 104
+    avail = top + 12 - note_h - 8
+    vsize = 20
+    while True:
+        lh = vsize * 1.35
+        blocks = [(label, _mpl_wrap(ctx, value, vsize, inner, "bold"), color)
+                  for label, value, color in entries]
+        heights = [31 + lh * (len(lines) - 1) + 20 for _, lines, _ in blocks]
+        if sum(heights) <= avail or vsize <= 13:
+            break
+        vsize -= 1
+    gap = max(0, min(30, (avail - sum(heights)) / max(len(blocks), 1)))
+    y = top
+    for (label, lines, color), h in zip(blocks, heights):
+        ax.text(pad, y + 12, label, color=pal["muted"], fontsize=12, va="center")
+        for i, line in enumerate(lines):
+            ax.text(pad, y - 19 - i * lh, line, color=color or pal["fg"], fontsize=vsize,
+                    fontweight="bold", va="center")
+        y -= h + gap
+    for i, line in enumerate(note_lines):
+        ax.text(pad, 24 + (len(note_lines) - 1 - i) * 20, line, color=pal["muted"], fontsize=11,
+                va="bottom")
+
+
+def _cluster_legend(ctx, handles, x=0.075):
+    """راهنمای خوشه‌ها در یک ردیف بالای نمودار؛ اگر زیاد بود دو ردیف. تعداد ردیف‌ها را برمی‌گرداند."""
+    pal = ctx.pal
+    n = len(handles)
+    ncol = n if n <= 7 else math.ceil(n / 2)
+    rows = math.ceil(n / ncol)
+    ctx.fig.legend(handles=handles, loc="center left", bbox_to_anchor=(x, 0.775 if rows == 1 else 0.795),
+                   ncol=ncol, frameon=False, fontsize=12.5 if rows == 1 else 11.5, labelcolor=pal["fg"],
+                   handlelength=1.6, columnspacing=1.8 if rows == 1 else 1.4)
+    return rows
 
 
 # =====================================================
@@ -201,6 +285,7 @@ class VisualizationModule(DatasetsModule):
     چهار نمودار یکسان برای همهٔ دیتاست‌های Clustering:
         Scatter (دو ویژگی دلخواه) · PCA · اندازهٔ خوشه‌ها · Correlation
     نقطه‌ها از processed_dataset و بقیه از متادیتا خوانده می‌شوند.
+    ظاهر نمودارها (matplotlib) مثل صفحهٔ RegressionVisualization است.
     """
 
     def __init__(self, master, scale=1.0, on_navigate=None):
@@ -430,11 +515,30 @@ class VisualizationModule(DatasetsModule):
             self._draw_head()
             self._draw_dynamic()
 
+    def _draw_back_button(self):
+        S = self.s
+        dark = theme.name == "dark"
+        color = "#f1d5fa" if dark else "#ffffff"
+        bg = "#50336f" if dark else "#713b91"
+        edge = "#805ba1" if dark else "#713b91"
+        w, h = 90, 30
+        x, y = MX + 4, 103
+        tag = "viz_back"
+        self.create_image(S(x), S(y), image=self._shape(w, h, 10, bg, border=(edge, 255)), anchor="nw", tags=(tag,))
+        cy = y + h / 2
+        self.create_line(S(x+29), S(cy), S(x+14), S(cy), fill=color, width=max(1,S(2)), capstyle="round", tags=(tag,))
+        self.create_line(S(x+21), S(cy-7), S(x+14), S(cy), S(x+21), S(cy+7), fill=color, width=max(1,S(2)), capstyle="round", joinstyle="round", tags=(tag,))
+        self.text(x+37, cy, "Back", 16, color, True, tags=(tag,))
+        self.hover(tag)
+        self.tag_bind(tag, "<Button-1>", lambda e: self.on_navigate("evaluate"))
+
     def _draw_head(self):
 
         c = theme.c
         d = self.data
         crumb_y, x = 118, MX + 4
+        self._draw_back_button()
+        x += 104
 
         self.text(x, crumb_y, "Datasets", 20, c("accent"), True, tags=("crumb_ds",))
         self.hover("crumb_ds")
@@ -470,7 +574,7 @@ class VisualizationModule(DatasetsModule):
     def _draw_pills(self):
 
         c, pal = theme.c, self._pal()
-        x, y, h = MX, 238, 44
+        x, y, h = MX, 254, 44
         self._pill_boxes = {}
 
         for key, label in CHARTS:
@@ -480,9 +584,9 @@ class VisualizationModule(DatasetsModule):
             tag = f"vz_{key}"
 
             if sel:
-                img = self._shape(w, h, h / 2, BTN_DARK, BTN_LIGHT)
+                img = self._shape(w, h, h / 2, *_pill_on())
             else:
-                img = self._shape(w, h, h / 2, pal["pill_off"], alpha=pal["pill_off_a"], border=c("card_border"))
+                img = self._shape(w, h, h / 2, pal["pill_off"], alpha=pal["pill_off_a"], border=_pill_border(c))
 
             self.create_image(self.s(x), self.s(y), image=img, anchor="nw", tags=D + (tag,))
             self.text(x + w / 2, y + h / 2, label, 19,
@@ -504,9 +608,9 @@ class VisualizationModule(DatasetsModule):
                 active = self._menu == axis
 
                 if active:
-                    img = self._shape(w, h, h / 2, BTN_DARK, BTN_LIGHT)
+                    img = self._shape(w, h, h / 2, *_pill_on())
                 else:
-                    img = self._shape(w, h, h / 2, pal["pill_off"], alpha=pal["pill_off_a"], border=c("card_border"))
+                    img = self._shape(w, h, h / 2, pal["pill_off"], alpha=pal["pill_off_a"], border=_pill_border(c))
 
                 self.create_image(self.s(right - w), self.s(y), image=img, anchor="nw", tags=D + (tag,))
                 self.text(right - w + 24, y + h / 2, label, 19, "white" if active else c("title"), True,
@@ -572,7 +676,7 @@ class VisualizationModule(DatasetsModule):
 
             if sel:
                 self.create_image(self.s(x), self.s(y + 2),
-                                  image=self._shape(col_w - 8, row_h - 4, 12, BTN_DARK, BTN_LIGHT),
+                                  image=self._shape(col_w - 8, row_h - 4, 12, *_pill_on()),
                                   anchor="nw", tags=D + (tag,))
             self.text(x + 22, y + row_h / 2, self._pn(name), 18, "white" if sel else c("title"), True,
                       tags=D + (tag,))
@@ -593,7 +697,7 @@ class VisualizationModule(DatasetsModule):
 
     def _draw_main(self):
 
-        c, S = theme.c, self.s
+        c = theme.c
         d = self.data
         x0, y0 = MX, PY
 
@@ -609,237 +713,238 @@ class VisualizationModule(DatasetsModule):
                 self.text(x0 + 40, y0 + 100 + i * 26, line, 17, c("body"), tags=D)
             return
 
-        # ----- عنوان + توضیح -----
-        n_rows = int(len(d.labels)) if d.labels is not None else sum(d.sizes.values())
-        titles = {
-            "scatter": (f"{self._pn(self.xf)} vs {self._pn(self.yf)}",
-                        f"{n_rows:,} records coloured by cluster" + (
-                            f" · showing {len(d.idx):,}" if d.idx is not None and len(d.idx) < n_rows else "")),
-            "pca": ("PCA clustering view",
-                    "PC1 + PC2 keep " + (f"{d.pca.ev.sum():.1f}%" if d.pca else "–") + " of the variance"),
-            "sizes": ("Cluster size comparison", f"{n_rows:,} records in {len(d.ids)} clusters"),
-            "corr": ("Correlation heatmap", self._corr_subtitle()),
-        }
-        title, sub = titles[key]
-        title_w = self.text_width(title, 26, True)
-        self.text(x0 + 40, y0 + 52, title, 26, c("title"), True, tags=D)
-        self.text(x0 + 40, y0 + 84, sub, 16, c("body"), tags=D)
+        ck = ("vz_chart", self._ds_sig, self.k, theme.name, key, self.xf, self.yf)
 
-        # ----- راهنمای رنگ خوشه‌ها -----
-        if key in ("scatter", "pca", "sizes"):
-            self._legend(x0 + CW - 40, y0 + 52, x0 + 40 + title_w + 30, centers=key in ("scatter", "pca"))
+        if ck not in self._cache:
+            old = [k for k in self._cache if isinstance(k, tuple) and k and k[0] == "vz_chart"]
+            if len(old) > 10:                                  # حافظه: قدیمی‌ترین نمودارها را نگه ندار
+                del self._cache[old[0]]
+            try:
+                self._cache[ck] = self._vz_render()
+            except Exception as exc:
+                self.text(x0 + 40, y0 + 52, "Chart unavailable", 26, c("title"), True, tags=D)
+                for i, line in enumerate(self._wrap(str(exc), 17, False, CW - 80, 3)):
+                    self.text(x0 + 40, y0 + 100 + i * 26, line, 17, c("body"), tags=D)
+                return
 
-        box = (x0 + 110, y0 + 116, x0 + CW - 50, y0 + PH - 84)
+        self.create_image(self.s(x0 + CW / 2), self.s(y0 + PH / 2), image=self._cache[ck],
+                          anchor="center", tags=D + ("vz_main",))
 
-        if key == "scatter":
-            self._draw_xy(box, d.X[self.xf].to_numpy(float), d.X[self.yf].to_numpy(float),
-                          self._centers_xy(self.xf, self.yf), self._pn(self.xf), self._pn(self.yf))
-        elif key == "pca":
-            comp = d.pca.comp
-            self._draw_xy(box, comp[:, 0], comp[:, 1],
-                          {cid: (v[0], v[1]) for cid, v in d.pca.centers.items()},
-                          f"PC1 ({d.pca.ev[0]:.1f}% variance)", f"PC2 ({d.pca.ev[1]:.1f}% variance)")
-        elif key == "sizes":
-            self._draw_sizes(box)
-        else:
-            self._draw_corr((x0 + 56, y0 + 112, x0 + CW - 40, y0 + PH - 44))
+    # =====================================================
+    # رسم نمودارها با matplotlib (مثل RegressionVisualization)
+    # =====================================================
 
-    def _corr_subtitle(self):
-        d = self.data
-        if d.corr is None:
-            return ""
-        names, M = d.corr_names, d.corr
-        best, pair = 0.0, None
-        for i in range(len(names)):
-            for j in range(i + 1, len(names)):
-                if abs(M[i][j]) > abs(best):
-                    best, pair = float(M[i][j]), (names[i], names[j])
-        if pair is None:
-            return "Pearson correlation between the dataset's numeric columns"
-        return (f"Darker = stronger correlation  ·  strongest pair: "
-                f"{self._pn(pair[0])} · {self._pn(pair[1])} ({best:.2f})")
+    def _vz_render(self):
+        d, key = self.data, self.chart
+        dark = theme.name == "dark"
+        pal = PALETTE["dark" if dark else "light"]
+        W, H = CW - 50, PH - 30                                # اندازهٔ طراحی (پیکسل)
+
+        with matplotlib.rc_context({"font.family": _font_family(), "axes.unicode_minus": True}):
+            fig = Figure(figsize=(W / 100, H / 100), dpi=100 * self.k, facecolor="none")
+            FigureCanvasAgg(fig)
+            ctx = SimpleNamespace(fig=fig, W=W, H=H, pal=pal, dark=dark, d=d, k=self.k)
+            builder = {"scatter": self._vz_scatter, "pca": self._vz_pca,
+                       "sizes": self._vz_sizes, "corr": self._vz_corr}[key]
+            title, subtitle = builder(ctx)
+            fig.text(0.035, 0.935, f"{d.name} — {title}", ha="left", va="center", color=pal["fg"],
+                     fontsize=20, fontweight="bold")
+            fig.text(0.035, 0.872, subtitle, ha="left", va="center", color=pal["muted"], fontsize=12)
+            canvas = fig.canvas
+            canvas.draw()
+            return ImageTk.PhotoImage(Image.fromarray(np.asarray(canvas.buffer_rgba()).copy()))
 
     def _centers_xy(self, xf, yf):
         d = self.data
         ix, iy = d.cols.index(xf), d.cols.index(yf)
         return {cid: (v[ix], v[iy]) for cid, v in d.centers.items()}
 
-    def _legend(self, right, cy, min_left, centers):
-
-        c, S = theme.c, self.s
+    def _pct(self, cid):
         d = self.data
-        items = [(f"Cluster {i}", self._color(i)) for i in d.ids]
+        if d.perc.get(cid) is not None:
+            return d.perc[cid]
+        total = sum(d.sizes.values()) or 1
+        return d.sizes[cid] / total * 100
+
+    def _size_entries(self, ctx):
+        d, pal = ctx.d, ctx.pal
+        ids = d.ids
+        big = max(ids, key=lambda i: d.sizes[i])
+        small = min(ids, key=lambda i: d.sizes[i])
+        return [("Clusters", str(len(ids)), pal["pink"]),
+                ("Records", f"{sum(d.sizes.values()):,}", None),
+                ("Largest cluster", f"Cluster {big}  {self._pct(big):.1f}%", None),
+                ("Smallest cluster", f"Cluster {small}  {self._pct(small):.1f}%", None)]
+
+    # ---- ۱) Scatter ----
+    def _vz_scatter(self, ctx):
+        d = ctx.d
+        X = d.X[self.xf].to_numpy(float)
+        Y = d.X[self.yf].to_numpy(float)
+        self._vz_xy(ctx, X, Y, self._centers_xy(self.xf, self.yf), self._pn(self.xf), self._pn(self.yf))
+        n_rows, shown = len(d.labels), len(d.idx)
+        sub = f"{n_rows:,} records coloured by cluster" + (f" • showing {shown:,}" if shown < n_rows else "")
+        _mpl_card(ctx, CARD_RECT, "Cluster summary", self._size_entries(ctx),
+                  "Each colour is one cluster. The × marks show the cluster centres.")
+        return f"{self._pn(self.xf)} vs {self._pn(self.yf)}", sub
+
+    # ---- ۲) PCA ----
+    def _vz_pca(self, ctx):
+        d, pal = ctx.d, ctx.pal
+        comp, ev = d.pca.comp, d.pca.ev
+        self._vz_xy(ctx, comp[:, 0], comp[:, 1], {cid: (v[0], v[1]) for cid, v in d.pca.centers.items()},
+                    f"PC1 ({ev[0]:.1f}% variance)", f"PC2 ({ev[1]:.1f}% variance)")
+        entries = [("PC1 (first component)", f"{ev[0]:.1f}%", pal["pink"]),
+                   ("PC2 (second component)", f"{ev[1]:.1f}%", None),
+                   ("PC1 + PC2 together", f"{ev.sum():.1f}%", None),
+                   ("Clusters", str(len(d.ids)), None)]
+        _mpl_card(ctx, CARD_RECT, "Variance explained", entries,
+                  "Each point is a record projected onto the first two principal components.")
+        return "PCA clustering view", f"PC1 + PC2 keep {ev.sum():.1f}% of the variance"
+
+    def _vz_xy(self, ctx, X, Y, centers, xlab, ylab):
+        """نمودار پراکندگی مشترک Scatter و PCA (رنگ هر خوشه جدا، مراکز با ×)."""
+        pal, d, dark = ctx.pal, ctx.d, ctx.dark
+        edge = "#1b1030" if dark else "#ffffff"
+
+        handles = [Line2D([0], [0], marker="o", linestyle="", markersize=9, markerfacecolor=self._color(i),
+                          markeredgecolor=pal["pt_edge"], markeredgewidth=1.0, label=f"Cluster {i}")
+                   for i in d.ids]
         if centers:
-            items.append(("Centers", c("title")))
+            handles.append(Line2D([0], [0], marker="X", linestyle="", markersize=10, markerfacecolor=pal["fg"],
+                                  markeredgecolor=edge, markeredgewidth=1.2, label="Centers"))
+        rows = _cluster_legend(ctx, handles)
 
-        widths = [self.text_width(label, 15, True) + 44 for label, _ in items]
-        gap = 10
+        bottom, height = (0.12, 0.61) if rows == 1 else (0.12, 0.58)
+        ax = ctx.fig.add_axes([0.075, bottom, 0.575, height])
+        _mpl_style_axes(ax, pal, grid="both")
 
-        while items and sum(widths) + gap * (len(items) - 1) > right - min_left:
-            drop = -2 if centers and len(items) > 2 else -1       # «Centers» همیشه می‌ماند
-            items.pop(drop)
-            widths.pop(drop)
-
-        x = right - sum(widths) - gap * (len(items) - 1)
-
-        for (label, col), w in zip(items, widths):
-            self.create_image(S(x), S(cy - 17), image=self._shape(w, 34, 17, c("row_bg"), border=c("card_border")),
-                              anchor="nw", tags=D)
-            self.create_image(S(x + 20), S(cy), image=self._shape(11, 11, 5.5, col), anchor="center", tags=D)
-            self.text(x + 34, cy, label, 15, c("title"), True, tags=D)
-            x += w + gap
-
-    # ---------- نمودار نقطه‌ای (Scatter / PCA) ----------
-
-    def _draw_xy(self, box, X, Y, centers, xlab, ylab):
-
-        c, S = theme.c, self.s
-        d = self.data
-        dark = theme.name == "dark"
-        L, T, R, B = box
-        wpx, hpx = S(R - L), S(B - T)
+        order = np.random.default_rng(7).permutation(d.idx)      # ترتیب تصادفی تا یک خوشه روی بقیه نیفتد
+        colors = [self._color(d.labels[i]) for i in order]
+        n = len(order)
+        few = n <= 600
+        ax.scatter(X[order], Y[order], s=70 if n <= 200 else (40 if few else 22), c=colors,
+                   edgecolors=pal["pt_edge"], linewidths=1.0 if few else .35, alpha=.97 if few else .85,
+                   zorder=3, rasterized=True)
+        if centers:
+            ax.scatter([v[0] for v in centers.values()], [v[1] for v in centers.values()], marker="X", s=210,
+                       c=pal["fg"], edgecolors=edge, linewidths=1.6, zorder=5)
 
         xmin, xmax = float(X.min()), float(X.max())
         ymin, ymax = float(Y.min()), float(Y.max())
-        px_, py_ = (xmax - xmin) * 0.06 or 1.0, (ymax - ymin) * 0.06 or 1.0
-        x0, x1, y0, y1 = xmin - px_, xmax + px_, ymin - py_, ymax + py_
+        px_, py_ = (xmax - xmin) * .05 or 1.0, (ymax - ymin) * .05 or 1.0
+        ax.set_xlim(xmin - px_, xmax + px_)
+        ax.set_ylim(ymin - py_, ymax + py_)
+        fmt = FuncFormatter(lambda v, _: _fmt_tick(v))
+        ax.xaxis.set_major_formatter(fmt)
+        ax.yaxis.set_major_formatter(fmt)
+        ax.set_xlabel(xlab)
+        ax.set_ylabel(ylab)
 
-        def fx(v):
-            return (v - x0) / (x1 - x0) * wpx
-
-        def fy(v):
-            return hpx - (v - y0) / (y1 - y0) * hpx
-
-        xt, yt = _nice_ticks(x0, x1, 7), _nice_ticks(y0, y1, 6)
-
-        idx = d.idx
-        pts = [(fx(X[i]), fy(Y[i])) for i in idx]
-        cols = [self._color(d.labels[i]) for i in idx]
-        ctr = [(fx(x), fy(y)) for x, y in centers.values()]
-
-        card = c("card_cols")[0] if dark else "#ffffff"
-        key = ("vz_xy", self._ds_sig, self.k, theme.name, self.chart, self.xf, self.yf, wpx, hpx)
-
-        if key not in self._cache:
-            self._cache[key] = ImageTk.PhotoImage(_scatter_img(
-                wpx, hpx, [fx(v) for v in xt], [fy(v) for v in yt], pts, cols, ctr,
-                max(3.6, 4.6 * self.k), _rgb(c("body")) + (46,), _rgb(c("body")) + (70,),
-                card, c("title") if not dark else "#f5efff", card, self.k))
-
-        self.create_image(S(L), S(T), image=self._cache[key], anchor="nw", tags=D)
-
-        for v in xt:
-            self.text(L + fx(v) / self.k, B + 18, _fmt_tick(v), 14, c("body"), anchor="center", tags=D)
-        for v in yt:
-            self.text(L - 12, T + fy(v) / self.k, _fmt_tick(v), 14, c("body"), anchor="e", tags=D)
-
-        self.text((L + R) / 2, B + 52, xlab, 16, c("body"), True, anchor="center", tags=D)
-        self.create_text(S(L - 70), S((T + B) / 2), text=ylab, angle=90, fill=c("body"),
-                         font=(FONT, -S(16), "bold"), tags=D)
-
-    # ---------- اندازهٔ خوشه‌ها ----------
-
-    def _draw_sizes(self, box):
-
-        c, S = theme.c, self.s
-        d = self.data
-        L, T, R, B = box
-        wpx, hpx = S(R - L), S(B - T)
+    # ---- ۳) اندازهٔ خوشه‌ها ----
+    def _vz_sizes(self, ctx):
+        pal, d = ctx.pal, ctx.d
         ids = d.ids
-        values = [d.sizes[i] for i in ids]
-        vmax = max(values)
-        ticks = _nice_ticks(0, vmax * 1.12, 5)
-        ymax = ticks[-1] if ticks and ticks[-1] >= vmax * 1.05 else vmax * 1.15
+        values = np.array([d.sizes[i] for i in ids], dtype=float)
+        top = float(values.max()) * 1.22
 
-        bars = []
-        slot = wpx / len(ids)
-        bw = min(slot * 0.55, 120 * self.k)
-        for i, (cid, v) in enumerate(zip(ids, values)):
-            bh = hpx * v / ymax
-            bars.append((i * slot + (slot - bw) / 2, bw, bh, self._color(cid)))
+        ax = ctx.fig.add_axes([0.075, 0.15, 0.575, 0.62])
+        _mpl_style_axes(ax, pal, grid="y")
+        xs = np.arange(len(ids))
+        ax.bar(xs, values, width=.56, color=[self._color(i) for i in ids])
+        ax.set_ylim(0, top)
+        ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: _fmt_tick(v)))
+        ax.set_ylabel("Number of records")
+        ax.set_xlabel("Cluster")
+        ax.set_xticks(xs, [f"Cluster {i}" for i in ids])
+        ax.tick_params(axis="x", labelsize=12 if len(ids) <= 6 else 10.5)
+        for tick in ax.get_xticklabels():
+            tick.set_fontweight("bold")
 
-        gy = [hpx - hpx * t / ymax for t in ticks]
-        key = ("vz_sizes", self._ds_sig, self.k, theme.name, wpx, hpx, tuple(round(b[2]) for b in bars))
+        many = len(ids) > 5
+        for x, cid, v in zip(xs, ids, values):
+            label = f"{int(v):,}\n{self._pct(cid):.1f}%" if many else f"{int(v):,} ({self._pct(cid):.1f}%)"
+            ax.text(x, v + top * .015, label, ha="center", va="bottom", color=pal["fg"],
+                    fontsize=14 if not many else 11, fontweight="bold", linespacing=1.25)
 
-        if key not in self._cache:
-            self._cache[key] = ImageTk.PhotoImage(_bars_img(
-                wpx, hpx, bars, gy, _rgb(c("body")) + (46,), radius=int(12 * self.k)))
+        _mpl_card(ctx, CARD_RECT, "Size summary", self._size_entries(ctx),
+                  "Bar height is the number of records assigned to each cluster.")
+        return "Cluster Size Comparison", f"{int(values.sum()):,} records in {len(ids)} clusters"
 
-        self.create_image(S(L), S(T), image=self._cache[key], anchor="nw", tags=D)
-
-        for t, y in zip(ticks, gy):
-            self.text(L - 12, T + y / self.k, _fmt_tick(t), 14, c("body"), anchor="e", tags=D)
-
-        for (bx, bw_, bh, _), cid, v in zip(bars, ids, values):
-            cx = L + (bx + bw_ / 2) / self.k
-            pct = d.perc.get(cid)
-            label = f"{v:,}" + (f" ({pct:.1f}%)" if pct is not None else "")
-            self.text(cx, T + (hpx - bh) / self.k - 16, label, 16, c("title"), True, anchor="center", tags=D)
-            self.text(cx, B + 18, f"Cluster {cid}", 15, c("body"), anchor="center", tags=D)
-
-        self.text((L + R) / 2, B + 52, "Cluster", 16, c("body"), True, anchor="center", tags=D)
-        self.create_text(S(L - 70), S((T + B) / 2), text="Number of records", angle=90, fill=c("body"),
-                         font=(FONT, -S(16), "bold"), tags=D)
-
-    # ---------- Correlation (بزرگ) ----------
-
-    def _draw_corr(self, box):
-
-        c, S = theme.c, self.s
-        d = self.data
-        dark = theme.name == "dark"
-        L, T, R, B = box
-        names, M = d.corr_names, d.corr
+    # ---- ۴) همبستگی ----
+    def _vz_corr(self, ctx):
+        pal, d, dark = ctx.pal, ctx.d, ctx.dark
+        names_all, M_all = list(d.corr_names), np.asarray(d.corr, float)
+        n_all = len(names_all)
+        keep = list(range(n_all))
+        if n_all > 14:                                         # برای خوانایی: ۱۴ ستون با بیشترین همبستگی
+            A = np.abs(np.nan_to_num(M_all))
+            np.fill_diagonal(A, 0)
+            keep = sorted(np.argsort(-A.mean(1))[:14].tolist())
+        M = M_all[np.ix_(keep, keep)]
+        names = [names_all[i] for i in keep]
         n = len(names)
+        fig, W, H = ctx.fig, ctx.W, ctx.H
 
-        label_w = max(self.text_width(self._pn(nm), 15, True) for nm in names) + 14
-        bar_zone = 84
-        avail_w = (R - L) - label_w - bar_zone
-        avail_h = (B - T) - 34
-        tile = int(_clamp(min(avail_w / n, avail_h / n), 18, 78))
-        gap = 4 if tile >= 34 else 2
-        step = tile + gap
-        grid_w = n * tile + (n - 1) * gap
-
-        gx = L + label_w + (avail_w - grid_w) / 2
-        gy = T + (avail_h - grid_w) / 2
-
-        tiles = [(j, i, _corr_color(1.0 if i == j else float(M[i][j]), dark))
-                 for i in range(n) for j in range(n)]
-
-        key = ("vz_heat", self.k, theme.name, n, tile, tuple(round(float(v), 2) for v in M.flatten()))
-        if key not in self._cache:
-            self._cache[key] = ImageTk.PhotoImage(_heat_img(S(tile), [(a, b, col) for a, b, col in tiles],
-                                                            S(gap), S(min(10, tile * 0.18))))
-        self.create_image(S(gx), S(gy), image=self._cache[key], anchor="nw", tags=D)
-
-        num_size = _clamp(tile * 0.27, 11, 17)
-
+        side_h, side_w = .60, .37
+        x0, y0 = .155, .19
+        ax = fig.add_axes([x0, y0, side_w, side_h])
+        ax.set_facecolor("none")
+        ax.set_xlim(-.5, n - .5)
+        ax.set_ylim(n - .5, -.5)
+        cell_w, cell_h = side_w * W / n, side_h * H / n           # اندازهٔ هر خانه به پیکسل
+        fs = max(8.5, min(13, .26 * min(cell_w, cell_h * 1.6)))
+        annotate = min(cell_w, cell_h * 1.6) >= 30
+        aspect = cell_h / cell_w                                   # گوشه‌های گرد، بدون کشیدگی
+        gap = 5                                                    # فاصلهٔ بین خانه‌ها (پیکسل)
+        gx, gy = gap / cell_w, gap / cell_h
         for i in range(n):
-            self.text(gx - 12, gy + i * step + tile / 2, self._fit(self._pn(names[i]), 15, True, label_w),
-                      15, c("body"), True, anchor="e", tags=D)
-            self.text(gx + i * step + tile / 2, gy + grid_w + 16,
-                      self._fit(self._pn(names[i]), 14, True, tile + 16), 14, c("body"), True,
-                      anchor="center", tags=D)
+            for j in range(n):
+                val = 1.0 if i == j else float(M[i, j])
+                ok = np.isfinite(val)
+                col = _corr_color(val, dark) if ok else "#777777"
+                ax.add_patch(FancyBboxPatch((j - .5 + gx / 2, i - .5 + gy / 2), 1 - gx, 1 - gy,
+                                            boxstyle="round,pad=0,rounding_size=.12", mutation_aspect=aspect,
+                                            facecolor=col, edgecolor="none", alpha=.55 if i == j else 1))
+                if i != j and annotate:
+                    txt = f"{val:.2f}".replace("0.", ".", 1) if ok else "—"
+                    ax.text(j, i, txt, ha="center", va="center", fontsize=fs, fontweight="bold",
+                            color="#1b1030" if _lum(col) > .55 else "#ffffff")
+        labels = [_short_label(self._pn(nm)) for nm in names]
+        ax.set_xticks(range(n), labels)
+        ax.set_yticks(range(n), labels)
+        ax.tick_params(length=0, labelsize=10 if n <= 12 else 8.5, colors=pal["fg"])
+        for lbl in ax.get_xticklabels():                       # برچسب‌های محور X همیشه مورب تا روی هم نیفتند
+            lbl.set_rotation(40)
+            lbl.set_ha("right")
+            lbl.set_rotation_mode("anchor")
+        for s_ in ax.spines.values():
+            s_.set_visible(False)
 
-            if tile >= 34:
-                for j in range(n):
-                    if i == j:
-                        continue
-                    v = float(M[i][j])
-                    col = _corr_color(v, dark)
-                    self.text(gx + j * step + tile / 2, gy + i * step + tile / 2, f"{v:.2f}", num_size,
-                              "#1b1030" if _lum(col) > 0.55 else "#ffffff", True, anchor="center", tags=D)
+        cmap = LinearSegmentedColormap.from_list("vzcorr", [_corr_color(-1, dark), _corr_color(0, dark),
+                                                            _corr_color(1, dark)])
+        cax = fig.add_axes([x0 + side_w + .018, y0, .011, side_h])
+        cb = fig.colorbar(ScalarMappable(norm=Normalize(-1, 1), cmap=cmap), cax=cax, ticks=[-1, -.5, 0, .5, 1])
+        cb.ax.tick_params(colors=pal["fg"], labelsize=10.5, length=0)
+        cb.set_label("Pearson r", color=pal["fg"], fontsize=11.5)
+        cb.outline.set_visible(False)
 
-        # نوار رنگ
-        bx = gx + grid_w + 34
-        bh = grid_w
-        kb = ("vz_cbar", self.k, theme.name, bh)
-        if kb not in self._cache:
-            self._cache[kb] = ImageTk.PhotoImage(_gradient_bar(S(16), S(bh), dark))
-        self.create_image(S(bx), S(gy), image=self._cache[kb], anchor="nw", tags=D)
+        pairs = sorted(((abs(M[i, j]), i, j) for i in range(n) for j in range(i + 1, n)
+                        if np.isfinite(M[i, j])), reverse=True)[:3]
+        entries = [(f"#{k + 1}  strongest pair", f"{self._pn(names[i])} · {self._pn(names[j])}  {M[i, j]:+.2f}",
+                    pal["purple"] if M[i, j] >= 0 else pal["pink"]) for k, (_, i, j) in enumerate(pairs)]
+        _mpl_card(ctx, CARD_RECT, "Strongest correlations", entries,
+                  "Closer to ±1 means a stronger linear relationship. Purple = positive, pink = negative.")
 
-        for v, y in ((1, gy), (0, gy + bh / 2), (-1, gy + bh)):
-            self.text(bx + 28, y, f"{v:g}", 14, c("body"), tags=D)
-        self.create_text(S(bx + 62), S(gy + bh / 2), text="Correlation", angle=270, fill=c("body"),
-                         font=(FONT, -S(14), "bold"), tags=D)
+        if pairs:
+            _, i, j = pairs[0]
+            sub = (f"Darker = stronger correlation • strongest pair: "
+                   f"{self._pn(names[i])} · {self._pn(names[j])} ({M[i, j]:.2f})")
+        else:
+            sub = "Pearson correlation between the dataset's numeric columns"
+        if n < n_all:
+            sub = f"Showing the {n} most correlated of {n_all} columns • " + sub
+        return "Correlation Heatmap", sub
+
+
+
