@@ -1,0 +1,632 @@
+{
+    "id": "D09",
+    "name": "Heart Disease",
+    "title": "Heart Disease (D09)",
+    "level": "Intermediate",
+    "domain": "Health Sciences",
+    "task": "Classification",
+    "description": "Educational binary classification of heart disease from examination attributes; not a clinical diagnostic tool.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 303,
+        "columns": 14,
+        "column_names": [
+            "age",
+            "sex",
+            "cp",
+            "trestbps",
+            "chol",
+            "fbs",
+            "restecg",
+            "thalach",
+            "exang",
+            "oldpeak",
+            "slope",
+            "ca",
+            "thal",
+            "Heart Disease"
+        ],
+        "data_types": {
+            "age": "float64",
+            "sex": "float64",
+            "cp": "float64",
+            "trestbps": "float64",
+            "chol": "float64",
+            "fbs": "float64",
+            "restecg": "float64",
+            "thalach": "float64",
+            "exang": "float64",
+            "oldpeak": "float64",
+            "slope": "float64",
+            "ca": "float64",
+            "thal": "float64",
+            "Heart Disease": "str"
+        },
+        "missing_values": {
+            "age": 0,
+            "sex": 0,
+            "cp": 0,
+            "trestbps": 0,
+            "chol": 0,
+            "fbs": 0,
+            "restecg": 0,
+            "thalach": 0,
+            "exang": 0,
+            "oldpeak": 0,
+            "slope": 0,
+            "ca": 4,
+            "thal": 2,
+            "Heart Disease": 0
+        },
+        "total_missing_values": 6,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "age": {
+                "count": 303.0,
+                "mean": 54.4389,
+                "std": 9.0387,
+                "min": 29.0,
+                "25%": 48.0,
+                "50%": 56.0,
+                "75%": 61.0,
+                "max": 77.0
+            },
+            "sex": {
+                "count": 303.0,
+                "mean": 0.6799,
+                "std": 0.4673,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "cp": {
+                "count": 303.0,
+                "mean": 3.1584,
+                "std": 0.9601,
+                "min": 1.0,
+                "25%": 3.0,
+                "50%": 3.0,
+                "75%": 4.0,
+                "max": 4.0
+            },
+            "trestbps": {
+                "count": 303.0,
+                "mean": 131.6898,
+                "std": 17.5997,
+                "min": 94.0,
+                "25%": 120.0,
+                "50%": 130.0,
+                "75%": 140.0,
+                "max": 200.0
+            },
+            "chol": {
+                "count": 303.0,
+                "mean": 246.6931,
+                "std": 51.7769,
+                "min": 126.0,
+                "25%": 211.0,
+                "50%": 241.0,
+                "75%": 275.0,
+                "max": 564.0
+            },
+            "fbs": {
+                "count": 303.0,
+                "mean": 0.1485,
+                "std": 0.3562,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "restecg": {
+                "count": 303.0,
+                "mean": 0.9901,
+                "std": 0.995,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "thalach": {
+                "count": 303.0,
+                "mean": 149.6073,
+                "std": 22.875,
+                "min": 71.0,
+                "25%": 133.5,
+                "50%": 153.0,
+                "75%": 166.0,
+                "max": 202.0
+            },
+            "exang": {
+                "count": 303.0,
+                "mean": 0.3267,
+                "std": 0.4698,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "oldpeak": {
+                "count": 303.0,
+                "mean": 1.0396,
+                "std": 1.1611,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.8,
+                "75%": 1.6,
+                "max": 6.2
+            },
+            "slope": {
+                "count": 303.0,
+                "mean": 1.6007,
+                "std": 0.6162,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 3.0
+            },
+            "ca": {
+                "count": 299.0,
+                "mean": 0.6722,
+                "std": 0.9374,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 1.0,
+                "max": 3.0
+            },
+            "thal": {
+                "count": 301.0,
+                "mean": 4.7342,
+                "std": 1.9397,
+                "min": 3.0,
+                "25%": 3.0,
+                "50%": 3.0,
+                "75%": 7.0,
+                "max": 7.0
+            }
+        },
+        "class_distribution": {
+            "No Heart Disease": 164,
+            "Heart Disease": 139
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "age",
+            "sex",
+            "cp",
+            "trestbps",
+            "chol",
+            "fbs",
+            "restecg",
+            "thalach",
+            "exang",
+            "oldpeak",
+            "slope",
+            "ca",
+            "thal"
+        ],
+        "target_column": "Heart Disease",
+        "feature_description": "Thirteen examination attributes in the original numeric encoding.",
+        "class_labels": [
+            "No Heart Disease",
+            "Heart Disease"
+        ],
+        "class_encoding": {
+            "No Heart Disease": 0,
+            "Heart Disease": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "age",
+            "sex",
+            "cp",
+            "trestbps",
+            "chol",
+            "fbs",
+            "restecg",
+            "thalach",
+            "exang",
+            "oldpeak",
+            "slope",
+            "ca",
+            "thal"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Label encoding (No Heart Disease=0, Heart Disease=1)"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 242,
+        "test_rows": 61,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over both heart disease classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.885246,
+                "Accuracy Percentage": 88.52459,
+                "F1": 0.885246,
+                "F1 Percentage": 88.52459,
+                "F1 Macro": 0.885246,
+                "CV Macro F1": 0.794566
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.885246,
+                "Accuracy Percentage": 88.52459,
+                "F1": 0.884814,
+                "F1 Percentage": 88.481368,
+                "F1 Macro": 0.885122,
+                "CV Macro F1": 0.820123
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.868852,
+                "Accuracy Percentage": 86.885246,
+                "F1": 0.868993,
+                "F1 Percentage": 86.899348,
+                "F1 Macro": 0.868817,
+                "CV Macro F1": 0.811157
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.868852,
+                "Accuracy Percentage": 86.885246,
+                "F1": 0.868641,
+                "F1 Percentage": 86.864093,
+                "F1 Macro": 0.868817,
+                "CV Macro F1": 0.815305
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.819672,
+                "Accuracy Percentage": 81.967213,
+                "F1": 0.819963,
+                "F1 Percentage": 81.996322,
+                "F1 Macro": 0.819478,
+                "CV Macro F1": 0.715671
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.819672,
+                "Accuracy Percentage": 81.967213,
+                "F1": 0.81792,
+                "F1 Percentage": 81.791996,
+                "F1 Macro": 0.818893,
+                "CV Macro F1": 0.76646
+            }
+        ],
+        "recommended_model": "Random Forest",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "No Heart Disease": {
+                "precision": 0.964286,
+                "recall": 0.818182,
+                "f1": 0.885246,
+                "support": 33
+            },
+            "Heart Disease": {
+                "precision": 0.818182,
+                "recall": 0.964286,
+                "f1": 0.885246,
+                "support": 28
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "No Heart Disease",
+                "Heart Disease"
+            ],
+            "matrix": [
+                [
+                    27,
+                    6
+                ],
+                [
+                    1,
+                    27
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "age": {
+            "age": 1.0,
+            "sex": -0.0975422838,
+            "cp": 0.1041389543,
+            "trestbps": 0.2849459193,
+            "chol": 0.2089502699,
+            "fbs": 0.1185302422,
+            "restecg": 0.1488675911,
+            "thalach": -0.393805806,
+            "exang": 0.0916607715,
+            "oldpeak": 0.2038054814,
+            "slope": 0.1617695585,
+            "ca": 0.3626045262,
+            "thal": 0.1273886215
+        },
+        "sex": {
+            "age": -0.0975422838,
+            "sex": 1.0,
+            "cp": 0.0100838882,
+            "trestbps": -0.064455898,
+            "chol": -0.1999146826,
+            "fbs": 0.0478621211,
+            "restecg": 0.0216473539,
+            "thalach": -0.0486632965,
+            "exang": 0.1462014865,
+            "oldpeak": 0.1021726443,
+            "slope": 0.0375328815,
+            "ca": 0.0931847587,
+            "thal": 0.3809358349
+        },
+        "cp": {
+            "age": 0.1041389543,
+            "sex": 0.0100838882,
+            "cp": 1.0,
+            "trestbps": -0.0360772452,
+            "chol": 0.0723188843,
+            "fbs": -0.0399749896,
+            "restecg": 0.0675052326,
+            "thalach": -0.3344217059,
+            "exang": 0.3840595264,
+            "oldpeak": 0.2022765406,
+            "slope": 0.1520504167,
+            "ca": 0.2332144107,
+            "thal": 0.2652455673
+        },
+        "trestbps": {
+            "age": 0.2849459193,
+            "sex": -0.064455898,
+            "cp": -0.0360772452,
+            "trestbps": 1.0,
+            "chol": 0.1301201085,
+            "fbs": 0.1753402269,
+            "restecg": 0.1465603871,
+            "thalach": -0.0453508794,
+            "exang": 0.0647624556,
+            "oldpeak": 0.1891709708,
+            "slope": 0.1173815842,
+            "ca": 0.0987732571,
+            "thal": 0.1335538973
+        },
+        "chol": {
+            "age": 0.2089502699,
+            "sex": -0.1999146826,
+            "cp": 0.0723188843,
+            "trestbps": 0.1301201085,
+            "chol": 1.0,
+            "fbs": 0.009841023,
+            "restecg": 0.171042532,
+            "thalach": -0.0034318315,
+            "exang": 0.0613103769,
+            "oldpeak": 0.0465639892,
+            "slope": -0.0040618341,
+            "ca": 0.1190004871,
+            "thal": 0.0142140655
+        },
+        "fbs": {
+            "age": 0.1185302422,
+            "sex": 0.0478621211,
+            "cp": -0.0399749896,
+            "trestbps": 0.1753402269,
+            "chol": 0.009841023,
+            "fbs": 1.0,
+            "restecg": 0.0695644971,
+            "thalach": -0.0078541467,
+            "exang": 0.0256651472,
+            "oldpeak": 0.0057472235,
+            "slope": 0.0598941783,
+            "ca": 0.1454775225,
+            "thal": 0.0713582691
+        },
+        "restecg": {
+            "age": 0.1488675911,
+            "sex": 0.0216473539,
+            "cp": 0.0675052326,
+            "trestbps": 0.1465603871,
+            "chol": 0.171042532,
+            "fbs": 0.0695644971,
+            "restecg": 1.0,
+            "thalach": -0.0833894328,
+            "exang": 0.0848669527,
+            "oldpeak": 0.1141328132,
+            "slope": 0.1339456897,
+            "ca": 0.1283426527,
+            "thal": 0.0245310861
+        },
+        "thalach": {
+            "age": -0.393805806,
+            "sex": -0.0486632965,
+            "cp": -0.3344217059,
+            "trestbps": -0.0453508794,
+            "chol": -0.0034318315,
+            "fbs": -0.0078541467,
+            "restecg": -0.0833894328,
+            "thalach": 1.0,
+            "exang": -0.3781034245,
+            "oldpeak": -0.3430853918,
+            "slope": -0.3856011621,
+            "ca": -0.2642462531,
+            "thal": -0.2796306465
+        },
+        "exang": {
+            "age": 0.0916607715,
+            "sex": 0.1462014865,
+            "cp": 0.3840595264,
+            "trestbps": 0.0647624556,
+            "chol": 0.0613103769,
+            "fbs": 0.0256651472,
+            "restecg": 0.0848669527,
+            "thalach": -0.3781034245,
+            "exang": 1.0,
+            "oldpeak": 0.2882228078,
+            "slope": 0.2577483685,
+            "ca": 0.1455696032,
+            "thal": 0.3296799982
+        },
+        "oldpeak": {
+            "age": 0.2038054814,
+            "sex": 0.1021726443,
+            "cp": 0.2022765406,
+            "trestbps": 0.1891709708,
+            "chol": 0.0465639892,
+            "fbs": 0.0057472235,
+            "restecg": 0.1141328132,
+            "thalach": -0.3430853918,
+            "exang": 0.2882228078,
+            "oldpeak": 1.0,
+            "slope": 0.5775368167,
+            "ca": 0.2958321146,
+            "thal": 0.3410039846
+        },
+        "slope": {
+            "age": 0.1617695585,
+            "sex": 0.0375328815,
+            "cp": 0.1520504167,
+            "trestbps": 0.1173815842,
+            "chol": -0.0040618341,
+            "fbs": 0.0598941783,
+            "restecg": 0.1339456897,
+            "thalach": -0.3856011621,
+            "exang": 0.2577483685,
+            "oldpeak": 0.5775368167,
+            "slope": 1.0,
+            "ca": 0.1101191885,
+            "thal": 0.2872319855
+        },
+        "ca": {
+            "age": 0.3626045262,
+            "sex": 0.0931847587,
+            "cp": 0.2332144107,
+            "trestbps": 0.0987732571,
+            "chol": 0.1190004871,
+            "fbs": 0.1454775225,
+            "restecg": 0.1283426527,
+            "thalach": -0.2642462531,
+            "exang": 0.1455696032,
+            "oldpeak": 0.2958321146,
+            "slope": 0.1101191885,
+            "ca": 1.0,
+            "thal": 0.2563824992
+        },
+        "thal": {
+            "age": 0.1273886215,
+            "sex": 0.3809358349,
+            "cp": 0.2652455673,
+            "trestbps": 0.1335538973,
+            "chol": 0.0142140655,
+            "fbs": 0.0713582691,
+            "restecg": 0.0245310861,
+            "thalach": -0.2796306465,
+            "exang": 0.3296799982,
+            "oldpeak": 0.3410039846,
+            "slope": 0.2872319855,
+            "ca": 0.2563824992,
+            "thal": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "thal",
+                "Importance": 0.132337
+            },
+            {
+                "Feature": "cp",
+                "Importance": 0.122763
+            },
+            {
+                "Feature": "thalach",
+                "Importance": 0.118627
+            },
+            {
+                "Feature": "ca",
+                "Importance": 0.112017
+            },
+            {
+                "Feature": "oldpeak",
+                "Importance": 0.09176
+            },
+            {
+                "Feature": "age",
+                "Importance": 0.088467
+            },
+            {
+                "Feature": "chol",
+                "Importance": 0.085711
+            },
+            {
+                "Feature": "trestbps",
+                "Importance": 0.078116
+            },
+            {
+                "Feature": "exang",
+                "Importance": 0.054263
+            },
+            {
+                "Feature": "slope",
+                "Importance": 0.042783
+            },
+            {
+                "Feature": "sex",
+                "Importance": 0.040384
+            },
+            {
+                "Feature": "restecg",
+                "Importance": 0.021905
+            },
+            {
+                "Feature": "fbs",
+                "Importance": 0.010867
+            }
+        ],
+        "most_influential_feature": "thal"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Heart Disease (D09)",
+        "category": "Health Sciences",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 303,
+        "columns": 14
+    },
+    "output_files": {
+        "original_dataset": "DataSets/processed.cleveland.data",
+        "processed_dataset": "DataSets/Processed/heart_disease_classification_results.csv",
+        "metrics": "DataSets/Processed/heart_disease_metrics.csv",
+        "feature_importance": "DataSets/Processed/heart_disease_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/heart_disease_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/heart_disease_feature_columns.joblib",
+        "metadata": "Metadata/D09_heart_disease.json"
+    },
+    "run_timestamp": "2026-11-27 00:22:21"
+}

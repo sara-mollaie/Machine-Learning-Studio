@@ -485,44 +485,73 @@ class DatasetsModule(HomeModule):
         return None
 
     @staticmethod
-    def _regression_summary(meta):
+    def _model_summary(meta, task):
         """
-        مدل انتخاب‌شده و دقت آن را از متادیتای Regression برمی‌گرداند: (نام مدل, دقت به درصد)
+        مدل انتخاب‌شده و دقت آن را از متادیتا برمی‌گرداند: (نام مدل, دقت به درصد)
+        برای Regression و Classification یکسان کار می‌کند.
         ساختار مورد انتظار: model_evaluation → recommended_model و results (فهرست {"Model", "Accuracy", ...}).
         """
         ev = meta.get("model_evaluation") or meta.get("evaluation") or {}
-        results = ev.get("results") if isinstance(ev.get("results"), list) else meta.get("results")
+        ev = ev if isinstance(ev, dict) else {}
+
+        results = None
+        for source in (ev, meta):
+            for key in ("results", "models", "model_results", "metrics"):
+                value = source.get(key)
+                if isinstance(value, (list, dict)) and value:
+                    results = value
+                    break
+            if results:
+                break
+        if isinstance(results, dict):                       # {"KNN": {...}, "SVM": {...}}
+            results = [{"Model": k, **v} for k, v in results.items() if isinstance(v, dict)]
         results = [r for r in results if isinstance(r, dict)] if isinstance(results, list) else []
 
         def entry_name(entry):
-            return str(entry.get("Model") or entry.get("model") or entry.get("name") or "").strip()
+            for key in ("Model", "model", "Algorithm", "algorithm", "Name", "name"):
+                if entry.get(key):
+                    return str(entry[key]).strip()
+            return ""
 
-        def entry_accuracy(entry):
-            for key in ("Accuracy", "accuracy"):
-                value = entry.get(key)
-                if isinstance(value, (int, float)):
+        def metric(entry, *names):
+            for key, value in entry.items():
+                normalized = str(key).strip().lower().replace(" ", "_")
+                if normalized in names and isinstance(value, (int, float)) and not isinstance(value, bool):
                     return float(value)
             return None
 
-        name = (ev.get("recommended_model") or ev.get("best_model") or meta.get("recommended_model")
-                or meta.get("best_model_name") or meta.get("best_model"))
+        accuracy_keys = ("accuracy", "test_accuracy", "accuracy_score")
+
+        name = (ev.get("recommended_model") or ev.get("best_model") or ev.get("best_model_name")
+                or ev.get("selected_model") or meta.get("recommended_model") or meta.get("best_model_name")
+                or meta.get("best_model"))
         name = str(name).strip() if name else ""
 
         chosen = next((r for r in results if name and entry_name(r).casefold() == name.casefold()), None)
 
-        # اگر مدل پیشنهادی در متادیتا نبود، مدلی که بیشترین دقت را دارد انتخاب می‌شود.
-        if chosen is None and not name:
-            scored = [r for r in results if isinstance(r.get("RMSE"), (int, float)) and math.isfinite(r["RMSE"])]
-            if scored:
-                chosen = min(scored, key=lambda r: r["RMSE"])
+        # اگر مدل پیشنهادی در متادیتا نبود: Classification → بیشترین دقت، Regression → کمترین RMSE
+        if chosen is None and not name and results:
+            if task == "Classification":
+                scored = [r for r in results if metric(r, *accuracy_keys) is not None]
+                if scored:
+                    chosen = max(scored, key=lambda r: metric(r, *accuracy_keys))
+            else:
+                scored = [r for r in results if metric(r, "rmse") is not None and math.isfinite(metric(r, "rmse"))]
+                if scored:
+                    chosen = min(scored, key=lambda r: metric(r, "rmse"))
+            if chosen is not None:
                 name = entry_name(chosen)
 
         if chosen is not None:
             name = entry_name(chosen) or name                # همان املای نام مدل در results
 
-        accuracy = entry_accuracy(chosen) if chosen is not None else None
+        accuracy = metric(chosen, *accuracy_keys) if chosen is not None else None
         if accuracy is None:
             accuracy = DatasetsModule._find_metric(meta, "accuracy", "test_accuracy")
+
+        # در Classification دقت معمولاً بین ۰ و ۱ ذخیره می‌شود
+        if task == "Classification" and accuracy is not None and 0 <= accuracy <= 1:
+            accuracy *= 100
 
         return name, accuracy
 
@@ -531,8 +560,8 @@ class DatasetsModule(HomeModule):
         متادیتا را برای هر سه نوع الگوریتم به ساختار ثابت پنجره تبدیل می‌کند:
 
             Clustering     → Preparation, X (features), Algorithm (+K), Quality
-            Classification → Preparation, X (features), Y (target), Algorithm, Quality
-            Regression     → Preparation, X (features), Y (target), Algorithm, Quality
+            Classification → Preparation, X (features), Y (target), Model, Accuracy
+            Regression     → Preparation, X (features), Y (target), Model, Accuracy
 
         فیلدِ نبود = ردیفِ نبود. (ردیف Analysis variable حذف شده است.)
         """
@@ -545,7 +574,11 @@ class DatasetsModule(HomeModule):
 
         rows = _to_int(stats.get("rows", ds.rows))
         cols = _to_int(stats.get("columns", ds.columns))
-        target = meta.get("target") or meta.get("target_column") or fs.get("target") or meta.get("y")
+        cls_info = meta.get("classification") or meta.get("Classification") or {}
+        cls_info = cls_info if isinstance(cls_info, dict) else {}
+        target = (meta.get("target") or meta.get("target_column") or fs.get("target") or fs.get("target_column")
+                  or meta.get("target_variable") or meta.get("y")
+                  or cls_info.get("target_column") or pre.get("target_column"))
 
         features = (self._as_list(fs.get("selected_features")) or self._as_list(clu.get("input_features"))
                     or self._as_list(pre.get("input_features")) or self._as_list(meta.get("features")))
@@ -693,17 +726,23 @@ class DatasetsModule(HomeModule):
         if quality:
             table.append(("Quality", " · ".join(quality)))
 
-        # Regression: X و Y نمایش داده می‌شوند و بعد از آن‌ها مدل انتخاب‌شده و دقت آن؛ ردیف‌های Algorithm و Quality نمی‌آیند.
-        if task == "Regression":
+        # Regression و Classification: X و Y و بعد از آن‌ها مدل انتخاب‌شده و دقت آن؛ ردیف‌های Algorithm و Quality نمی‌آیند.
+        if task in ("Regression", "Classification"):
+            old_rows = dict(table)
             table = [row for row in table if row[0] in ("Preparation", "X (features)", "Y (target)")]
-            regression_target = fs.get("target_column") or fs.get("target") or target
-            if regression_target and not any(row[0] == "Y (target)" for row in table):
-                table.append(("Y (target)", str(regression_target)))
-            model_name, accuracy = self._regression_summary(meta)
+            model_target = fs.get("target_column") or fs.get("target") or target
+            if model_target and not any(row[0] == "Y (target)" for row in table):
+                table.append(("Y (target)", str(model_target)))
+            model_name, accuracy = self._model_summary(meta, task)
             if model_name:
                 table.append(("Model", model_name))
             if accuracy is not None:
                 table.append(("Accuracy", f"{accuracy:.2f}%"))
+            # اگر متادیتای Classification هیچ مدل و دقتی نداشت، ردیف‌های قبلی را نگه می‌دارد
+            if task == "Classification" and not model_name and accuracy is None:
+                for label in ("Algorithm", "Quality"):
+                    if label in old_rows:
+                        table.append((label, old_rows[label]))
 
         return {
             "ds": ds,

@@ -1,0 +1,349 @@
+{
+    "id": "D04",
+    "name": "Wireless Indoor Localization",
+    "title": "Wireless Indoor Localization (D04)",
+    "level": "Beginner",
+    "domain": "Mobile/Location",
+    "task": "Classification",
+    "description": "Estimate which of four rooms a smartphone is in, using the WiFi signal strength (dBm) observed from 7 WiFi devices in an indoor space.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 2000,
+        "columns": 8,
+        "column_names": [
+            "WiFi 1",
+            "WiFi 2",
+            "WiFi 3",
+            "WiFi 4",
+            "WiFi 5",
+            "WiFi 6",
+            "WiFi 7",
+            "Room"
+        ],
+        "data_types": {
+            "WiFi 1": "float64",
+            "WiFi 2": "float64",
+            "WiFi 3": "float64",
+            "WiFi 4": "float64",
+            "WiFi 5": "float64",
+            "WiFi 6": "float64",
+            "WiFi 7": "float64",
+            "Room": "str"
+        },
+        "missing_values": {
+            "WiFi 1": 0,
+            "WiFi 2": 0,
+            "WiFi 3": 0,
+            "WiFi 4": 0,
+            "WiFi 5": 0,
+            "WiFi 6": 0,
+            "WiFi 7": 0,
+            "Room": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "WiFi 1": {
+                "count": 2000.0,
+                "mean": -52.3305,
+                "std": 11.3217,
+                "min": -74.0,
+                "25%": -61.0,
+                "50%": -55.0,
+                "75%": -46.0,
+                "max": -10.0
+            },
+            "WiFi 2": {
+                "count": 2000.0,
+                "mean": -55.6235,
+                "std": 3.4177,
+                "min": -74.0,
+                "25%": -58.0,
+                "50%": -56.0,
+                "75%": -53.0,
+                "max": -45.0
+            },
+            "WiFi 3": {
+                "count": 2000.0,
+                "mean": -54.964,
+                "std": 5.3162,
+                "min": -73.0,
+                "25%": -58.0,
+                "50%": -55.0,
+                "75%": -51.0,
+                "max": -40.0
+            },
+            "WiFi 4": {
+                "count": 2000.0,
+                "mean": -53.5665,
+                "std": 11.472,
+                "min": -77.0,
+                "25%": -63.0,
+                "50%": -56.0,
+                "75%": -46.0,
+                "max": -11.0
+            },
+            "WiFi 5": {
+                "count": 2000.0,
+                "mean": -62.6405,
+                "std": 9.1051,
+                "min": -89.0,
+                "25%": -69.0,
+                "50%": -64.0,
+                "75%": -56.0,
+                "max": -36.0
+            },
+            "WiFi 6": {
+                "count": 2000.0,
+                "mean": -80.985,
+                "std": 6.5167,
+                "min": -97.0,
+                "25%": -86.0,
+                "50%": -82.0,
+                "75%": -77.0,
+                "max": -61.0
+            },
+            "WiFi 7": {
+                "count": 2000.0,
+                "mean": -81.7265,
+                "std": 6.5198,
+                "min": -98.0,
+                "25%": -87.0,
+                "50%": -83.0,
+                "75%": -78.0,
+                "max": -63.0
+            }
+        },
+        "class_distribution": {
+            "Room 1": 500,
+            "Room 2": 500,
+            "Room 3": 500,
+            "Room 4": 500
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "WiFi 1",
+            "WiFi 2",
+            "WiFi 3",
+            "WiFi 4",
+            "WiFi 5",
+            "WiFi 6",
+            "WiFi 7"
+        ],
+        "target_column": "Room",
+        "feature_description": "WiFi 1 to WiFi 7 are the signal strengths (dBm) observed from 7 WiFi devices; the original file has no column names.",
+        "class_labels": [
+            "Room 1",
+            "Room 2",
+            "Room 3",
+            "Room 4"
+        ],
+        "class_encoding": {
+            "Room 1": 0,
+            "Room 2": 1,
+            "Room 3": 2,
+            "Room 4": 3
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "WiFi 1",
+            "WiFi 2",
+            "WiFi 3",
+            "WiFi 4",
+            "WiFi 5",
+            "WiFi 6",
+            "WiFi 7"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Label encoding (Room 1=0, Room 2=1, Room 3=2, Room 4=3)"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 1600,
+        "test_rows": 400,
+        "metrics": [
+            "Accuracy",
+            "F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over the four rooms. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "SVM",
+                "Accuracy": 0.985,
+                "Accuracy Percentage": 98.5,
+                "F1": 0.985048,
+                "F1 Percentage": 98.504827,
+                "F1 Macro": 0.985048
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.985,
+                "Accuracy Percentage": 98.5,
+                "F1": 0.985044,
+                "F1 Percentage": 98.504412,
+                "F1 Macro": 0.985044
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.985,
+                "Accuracy Percentage": 98.5,
+                "F1": 0.985036,
+                "F1 Percentage": 98.503558,
+                "F1 Macro": 0.985036
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.9825,
+                "Accuracy Percentage": 98.25,
+                "F1": 0.982591,
+                "F1 Percentage": 98.259115,
+                "F1 Macro": 0.982591
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.98,
+                "Accuracy Percentage": 98.0,
+                "F1": 0.980049,
+                "F1 Percentage": 98.004937,
+                "F1 Macro": 0.980049
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.98,
+                "Accuracy Percentage": 98.0,
+                "F1": 0.980033,
+                "F1 Percentage": 98.003304,
+                "F1 Macro": 0.980033
+            }
+        ],
+        "recommended_model": "SVM",
+        "selection_rule": "Highest weighted F1 on the held-out test set",
+        "best_model_per_class_report": {
+            "Room 1": {
+                "precision": 0.99,
+                "recall": 0.99,
+                "f1": 0.99,
+                "support": 100
+            },
+            "Room 2": {
+                "precision": 0.989899,
+                "recall": 0.98,
+                "f1": 0.984925,
+                "support": 100
+            },
+            "Room 3": {
+                "precision": 0.961165,
+                "recall": 0.99,
+                "f1": 0.975369,
+                "support": 100
+            },
+            "Room 4": {
+                "precision": 1.0,
+                "recall": 0.98,
+                "f1": 0.989899,
+                "support": 100
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "Room 1",
+                "Room 2",
+                "Room 3",
+                "Room 4"
+            ],
+            "matrix": [
+                [
+                    99,
+                    0,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    98,
+                    2,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    99,
+                    0
+                ],
+                [
+                    1,
+                    0,
+                    1,
+                    98
+                ]
+            ]
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "WiFi 1",
+                "Importance": 0.284823
+            },
+            {
+                "Feature": "WiFi 5",
+                "Importance": 0.257804
+            },
+            {
+                "Feature": "WiFi 4",
+                "Importance": 0.178633
+            },
+            {
+                "Feature": "WiFi 6",
+                "Importance": 0.113803
+            },
+            {
+                "Feature": "WiFi 3",
+                "Importance": 0.089544
+            },
+            {
+                "Feature": "WiFi 7",
+                "Importance": 0.066024
+            },
+            {
+                "Feature": "WiFi 2",
+                "Importance": 0.009369
+            }
+        ],
+        "most_influential_feature": "WiFi 1"
+    },
+    "charts": [
+        "Class Distribution",
+        "WiFi Signal Strength by Room",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Wireless Indoor Localization (D04)",
+        "category": "Mobile/Location",
+        "task": "Classification",
+        "level": "Beginner",
+        "rows": 2000,
+        "columns": 8
+    },
+    "output_files": {
+        "original_dataset": "DataSets/wifi_localization.txt",
+        "processed_dataset": "DataSets/Processed/wifi_localization_classification_results.csv",
+        "metrics": "DataSets/Processed/wifi_localization_metrics.csv",
+        "feature_importance": "DataSets/Processed/wifi_localization_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/wifi_localization_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/wifi_localization_feature_columns.joblib",
+        "metadata": "Metadata/D04_wifi_localization.json"
+    },
+    "run_timestamp": "2026-11-26 16:28:08"
+}

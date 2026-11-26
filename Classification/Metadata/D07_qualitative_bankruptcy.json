@@ -1,0 +1,346 @@
+{
+    "id": "D07",
+    "name": "Qualitative Bankruptcy",
+    "title": "Qualitative Bankruptcy (D07)",
+    "level": "Beginner",
+    "domain": "Finance/Banking",
+    "task": "Classification",
+    "description": "Predict bankruptcy from six qualitative expert assessments (P=Positive, A=Average, N=Negative).",
+    "source": "UCI Machine Learning Repository (https://doi.org/10.24432/C52889)",
+    "dataset_statistics": {
+        "rows": 250,
+        "columns": 7,
+        "column_names": [
+            "Industrial Risk",
+            "Management Risk",
+            "Financial Flexibility",
+            "Credibility",
+            "Competitiveness",
+            "Operating Risk",
+            "Bankruptcy"
+        ],
+        "data_types": {
+            "Industrial Risk": "str",
+            "Management Risk": "str",
+            "Financial Flexibility": "str",
+            "Credibility": "str",
+            "Competitiveness": "str",
+            "Operating Risk": "str",
+            "Bankruptcy": "str"
+        },
+        "missing_values": {
+            "Industrial Risk": 0,
+            "Management Risk": 0,
+            "Financial Flexibility": 0,
+            "Credibility": 0,
+            "Competitiveness": 0,
+            "Operating Risk": 0,
+            "Bankruptcy": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 147,
+        "category_counts": {
+            "Industrial Risk": {
+                "N": 89,
+                "A": 81,
+                "P": 80
+            },
+            "Management Risk": {
+                "N": 119,
+                "A": 69,
+                "P": 62
+            },
+            "Financial Flexibility": {
+                "N": 119,
+                "A": 74,
+                "P": 57
+            },
+            "Credibility": {
+                "N": 94,
+                "A": 77,
+                "P": 79
+            },
+            "Competitiveness": {
+                "N": 103,
+                "A": 56,
+                "P": 91
+            },
+            "Operating Risk": {
+                "N": 114,
+                "A": 57,
+                "P": 79
+            }
+        },
+        "class_distribution": {
+            "NB": 143,
+            "B": 107
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Industrial Risk",
+            "Management Risk",
+            "Financial Flexibility",
+            "Credibility",
+            "Competitiveness",
+            "Operating Risk"
+        ],
+        "target_column": "Bankruptcy",
+        "feature_categories": {
+            "Industrial Risk": [
+                "N",
+                "A",
+                "P"
+            ],
+            "Management Risk": [
+                "N",
+                "A",
+                "P"
+            ],
+            "Financial Flexibility": [
+                "N",
+                "A",
+                "P"
+            ],
+            "Credibility": [
+                "N",
+                "A",
+                "P"
+            ],
+            "Competitiveness": [
+                "N",
+                "A",
+                "P"
+            ],
+            "Operating Risk": [
+                "N",
+                "A",
+                "P"
+            ]
+        },
+        "class_labels": [
+            "NB",
+            "B"
+        ],
+        "class_encoding": {
+            "NB": 0,
+            "B": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [],
+        "categorical_features": [
+            "Industrial Risk",
+            "Management Risk",
+            "Financial Flexibility",
+            "Credibility",
+            "Competitiveness",
+            "Operating Risk"
+        ],
+        "categorical_method": "Most Frequent Imputation + OneHotEncoder",
+        "target_method": "Label encoding (NB=0, B=1)",
+        "class_imbalance_handling": "Stratified split and class_weight='balanced' for Logistic, Decision Tree, Random Forest and SVM"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 200,
+        "test_rows": 50,
+        "metrics": [
+            "Accuracy",
+            "F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over the two bankruptcy classes. F1 Macro is also stored because the classes are imbalanced.",
+        "results": [
+            {
+                "Model": "KNN",
+                "Accuracy": 1.0,
+                "Accuracy Percentage": 100.0,
+                "F1": 1.0,
+                "F1 Percentage": 100.0,
+                "F1 Macro": 1.0
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 1.0,
+                "Accuracy Percentage": 100.0,
+                "F1": 1.0,
+                "F1 Percentage": 100.0,
+                "F1 Macro": 1.0
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 1.0,
+                "Accuracy Percentage": 100.0,
+                "F1": 1.0,
+                "F1 Percentage": 100.0,
+                "F1 Macro": 1.0
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 1.0,
+                "Accuracy Percentage": 100.0,
+                "F1": 1.0,
+                "F1 Percentage": 100.0,
+                "F1 Macro": 1.0
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.98,
+                "Accuracy Percentage": 98.0,
+                "F1": 0.980057,
+                "F1 Percentage": 98.005712,
+                "F1 Macro": 0.9796
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.98,
+                "Accuracy Percentage": 98.0,
+                "F1": 0.979926,
+                "F1 Percentage": 97.992559,
+                "F1 Macro": 0.97933
+            }
+        ],
+        "recommended_model": "KNN",
+        "selection_rule": "Highest test Accuracy (weighted F1 breaks ties)",
+        "best_model_per_class_report": {
+            "NB": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 29
+            },
+            "B": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 21
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "NB",
+                "B"
+            ],
+            "matrix": [
+                [
+                    29,
+                    0
+                ],
+                [
+                    0,
+                    21
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Industrial Risk": {
+            "Industrial Risk": 1.0,
+            "Management Risk": 0.2551270378,
+            "Financial Flexibility": 0.1626237826,
+            "Credibility": 0.0144383653,
+            "Competitiveness": 0.2578135621,
+            "Operating Risk": 0.1445065385
+        },
+        "Management Risk": {
+            "Industrial Risk": 0.2551270378,
+            "Management Risk": 1.0,
+            "Financial Flexibility": 0.2548447506,
+            "Credibility": 0.3033409843,
+            "Competitiveness": 0.3065683559,
+            "Operating Risk": 0.2138739566
+        },
+        "Financial Flexibility": {
+            "Industrial Risk": 0.1626237826,
+            "Management Risk": 0.2548447506,
+            "Financial Flexibility": 1.0,
+            "Credibility": 0.5249513827,
+            "Competitiveness": 0.6866115493,
+            "Operating Risk": 0.1169025777
+        },
+        "Credibility": {
+            "Industrial Risk": 0.0144383653,
+            "Management Risk": 0.3033409843,
+            "Financial Flexibility": 0.5249513827,
+            "Credibility": 1.0,
+            "Competitiveness": 0.6756892515,
+            "Operating Risk": 0.2884579581
+        },
+        "Competitiveness": {
+            "Industrial Risk": 0.2578135621,
+            "Management Risk": 0.3065683559,
+            "Financial Flexibility": 0.6866115493,
+            "Credibility": 0.6756892515,
+            "Competitiveness": 1.0,
+            "Operating Risk": 0.2113834324
+        },
+        "Operating Risk": {
+            "Industrial Risk": 0.1445065385,
+            "Management Risk": 0.2138739566,
+            "Financial Flexibility": 0.1169025777,
+            "Credibility": 0.2884579581,
+            "Competitiveness": 0.2113834324,
+            "Operating Risk": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance (summed over one-hot columns)",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Competitiveness",
+                "Importance": 0.476399
+            },
+            {
+                "Feature": "Financial Flexibility",
+                "Importance": 0.26803
+            },
+            {
+                "Feature": "Credibility",
+                "Importance": 0.19888
+            },
+            {
+                "Feature": "Management Risk",
+                "Importance": 0.02419
+            },
+            {
+                "Feature": "Industrial Risk",
+                "Importance": 0.018845
+            },
+            {
+                "Feature": "Operating Risk",
+                "Importance": 0.013655
+            }
+        ],
+        "most_influential_feature": "Competitiveness"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection of Samples",
+        "Correlation Heatmap (Ordered Categories)",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Qualitative Bankruptcy (D07)",
+        "category": "Finance/Banking",
+        "task": "Classification",
+        "level": "Beginner",
+        "rows": 250,
+        "columns": 7
+    },
+    "output_files": {
+        "original_dataset": "DataSets/Qualitative_Bankruptcy.data.txt",
+        "processed_dataset": "DataSets/Processed/qualitative_bankruptcy_classification_results.csv",
+        "metrics": "DataSets/Processed/qualitative_bankruptcy_metrics.csv",
+        "feature_importance": "DataSets/Processed/qualitative_bankruptcy_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/qualitative_bankruptcy_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/qualitative_bankruptcy_feature_columns.joblib",
+        "metadata": "Metadata/D07_qualitative_bankruptcy.json"
+    },
+    "run_timestamp": "2026-11-27 00:15:31"
+}

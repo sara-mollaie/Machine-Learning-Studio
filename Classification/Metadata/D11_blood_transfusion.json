@@ -1,0 +1,290 @@
+{
+    "id": "D11",
+    "name": "Blood Transfusion",
+    "title": "Blood Transfusion (D11)",
+    "level": "Intermediate",
+    "domain": "Business",
+    "task": "Classification",
+    "description": "Predict whether a donor donated blood in March 2007 from prior donation history.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 748,
+        "columns": 5,
+        "column_names": [
+            "Recency",
+            "Frequency",
+            "Monetary",
+            "Time",
+            "Donation"
+        ],
+        "data_types": {
+            "Recency": "int64",
+            "Frequency": "int64",
+            "Monetary": "int64",
+            "Time": "int64",
+            "Donation": "str"
+        },
+        "missing_values": {
+            "Recency": 0,
+            "Frequency": 0,
+            "Monetary": 0,
+            "Time": 0,
+            "Donation": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 215,
+        "descriptive_statistics": {
+            "Recency": {
+                "count": 748.0,
+                "mean": 9.5067,
+                "std": 8.0954,
+                "min": 0.0,
+                "25%": 2.75,
+                "50%": 7.0,
+                "75%": 14.0,
+                "max": 74.0
+            },
+            "Frequency": {
+                "count": 748.0,
+                "mean": 5.5147,
+                "std": 5.8393,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 4.0,
+                "75%": 7.0,
+                "max": 50.0
+            },
+            "Monetary": {
+                "count": 748.0,
+                "mean": 1378.6765,
+                "std": 1459.8268,
+                "min": 250.0,
+                "25%": 500.0,
+                "50%": 1000.0,
+                "75%": 1750.0,
+                "max": 12500.0
+            },
+            "Time": {
+                "count": 748.0,
+                "mean": 34.2821,
+                "std": 24.3767,
+                "min": 2.0,
+                "25%": 16.0,
+                "50%": 28.0,
+                "75%": 50.0,
+                "max": 98.0
+            }
+        },
+        "class_distribution": {
+            "Not Donor": 570,
+            "Donor": 178
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Recency",
+            "Frequency",
+            "Monetary",
+            "Time"
+        ],
+        "target_column": "Donation",
+        "feature_description": "Four numeric donation history attributes: recency, frequency, monetary volume and time.",
+        "class_labels": [
+            "Not Donor",
+            "Donor"
+        ],
+        "class_encoding": {
+            "Not Donor": 0,
+            "Donor": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Recency",
+            "Frequency",
+            "Monetary",
+            "Time"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Label encoding (Not Donor=0, Donor=1)"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 598,
+        "test_rows": 150,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over both blood donation classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "KNN",
+                "Accuracy": 0.766667,
+                "Accuracy Percentage": 76.666667,
+                "F1": 0.757578,
+                "F1 Percentage": 75.757774,
+                "F1 Macro": 0.656301,
+                "CV Macro F1": 0.59319
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.76,
+                "Accuracy Percentage": 76.0,
+                "F1": 0.71776,
+                "F1 Percentage": 71.776,
+                "F1 Macro": 0.568,
+                "CV Macro F1": 0.553695
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.746667,
+                "Accuracy Percentage": 74.666667,
+                "F1": 0.759,
+                "F1 Percentage": 75.900022,
+                "F1 Macro": 0.690285,
+                "CV Macro F1": 0.617055
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.726667,
+                "Accuracy Percentage": 72.666667,
+                "F1": 0.743662,
+                "F1 Percentage": 74.366215,
+                "F1 Macro": 0.680536,
+                "CV Macro F1": 0.594141
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.72,
+                "Accuracy Percentage": 72.0,
+                "F1": 0.739964,
+                "F1 Percentage": 73.996435,
+                "F1 Macro": 0.688057,
+                "CV Macro F1": 0.614383
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.7,
+                "Accuracy Percentage": 70.0,
+                "F1": 0.717682,
+                "F1 Percentage": 71.768232,
+                "F1 Macro": 0.645092,
+                "CV Macro F1": 0.564392
+            }
+        ],
+        "recommended_model": "KNN",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "Not Donor": {
+                "precision": 0.826446,
+                "recall": 0.877193,
+                "f1": 0.851064,
+                "support": 114
+            },
+            "Donor": {
+                "precision": 0.517241,
+                "recall": 0.416667,
+                "f1": 0.461538,
+                "support": 36
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "Not Donor",
+                "Donor"
+            ],
+            "matrix": [
+                [
+                    100,
+                    14
+                ],
+                [
+                    21,
+                    15
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Recency": {
+            "Recency": 1.0,
+            "Frequency": -0.1827454681,
+            "Monetary": -0.1827454681,
+            "Time": 0.1606180942
+        },
+        "Frequency": {
+            "Recency": -0.1827454681,
+            "Frequency": 1.0,
+            "Monetary": 1.0,
+            "Time": 0.6349402703
+        },
+        "Monetary": {
+            "Recency": -0.1827454681,
+            "Frequency": 1.0,
+            "Monetary": 1.0,
+            "Time": 0.6349402703
+        },
+        "Time": {
+            "Recency": 0.1606180942,
+            "Frequency": 0.6349402703,
+            "Monetary": 0.6349402703,
+            "Time": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Time",
+                "Importance": 0.413521
+            },
+            {
+                "Feature": "Recency",
+                "Importance": 0.299853
+            },
+            {
+                "Feature": "Monetary",
+                "Importance": 0.146637
+            },
+            {
+                "Feature": "Frequency",
+                "Importance": 0.139989
+            }
+        ],
+        "most_influential_feature": "Time"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Blood Transfusion (D11)",
+        "category": "Business",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 748,
+        "columns": 5
+    },
+    "output_files": {
+        "original_dataset": "DataSets/transfusion.data.csv",
+        "processed_dataset": "DataSets/Processed/blood_transfusion_classification_results.csv",
+        "metrics": "DataSets/Processed/blood_transfusion_metrics.csv",
+        "feature_importance": "DataSets/Processed/blood_transfusion_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/blood_transfusion_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/blood_transfusion_feature_columns.joblib",
+        "metadata": "Metadata/D11_blood_transfusion.json"
+    },
+    "run_timestamp": "2026-11-27 00:26:14"
+}

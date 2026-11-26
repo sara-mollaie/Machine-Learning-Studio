@@ -23,7 +23,7 @@ CATEGORIES = [
          glow="#a88bf0", glow_pos="bl", shadow=(110, 70, 170)),
     dict(task="Classification", subtitle="Predict a category",
          algorithms=["KNN", "Logistic", "Decision Tree", "Random Forest", "SVM", "Naive Bayes"],
-         metrics=["Accuracy", "F1", "Confusion matrix"],
+         metrics=["Accuracy", "F1"],
          x=599, y=280, w=474, h=590, featured=False,
          tile=("#ee4f97", "#f78db8"), accent="#ec4899", button=("#c0267c", "#7a1d63"),
          glow="#f26eae", glow_pos="bl", shadow=(235, 80, 150)),

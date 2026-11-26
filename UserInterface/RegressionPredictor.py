@@ -6,7 +6,7 @@ from PIL import Image, ImageTk
 from UserInterface.HomeModule import BASE
 from tkinter import messagebox
 import tkinter as tk
-from datetime import date
+from calendar import month_name
 from UserInterface.Theme import FONT
 from UserInterface.PredictorModule import PredictorModule, MX, PY, PH, LW, RX, RW, BAR_TRACK, BAR_ON
 from UserInterface.Theme import theme
@@ -58,13 +58,15 @@ class RegressionPredictor(PredictorModule):
         self.manual = set()
         self._show_missing = False
         self.vals = {}
+        self._date_years = {}
+        self._date_months = {}
         try:
             self.data = RegressionData(ds)
             self.meta = self.data.meta
             ranges, decimals = {}, {}
             for f in self.data.features:
                 options = self.data.categories.get(f)
-                if options is not None and len(options):
+                if f.lower() != 'x1 transaction date' and options is not None and len(options):
                     try:
                         if len(options)>10 and all(math.isfinite(float(v)) for v in options):
                             options = sorted(options,key=float)
@@ -79,7 +81,7 @@ class RegressionPredictor(PredictorModule):
                     lo, hi = float(st['min']), float(st['max'])
                     if not math.isfinite(lo) or not math.isfinite(hi) or lo > hi:
                         raise ValueError('Invalid range')
-                    if f in self.data.categorical:
+                    if f.lower() != 'x1 transaction date' and f in self.data.categorical:
                         raise ValueError('Unknown categories')
                     ranges[f] = (lo, hi)
                     decimals[f] = 0 if f.lower() in ('weight','age','x4 number of convenience stores') or 'volume' in f.lower() else 4 if hi-lo < 1 else 3
@@ -98,6 +100,41 @@ class RegressionPredictor(PredictorModule):
         self._dirty = True
         if self.winfo_ismapped():
             self._build()
+
+    def _date_options(self, f):
+        lo, hi = self.bundle['range'][f]
+        if f in self.manual or not (1 <= lo <= hi <= 9999):
+            return {}
+        # Metadata statistics are rounded to two decimal places.
+        return {year: months for year in range(max(1, int(lo)-1), min(9999, int(hi))+1)
+                if (months := [month for month in range(1, 13)
+                    if lo-.00501 <= round(year+month/12, 3) <= hi+.00501])}
+
+    def _choose_date(self, f, part, event):
+        options = self._date_options(f)
+        menu = tk.Menu(self, tearoff=False, font=(FONT, -self.s(17)),
+                       bg=theme.c('dlg_bg'), fg=theme.c('title'),
+                       activebackground='#873c78', activeforeground='white')
+        def choose_year(year):
+            self._date_years[f] = year
+            self._date_months.pop(f, None)
+            self._set_feature(f, None)
+        def choose_month(month):
+            year = self._date_years[f]
+            self._date_months[f] = month
+            self._set_feature(f, round(year+month/12, 3))
+        if part == 'year' or f not in self._date_years:
+            for year in options:
+                menu.add_command(label=str(year), command=lambda y=year: choose_year(y))
+        else:
+            for month in options.get(self._date_years[f], []):
+                menu.add_command(label=month_name[month], command=lambda m=month: choose_month(m))
+        if menu.index('end') is None:
+            menu.add_command(label='Date range unavailable', state='disabled')
+        try:
+            menu.tk_popup(event.x_root, event.y_root)
+        finally:
+            menu.grab_release()
 
     def _fmt_feat(self, f, v):
         options = self.data.categories.get(f)
@@ -188,6 +225,23 @@ class RegressionPredictor(PredictorModule):
                 self.hover(tag)
                 self.tag_bind(tag,'<Button-1>',lambda e,name=f:self._drag(name,e))
                 self.tag_bind(tag,'<B1-Motion>',lambda e,name=f:self._drag(name,e))
+            elif kind == 'date':
+                ty = y+30
+                self._sl[f] = dict(x=x,w=w,ty=ty,lo=lo,hi=hi)
+                border = ('#7a5aa6' if dark else '#bfaedf',255)
+                half = (w-10)/2
+                year = self._date_years.get(f)
+                month = self._date_months.get(f)
+                for part, xx, label in [('year', x, str(year) if year else 'Select year'),
+                                        ('month', x+half+10, month_name[month] if month else 'Select month')]:
+                    tag = f'date_{i}_{part}'
+                    self.create_image(S(xx),S(ty-16),image=self._shape(half,32,12,self._pal()['search_bg'],border=border),anchor='nw',tags=(tag,))
+                    self.text(xx+10,ty,self._fit(label,17,False,half-34),17,c('title'),tags=(tag,))
+                    self.text(xx+half-10,ty,'▾',16,c('title'),anchor='e',tags=(tag,))
+                    self.hover(tag)
+                    self.tag_bind(tag,'<Button-1>',lambda e,name=f,p=part:self._choose_date(name,p,e))
+                hint = 'Gregorian date: year, then month' if v is None else f'{month_name[month]} {year}'
+                self.text(x,ty+25,hint,13,c('body'))
             else:
                 ty = y+35
                 self._sl[f] = dict(x=x,w=w,ty=ty,lo=lo,hi=hi)
@@ -248,6 +302,9 @@ class RegressionPredictor(PredictorModule):
 
     def _edit_feature(self, f, event):
         kind = self._kind(f)
+        if kind == 'date':
+            self._choose_date(f, 'year' if f not in self._date_years else 'month', event)
+            return
         if kind == 'scroll_choice':
             popup = tk.Toplevel(self)
             popup.transient(self.winfo_toplevel())
@@ -296,18 +353,12 @@ class RegressionPredictor(PredictorModule):
                     width=self.s(slot['w']-20), height=self.s(30))
         if self.vals[f] is not None:
             entry.insert(0,str(self.vals[f]))
-        elif kind == 'date':
-            entry.insert(0,'YYYY-MM')
         entry.select_range(0,'end')
         entry.focus_set()
         def commit(e=None):
             try:
                 raw = entry.get().strip()
-                if kind == 'date':
-                    d = date.fromisoformat(raw+'-01')
-                    value = round(d.year+d.month/12,3)
-                else:
-                    value = raw if f in self.data.categorical else float(raw)
+                value = raw if f in self.data.categorical else float(raw)
                 if not raw or isinstance(value,float) and not math.isfinite(value):
                     raise ValueError()
                 if f not in self.manual:
@@ -381,7 +432,7 @@ class RegressionPredictor(PredictorModule):
             self._show_missing = False
             self._highlight_missing()
             try:
-                values = {f:self.data.categories[f][int(v)] if f in self.data.categories and len(self.data.categories[f]) else v for f,v in self.vals.items()}
+                values = {f:self.data.categories[f][int(v)] if self._kind(f) != 'date' and f in self.data.categories and len(self.data.categories[f]) else v for f,v in self.vals.items()}
                 self.result = self.data.predict(values)
                 self.notice = None
             except Exception as exc:
@@ -392,6 +443,8 @@ class RegressionPredictor(PredictorModule):
         self.feature_page = 0
         self._show_missing = False
         self.vals = dict.fromkeys(self.vals)
+        self._date_years.clear()
+        self._date_months.clear()
         self.result = self.notice = None
         self._build()
 
@@ -455,9 +508,12 @@ class RegressionPredictor(PredictorModule):
             r=4 if x!=center+45 else 6
             self.create_oval(S(x-r),S(PY+y-r),S(x+r),S(PY+y+r),fill=accent,outline='',tags=T)
         txt(center,120,self._fit('Predicted '+str(self.data.target),19,False,width),19,False,muted,'center')
-        decimals = 0 if str(self.data.bundle.get('dataset_name', '')).casefold() == 'abalone' else 2
+        decimals = 0 if str(self.data.bundle.get('dataset_name', '')).strip().casefold() == 'abalone' else 5
         value = '—' if self.result is None else f'{self.result:,.{decimals}f}'
-        txt(center,163,self._fit(value,48,True,width),48,True,accent,'center')
+        value_size = 48
+        while value_size > 1 and self.text_width(value, value_size, True) > width:
+            value_size -= 1
+        txt(center,163,value,value_size,True,accent,'center')
         msg=self.notice or ('Set every feature value, then press Predict.' if self.result is None else 'Prediction generated')
         txt(center,203,self._fit(msg,17,False,width),17,False,muted,'center')
         line([(left,224),(right,224)],'#795184',1)

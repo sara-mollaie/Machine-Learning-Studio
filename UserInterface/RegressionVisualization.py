@@ -21,14 +21,14 @@ from UserInterface.VisualizationModule import VisualizationModule, MX, CW, PY, P
 from UserInterface.VisualizationModule import _corr_color, _lum, PILL_ON_LIGHT, PILL_BORDER_LIGHT
 
 TABS = [('importance', 'Feature Importance'), ('corr', 'Correlation'), ('actual', 'Actual vs Predicted'),
-        ('accuracy', 'Model Accuracy'), ('residual', 'Residual Distribution')]
+        ('accuracy', 'Model Accuracy'), ('residual', 'Residuals vs Predicted')]
 
 TITLES = {
     'importance': 'Feature Importance',
     'corr': 'Correlation Heatmap',
     'actual': 'Actual vs Predicted',
     'accuracy': 'Model Accuracy Comparison',
-    'residual': 'Residual Error Distribution',
+    'residual': 'Residuals vs Predicted',
 }
 
 # ---- پالت چارت‌ها (برای هر دو تم، با کنتراست بالا روی کارت شیشه‌ای) ----
@@ -371,11 +371,14 @@ class RegressionVisualization(VisualizationModule):
                        labelcolor=pal['fg'], handlelength=1.4, columnspacing=1.8)
 
         top3 = by_strength[:3]
-        entries = [(f'#{i + 1}  {"raises" if v >= 0 else "lowers"} {d.target or "the target"}',
+        target = {'cnt': 'rentals', 'mp2.5': 'PM2.5', 'pm2.5': 'PM2.5'}.get(d.target, d.target or 'the target')
+        entries = [(f'#{i + 1}  {"pushes" if v != 0 else "no change in"} {target}{" up" if v > 0 else " down" if v < 0 else ""}',
                     f'{n}  {v:+.2f}', pal['purple'] if v >= 0 else pal['pink'])
                    for i, (n, v) in enumerate(top3)]
-        self._card(ctx, CARD_RECT, 'Top drivers', entries,
-                   'Inputs are standardized, so bar lengths are directly comparable across features.')
+        note = 'Linear-model associations, not causal effects.'
+        if d.model and d.model not in ('Linear Regression', 'Unknown'):
+            note += f' These coefficients come from the linear model, not {d.model}.'
+        self._card(ctx, CARD_RECT, 'Top drivers', entries, note)
         return 'Signed coefficients from the saved linear regression model'
 
     # ---- ۲) همبستگی ----
@@ -487,9 +490,22 @@ class RegressionVisualization(VisualizationModule):
                    ('R² (variance explained)', _num(info.get('R2'), 3), None),
                    ('RMSE (typical error)', _num(info.get('RMSE'), 1), None),
                    ('MAE (average error)', _num(info.get('MAE'), 1), None)]
-        definition = (self.meta.get('model_evaluation') or {}).get('accuracy_definition')
-        note = 'Accuracy = 100 × (1 − RMSE / mean |actual|), a descriptive score, not classification accuracy.' \
-            if definition else 'Accuracy is the saved RMSE-based score for each model.'
+        definition = (self.meta.get('model_evaluation') or {}).get('accuracy_definition') or self.meta.get('accuracy_definition')
+        normalized = ''.join(str(definition or '').lower().split())
+        if 'targetrange' in normalized or ('max(' in normalized and 'min(' in normalized and 'rmse' in normalized):
+            denominator = 'target range'
+        elif 'mean(abs(' in normalized or 'mean|actual|' in normalized or 'meanabsolute' in normalized:
+            denominator = 'mean |actual|'
+        elif 'mean(y_test)' in normalized or 'mean(actual)' in normalized:
+            denominator = 'mean actual'
+        else:
+            denominator = None
+        if denominator:
+            note = f'Accuracy = max(0, 100 × (1 − RMSE / {denominator})). Not classification accuracy.'
+        elif definition:
+            note = str(definition)
+        else:
+            note = 'Accuracy is the saved RMSE-based score for each model.'
         self._card(ctx, CARD_RECT, best[0], entries, note)
         return 'Held-out test results • the pink bar is the recommended model'
 
@@ -539,7 +555,7 @@ class RegressionVisualization(VisualizationModule):
                    'Points close to the diagonal line are accurate predictions.')
         return f'{d.model} • {len(idx):,} of {len(a):,} saved prediction pairs'
 
-    # ---- ۵) توزیع خطا ----
+    # ---- ۵) باقیمانده در برابر پیش‌بینی (الگوی خطا را نشان می‌دهد) ----
     def _residual(self, ctx):
         pal, d, dark = ctx.pal, ctx.d, ctx.dark
         a, p = self._pairs(d)
@@ -547,33 +563,62 @@ class RegressionVisualization(VisualizationModule):
         mean, std = float(err.mean()), float(err.std())
         rmse = float(np.sqrt((err ** 2).mean()))
 
+        idx = np.random.default_rng(42).choice(len(a), min(6000, len(a)), replace=False)
+        px, pe = p[idx], err[idx]
+        n = len(idx)
+
         ax = ctx.fig.add_axes([0.075, 0.12, 0.575, 0.61])
-        self._style_axes(ax, pal, grid='y')
-        counts, edges, patches = ax.hist(err, bins=36, edgecolor=pal['fg'], linewidth=.5)
-        centers = (edges[:-1] + edges[1:]) / 2
-        for c_, patch in zip(centers, patches):
-            patch.set_facecolor(pal['purple'] if abs(c_ - mean) <= std else pal['purple_soft'])
-            patch.set_alpha(.95 if abs(c_ - mean) <= std else .6)
-        ax.axvline(0, color=pal['pink'], linewidth=2.4)
-        for s_ in (-std, std):
-            ax.axvline(mean + s_, color=pal['fg'], linewidth=1.3, linestyle=(0, (5, 4)), alpha=.75)
-        ax.set_xlabel('Residual (actual − predicted)')
-        ax.set_ylabel('Number of predictions')
+        self._style_axes(ax, pal, grid='both')
+        ax.axhspan(-rmse, rmse, color=pal['purple'], alpha=.10, zorder=1)
+        ax.axhline(0, color=pal['pink'], linewidth=2.4, zorder=2)
+        if n <= 600:
+            ax.scatter(px, pe, s=78 if n <= 200 else 44, c=pal['pt_face'], edgecolors=pal['pt_edge'],
+                       linewidths=1.1, alpha=.97, zorder=3)
+        else:
+            ax.scatter(px, pe, s=14, c=pal['purple'], alpha=.35, edgecolors='none', rasterized=True, zorder=3)
+
+        order = np.argsort(p)                         # میانگین باقیمانده در بازه‌های پیش‌بینی
+        chunks = np.array_split(order, int(min(10, max(3, len(p) // 15))))
+        tx = [float(p[c].mean()) for c in chunks if len(c)]
+        ty = [float(err[c].mean()) for c in chunks if len(c)]
+        ax.plot(tx, ty, color=pal['fg'], linewidth=2.2, marker='o', markersize=6.5, markerfacecolor=pal['pink'],
+                markeredgecolor='white', markeredgewidth=1.0, zorder=5)
+
+        lim = max(float(np.abs(err).max()) * 1.08, rmse * 1.3, 1e-9)
+        ax.set_ylim(-lim, lim)
+        pad = (float(p.max()) - float(p.min())) * .04
+        ax.set_xlim(float(p.min()) - pad, float(p.max()) + pad)
+        ax.set_xlabel('Predicted values')
+        ax.set_ylabel('Residual (actual − predicted)')
         ctx.fig.legend(handles=[Line2D([0], [0], color=pal['pink'], linewidth=2.4, label='Zero error'),
-                                Patch(color=pal['purple'], label='Within ±1 standard deviation'),
-                                Line2D([0], [0], color=pal['fg'], linewidth=1.3, linestyle=(0, (5, 4)),
-                                       label='±1 std boundary')],
-                       loc='center left', bbox_to_anchor=(0.075, 0.775), ncol=3, frameon=False, fontsize=12.5,
-                       labelcolor=pal['fg'], handlelength=1.6, columnspacing=1.8)
+                                Line2D([0], [0], marker='o', linestyle='', markersize=9,
+                                       markerfacecolor=pal['pt_face'], markeredgecolor=pal['pt_edge'],
+                                       markeredgewidth=1.1, label='Predictions'),
+                                Line2D([0], [0], color=pal['fg'], linewidth=2.2, marker='o', markersize=6.5,
+                                       markerfacecolor=pal['pink'], markeredgecolor='white', label='Average trend'),
+                                Patch(color=pal['purple'], alpha=.18, label='±RMSE band')],
+                       loc='center left', bbox_to_anchor=(0.075, 0.775), ncol=4, frameon=False, fontsize=12.5,
+                       labelcolor=pal['fg'], handlelength=1.6, columnspacing=1.6)
 
         within = float((np.abs(err) <= rmse).mean() * 100)
+        third = len(order) // 3
+        if third >= 3 and err[order[:third]].std() > 0:
+            ratio = float(err[order[-third:]].std() / err[order[:third]].std())
+            if ratio > 1.5:
+                spread = f'Grows ×{ratio:.1f} at high values'
+            elif ratio < 1 / 1.5:
+                spread = f'Shrinks ×{1 / ratio:.1f} at high values'
+            else:
+                spread = 'Roughly constant'
+        else:
+            spread = 'Too few points'
         entries = [('Mean error (bias)', f'{mean:+.2f}', pal['pink']),
-                   ('Standard deviation', _num(std, 1), None),
+                   ('Typical spread (std)', _num(std, 1), None),
                    (f'Within ± RMSE ({_num(rmse, 1)})', f'{within:.0f}% of cases', None),
-                   ('Saved test predictions', f'{len(a):,}', None)]
-        self._card(ctx, CARD_RECT, 'Error summary', entries,
-                   'A histogram centered on zero means the model has no systematic over- or under-prediction.')
-        return f'{d.model} • {len(a):,} saved prediction pairs'
+                   ('Error size vs prediction', spread, None)]
+        self._card(ctx, CARD_RECT, 'Error pattern', entries,
+                   'Dots should spread evenly around zero. A curve or funnel means a missed pattern.')
+        return f'{d.model} • {n:,} of {len(a):,} saved prediction pairs'
 
     @staticmethod
     def _pairs(d):
