@@ -1,4 +1,3 @@
-
 <div align="center">
 
 <img src="assets/MLStudio.png" width="130" alt="Machine Learning Studio Logo">
@@ -35,6 +34,36 @@ real-world datasets, and comprehensive analytical insights.
 Users can explore datasets, compare algorithms, generate
 predictions, evaluate model performance, and discover meaningful
 patterns without writing code.
+
+---
+
+## 🖼️ Application Screenshots
+
+Explore the interactive interface and key features of Machine Learning Studio in Light and Dark modes.
+
+### 🏠 Home — Light Mode
+
+<p align="center">
+  <img src="assets/screenshots/home.png" width="100%" alt="ML Studio Home">
+</p>
+
+### 📚 Dataset Exploration & Algorithms
+
+| Dataset Explorer | Machine Learning Algorithms |
+|:---:|:---:|
+| <img src="assets/screenshots/datasets.png" width="100%" alt="Dataset Explorer"> | <img src="assets/screenshots/algorithms.png" width="100%" alt="Machine Learning Algorithms"> |
+
+### 🎯 Prediction & Model Evaluation
+
+| Regression Predictor | Clustering Evaluation |
+|:---:|:---:|
+| <img src="assets/screenshots/regression.png" width="100%" alt="Regression Predictor"> | <img src="assets/screenshots/evaluation.png" width="100%" alt="Clustering Evaluation"> |
+
+### 📊 Interactive Data Visualization
+
+<p align="center">
+  <img src="assets/screenshots/visualization.png" width="100%" alt="PCA Visualization">
+</p>
 
 ---
 
@@ -322,6 +351,7 @@ Machine-Learning-Studio/
 │   ├── DataSets/
 │   ├── icons/
 │   ├── page_images/
+│   ├── screenshots/
 │   ├── MLStudio.ico
 │   └── MLStudio.png
 │
@@ -455,21 +485,6 @@ the packaged executable distribution.
 
 The `requirements.txt` file documents the Python dependencies
 used during application development.
-
----
-
-## 🖼️ Application Screenshots
-
-Application screenshots will showcase the following modules:
-
-- Home — Light and Dark Mode
-- Dataset Explorer
-- Machine Learning Algorithms
-- Regression Predictor
-- Classification Predictor
-- Clustering Analysis
-- Model Evaluation
-- Data Visualization
 
 ---
 
