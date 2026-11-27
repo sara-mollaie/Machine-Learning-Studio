@@ -1,0 +1,368 @@
+{
+    "id": "D02",
+    "name": "User Knowledge Modeling",
+    "title": "User Knowledge Modeling (D02)",
+    "level": "Beginner",
+    "domain": "Education",
+    "task": "Classification",
+    "description": "Predict a student's knowledge level about Electrical DC Machines using study time, repetition and exam performance features. The target has four ordered classes: very_low, Low, Middle and High.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 403,
+        "columns": 6,
+        "column_names": [
+            "Study Time Goal",
+            "Repetition Goal",
+            "Study Time Related",
+            "Exam Performance Related",
+            "Exam Performance Goal",
+            "Knowledge Level"
+        ],
+        "data_types": {
+            "Study Time Goal": "float64",
+            "Repetition Goal": "float64",
+            "Study Time Related": "float64",
+            "Exam Performance Related": "float64",
+            "Exam Performance Goal": "float64",
+            "Knowledge Level": "str"
+        },
+        "missing_values": {
+            "Study Time Goal": 0,
+            "Repetition Goal": 0,
+            "Study Time Related": 0,
+            "Exam Performance Related": 0,
+            "Exam Performance Goal": 0,
+            "Knowledge Level": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Study Time Goal": {
+                "count": 403.0,
+                "mean": 0.3531,
+                "std": 0.212,
+                "min": 0.0,
+                "25%": 0.2,
+                "50%": 0.3,
+                "75%": 0.48,
+                "max": 0.99
+            },
+            "Repetition Goal": {
+                "count": 403.0,
+                "mean": 0.3559,
+                "std": 0.2155,
+                "min": 0.0,
+                "25%": 0.2,
+                "50%": 0.3,
+                "75%": 0.51,
+                "max": 0.9
+            },
+            "Study Time Related": {
+                "count": 403.0,
+                "mean": 0.4577,
+                "std": 0.2467,
+                "min": 0.0,
+                "25%": 0.265,
+                "50%": 0.44,
+                "75%": 0.68,
+                "max": 0.95
+            },
+            "Exam Performance Related": {
+                "count": 403.0,
+                "mean": 0.4313,
+                "std": 0.2575,
+                "min": 0.0,
+                "25%": 0.25,
+                "50%": 0.33,
+                "75%": 0.65,
+                "max": 0.99
+            },
+            "Exam Performance Goal": {
+                "count": 403.0,
+                "mean": 0.4564,
+                "std": 0.2668,
+                "min": 0.0,
+                "25%": 0.25,
+                "50%": 0.4,
+                "75%": 0.66,
+                "max": 0.99
+            }
+        },
+        "class_distribution": {
+            "very_low": 50,
+            "Low": 129,
+            "Middle": 122,
+            "High": 102
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Study Time Goal",
+            "Repetition Goal",
+            "Study Time Related",
+            "Exam Performance Related",
+            "Exam Performance Goal"
+        ],
+        "target_column": "Knowledge Level",
+        "original_column_names": {
+            "Study Time Goal": "STG",
+            "Repetition Goal": "SCG",
+            "Study Time Related": "STR",
+            "Exam Performance Related": "LPR",
+            "Exam Performance Goal": "PEG",
+            "Knowledge Level": "UNS"
+        },
+        "class_labels": [
+            "very_low",
+            "Low",
+            "Middle",
+            "High"
+        ],
+        "class_encoding": {
+            "very_low": 0,
+            "Low": 1,
+            "Middle": 2,
+            "High": 3
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Study Time Goal",
+            "Repetition Goal",
+            "Study Time Related",
+            "Exam Performance Related",
+            "Exam Performance Goal"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Ordered label encoding (very_low=0, Low=1, Middle=2, High=3)"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 322,
+        "test_rows": 81,
+        "metrics": [
+            "Accuracy",
+            "F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over the four knowledge levels. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.938272,
+                "Accuracy Percentage": 93.82716,
+                "F1": 0.938205,
+                "F1 Percentage": 93.820544,
+                "F1 Macro": 0.934189
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.938272,
+                "Accuracy Percentage": 93.82716,
+                "F1": 0.938205,
+                "F1 Percentage": 93.820544,
+                "F1 Macro": 0.934189
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.925926,
+                "Accuracy Percentage": 92.592593,
+                "F1": 0.925307,
+                "F1 Percentage": 92.530734,
+                "F1 Macro": 0.914063
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.888889,
+                "Accuracy Percentage": 88.888889,
+                "F1": 0.889142,
+                "F1 Percentage": 88.914213,
+                "F1 Macro": 0.89359
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.888889,
+                "Accuracy Percentage": 88.888889,
+                "F1": 0.887094,
+                "F1 Percentage": 88.709428,
+                "F1 Macro": 0.890727
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.802469,
+                "Accuracy Percentage": 80.246914,
+                "F1": 0.783385,
+                "F1 Percentage": 78.338473,
+                "F1 Macro": 0.725498
+            }
+        ],
+        "recommended_model": "Decision Tree",
+        "selection_rule": "Highest weighted F1 on the held-out test set",
+        "best_model_per_class_report": {
+            "very_low": {
+                "precision": 1.0,
+                "recall": 0.8,
+                "f1": 0.888889,
+                "support": 10
+            },
+            "Low": {
+                "precision": 0.862069,
+                "recall": 0.961538,
+                "f1": 0.909091,
+                "support": 26
+            },
+            "Middle": {
+                "precision": 0.958333,
+                "recall": 0.92,
+                "f1": 0.938776,
+                "support": 25
+            },
+            "High": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 20
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "very_low",
+                "Low",
+                "Middle",
+                "High"
+            ],
+            "matrix": [
+                [
+                    8,
+                    2,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    25,
+                    1,
+                    0
+                ],
+                [
+                    0,
+                    2,
+                    23,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    20
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Study Time Goal": {
+            "Study Time Goal": 1.0,
+            "Repetition Goal": 0.0490226319,
+            "Study Time Related": -0.0518885069,
+            "Exam Performance Related": 0.1139565052,
+            "Exam Performance Goal": 0.1986292016,
+            "Knowledge Level (encoded)": 0.2174774878
+        },
+        "Repetition Goal": {
+            "Study Time Goal": 0.0490226319,
+            "Repetition Goal": 1.0,
+            "Study Time Related": 0.1212354742,
+            "Exam Performance Related": 0.1197163583,
+            "Exam Performance Goal": 0.1935655972,
+            "Knowledge Level (encoded)": 0.2490945083
+        },
+        "Study Time Related": {
+            "Study Time Goal": -0.0518885069,
+            "Repetition Goal": 0.1212354742,
+            "Study Time Related": 1.0,
+            "Exam Performance Related": 0.0834227466,
+            "Exam Performance Goal": 0.1483383742,
+            "Knowledge Level (encoded)": 0.2034523639
+        },
+        "Exam Performance Related": {
+            "Study Time Goal": 0.1139565052,
+            "Repetition Goal": 0.1197163583,
+            "Study Time Related": 0.0834227466,
+            "Exam Performance Related": 1.0,
+            "Exam Performance Goal": -0.0392830435,
+            "Knowledge Level (encoded)": 0.2479680787
+        },
+        "Exam Performance Goal": {
+            "Study Time Goal": 0.1986292016,
+            "Repetition Goal": 0.1935655972,
+            "Study Time Related": 0.1483383742,
+            "Exam Performance Related": -0.0392830435,
+            "Exam Performance Goal": 1.0,
+            "Knowledge Level (encoded)": 0.9194563104
+        },
+        "Knowledge Level (encoded)": {
+            "Study Time Goal": 0.2174774878,
+            "Repetition Goal": 0.2490945083,
+            "Study Time Related": 0.2034523639,
+            "Exam Performance Related": 0.2479680787,
+            "Exam Performance Goal": 0.9194563104,
+            "Knowledge Level (encoded)": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Exam Performance Goal",
+                "Importance": 0.639595
+            },
+            {
+                "Feature": "Exam Performance Related",
+                "Importance": 0.172011
+            },
+            {
+                "Feature": "Study Time Goal",
+                "Importance": 0.066468
+            },
+            {
+                "Feature": "Repetition Goal",
+                "Importance": 0.062228
+            },
+            {
+                "Feature": "Study Time Related",
+                "Importance": 0.059698
+            }
+        ],
+        "most_influential_feature": "Exam Performance Goal"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Knowledge Level",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "User Knowledge Modeling (D02)",
+        "category": "Education",
+        "task": "Classification",
+        "level": "Beginner",
+        "rows": 403,
+        "columns": 6
+    },
+    "output_files": {
+        "original_dataset": "DataSets/User_Knowledge_Modeling.xls",
+        "processed_dataset": "DataSets/Processed/user_knowledge_classification_results.csv",
+        "metrics": "DataSets/Processed/user_knowledge_metrics.csv",
+        "feature_importance": "DataSets/Processed/user_knowledge_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/user_knowledge_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/user_knowledge_feature_columns.joblib",
+        "metadata": "Metadata/D02_user_knowledge.json"
+    },
+    "run_timestamp": "2026-11-27 07:02:09"
+}

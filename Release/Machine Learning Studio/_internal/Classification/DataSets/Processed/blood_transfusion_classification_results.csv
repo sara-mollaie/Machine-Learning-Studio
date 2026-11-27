@@ -1,0 +1,749 @@
+Recency,Frequency,Monetary,Time,Donation,Predicted_Donation
+2,50,12500,98,Donor,
+0,13,3250,28,Donor,
+1,16,4000,35,Donor,
+2,20,5000,45,Donor,
+1,24,6000,77,Not Donor,
+4,4,1000,4,Not Donor,Donor
+2,7,1750,14,Donor,Donor
+1,12,3000,35,Not Donor,
+2,9,2250,22,Donor,
+5,46,11500,98,Donor,Donor
+4,23,5750,58,Not Donor,
+0,3,750,4,Not Donor,
+2,10,2500,28,Donor,
+1,13,3250,47,Not Donor,
+2,6,1500,15,Donor,Donor
+2,5,1250,11,Donor,
+2,14,3500,48,Donor,
+2,15,3750,49,Donor,
+2,6,1500,15,Donor,
+2,3,750,4,Donor,
+2,3,750,4,Donor,
+4,11,2750,28,Not Donor,
+2,6,1500,16,Donor,
+2,6,1500,16,Donor,
+9,9,2250,16,Not Donor,
+4,14,3500,40,Not Donor,Donor
+4,6,1500,14,Not Donor,
+4,12,3000,34,Donor,
+4,5,1250,11,Donor,
+4,8,2000,21,Not Donor,
+1,14,3500,58,Not Donor,
+4,10,2500,28,Donor,
+4,10,2500,28,Donor,
+4,9,2250,26,Donor,
+2,16,4000,64,Not Donor,
+2,8,2000,28,Donor,
+2,12,3000,47,Donor,
+4,6,1500,16,Donor,Donor
+2,14,3500,57,Donor,
+4,7,1750,22,Donor,Not Donor
+2,13,3250,53,Donor,Donor
+2,5,1250,16,Not Donor,Donor
+2,5,1250,16,Donor,Donor
+2,5,1250,16,Not Donor,Donor
+4,20,5000,69,Donor,
+4,9,2250,28,Donor,
+2,9,2250,36,Not Donor,
+2,2,500,2,Not Donor,
+2,2,500,2,Not Donor,
+2,2,500,2,Not Donor,
+2,11,2750,46,Not Donor,
+2,11,2750,46,Donor,
+2,6,1500,22,Not Donor,Donor
+2,12,3000,52,Not Donor,Not Donor
+4,5,1250,14,Donor,
+4,19,4750,69,Donor,
+4,8,2000,26,Donor,
+2,7,1750,28,Donor,
+2,16,4000,81,Not Donor,
+3,6,1500,21,Not Donor,
+2,7,1750,29,Not Donor,
+2,8,2000,35,Donor,
+2,10,2500,49,Not Donor,
+4,5,1250,16,Donor,
+2,3,750,9,Donor,Not Donor
+3,16,4000,74,Not Donor,
+2,4,1000,14,Donor,
+0,2,500,4,Not Donor,Not Donor
+4,7,1750,25,Not Donor,
+1,9,2250,51,Not Donor,
+2,4,1000,16,Not Donor,
+2,4,1000,16,Not Donor,
+4,17,4250,71,Donor,
+2,2,500,4,Not Donor,
+2,2,500,4,Donor,Not Donor
+2,2,500,4,Donor,
+2,4,1000,16,Donor,
+2,2,500,4,Not Donor,
+2,2,500,4,Not Donor,Not Donor
+2,2,500,4,Not Donor,
+4,6,1500,23,Donor,
+2,4,1000,16,Not Donor,
+2,4,1000,16,Not Donor,
+2,4,1000,16,Not Donor,
+2,6,1500,28,Donor,
+2,6,1500,28,Not Donor,
+4,2,500,4,Not Donor,Donor
+4,2,500,4,Not Donor,
+4,2,500,4,Not Donor,
+2,7,1750,35,Donor,
+4,2,500,4,Donor,
+4,2,500,4,Not Donor,Donor
+4,2,500,4,Not Donor,
+4,2,500,4,Not Donor,
+12,11,2750,23,Not Donor,
+4,7,1750,28,Not Donor,
+3,17,4250,86,Not Donor,
+4,9,2250,38,Donor,
+4,4,1000,14,Donor,
+5,7,1750,26,Donor,
+4,8,2000,34,Donor,Donor
+2,13,3250,76,Donor,Not Donor
+4,9,2250,40,Not Donor,
+2,5,1250,26,Not Donor,
+2,5,1250,26,Not Donor,
+6,17,4250,70,Not Donor,Donor
+0,8,2000,59,Not Donor,
+3,5,1250,26,Not Donor,
+2,3,750,14,Not Donor,
+2,10,2500,64,Not Donor,
+4,5,1250,23,Donor,
+4,9,2250,46,Not Donor,
+4,5,1250,23,Not Donor,Donor
+4,8,2000,40,Donor,
+2,12,3000,82,Not Donor,
+11,24,6000,64,Not Donor,
+2,7,1750,46,Donor,
+4,11,2750,61,Not Donor,
+1,7,1750,57,Not Donor,Not Donor
+2,11,2750,79,Donor,Not Donor
+2,3,750,16,Donor,
+4,5,1250,26,Donor,
+2,6,1500,41,Donor,
+2,5,1250,33,Donor,
+2,4,1000,26,Not Donor,
+2,5,1250,34,Not Donor,Not Donor
+4,8,2000,46,Donor,
+2,4,1000,26,Not Donor,
+4,8,2000,48,Donor,
+2,2,500,10,Donor,
+4,5,1250,28,Not Donor,
+2,12,3000,95,Not Donor,
+2,2,500,10,Not Donor,
+4,6,1500,35,Not Donor,
+2,11,2750,88,Not Donor,
+2,3,750,19,Not Donor,Not Donor
+2,5,1250,37,Not Donor,
+2,12,3000,98,Not Donor,
+9,5,1250,19,Not Donor,
+2,2,500,11,Not Donor,
+2,9,2250,74,Not Donor,
+5,14,3500,86,Not Donor,
+4,3,750,16,Not Donor,
+4,3,750,16,Not Donor,
+4,2,500,9,Donor,
+4,3,750,16,Donor,
+6,3,750,14,Not Donor,Not Donor
+2,2,500,11,Not Donor,
+2,2,500,11,Donor,
+2,2,500,11,Not Donor,
+2,7,1750,58,Donor,
+4,6,1500,39,Not Donor,
+4,11,2750,78,Not Donor,
+2,1,250,2,Donor,Not Donor
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,Not Donor
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,Not Donor
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Donor,
+2,1,250,2,Donor,
+2,1,250,2,Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,Not Donor
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,Not Donor
+11,10,2500,35,Not Donor,
+11,4,1000,16,Donor,
+4,5,1250,33,Donor,Not Donor
+4,6,1500,41,Donor,Not Donor
+2,3,750,22,Not Donor,
+4,4,1000,26,Donor,Not Donor
+10,4,1000,16,Not Donor,Not Donor
+2,4,1000,35,Not Donor,Not Donor
+4,12,3000,88,Not Donor,
+13,8,2000,26,Not Donor,
+11,9,2250,33,Not Donor,
+4,5,1250,34,Not Donor,
+4,4,1000,26,Not Donor,
+8,15,3750,77,Not Donor,
+4,5,1250,35,Donor,
+4,7,1750,52,Not Donor,
+4,7,1750,52,Not Donor,
+2,4,1000,35,Not Donor,
+11,11,2750,42,Not Donor,
+2,2,500,14,Not Donor,
+2,5,1250,47,Donor,
+9,8,2000,38,Donor,
+4,6,1500,47,Not Donor,
+11,7,1750,29,Not Donor,
+9,9,2250,45,Not Donor,
+4,6,1500,52,Not Donor,Not Donor
+4,7,1750,58,Not Donor,
+6,2,500,11,Donor,
+4,7,1750,58,Not Donor,
+11,9,2250,38,Not Donor,
+11,6,1500,26,Not Donor,
+2,2,500,16,Not Donor,
+2,7,1750,76,Not Donor,
+11,6,1500,27,Not Donor,Not Donor
+11,3,750,14,Not Donor,
+4,1,250,4,Not Donor,Not Donor
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,Not Donor
+4,1,250,4,Donor,
+4,1,250,4,Not Donor,Not Donor
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,Not Donor
+4,1,250,4,Not Donor,
+4,1,250,4,Donor,
+4,1,250,4,Donor,Not Donor
+4,1,250,4,Not Donor,
+4,1,250,4,Donor,
+4,1,250,4,Donor,
+4,1,250,4,Not Donor,
+4,3,750,24,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Donor,
+4,1,250,4,Not Donor,
+10,8,2000,39,Not Donor,
+14,7,1750,26,Not Donor,
+8,10,2500,63,Not Donor,
+11,3,750,15,Not Donor,
+4,2,500,14,Not Donor,
+2,4,1000,43,Not Donor,
+8,9,2250,58,Not Donor,
+8,8,2000,52,Donor,
+11,22,5500,98,Not Donor,
+4,3,750,25,Donor,
+11,17,4250,79,Donor,
+9,2,500,11,Not Donor,
+4,5,1250,46,Not Donor,Not Donor
+11,12,3000,58,Not Donor,
+7,12,3000,86,Not Donor,
+11,2,500,11,Not Donor,
+11,2,500,11,Not Donor,Not Donor
+11,2,500,11,Not Donor,Not Donor
+2,6,1500,75,Not Donor,Not Donor
+11,8,2000,41,Donor,
+11,3,750,16,Donor,
+12,13,3250,59,Not Donor,
+2,3,750,35,Not Donor,
+16,8,2000,28,Not Donor,
+11,7,1750,37,Not Donor,Not Donor
+4,3,750,28,Not Donor,
+12,12,3000,58,Not Donor,
+4,4,1000,41,Not Donor,
+11,14,3500,73,Donor,
+2,2,500,23,Not Donor,
+2,3,750,38,Donor,
+4,5,1250,58,Not Donor,
+4,4,1000,43,Donor,
+3,2,500,23,Not Donor,
+11,8,2000,46,Not Donor,
+4,7,1750,82,Not Donor,
+13,4,1000,21,Not Donor,
+16,11,2750,40,Not Donor,
+16,7,1750,28,Not Donor,
+7,2,500,16,Not Donor,
+4,5,1250,58,Not Donor,
+4,5,1250,58,Not Donor,
+4,4,1000,46,Not Donor,
+14,13,3250,57,Not Donor,
+4,3,750,34,Not Donor,
+14,18,4500,78,Not Donor,
+11,8,2000,48,Not Donor,
+14,16,4000,70,Not Donor,
+14,4,1000,22,Donor,
+14,5,1250,26,Not Donor,Donor
+8,2,500,16,Not Donor,
+11,5,1250,33,Not Donor,Not Donor
+11,2,500,14,Not Donor,Not Donor
+4,2,500,23,Not Donor,Not Donor
+9,2,500,16,Donor,
+14,5,1250,28,Donor,
+14,3,750,19,Donor,
+14,4,1000,23,Donor,Not Donor
+16,12,3000,50,Not Donor,
+11,4,1000,28,Not Donor,
+11,5,1250,35,Not Donor,
+11,5,1250,35,Not Donor,
+2,4,1000,70,Not Donor,
+14,5,1250,28,Not Donor,
+14,2,500,14,Not Donor,
+14,2,500,14,Not Donor,
+14,2,500,14,Not Donor,Not Donor
+14,2,500,14,Not Donor,Not Donor
+14,2,500,14,Not Donor,
+14,2,500,14,Not Donor,
+2,3,750,52,Not Donor,
+14,6,1500,34,Not Donor,Not Donor
+11,5,1250,37,Donor,
+4,5,1250,74,Not Donor,
+11,3,750,23,Not Donor,Not Donor
+16,4,1000,23,Not Donor,
+16,3,750,19,Not Donor,
+11,5,1250,38,Not Donor,
+11,2,500,16,Not Donor,
+12,9,2250,60,Not Donor,Donor
+9,1,250,9,Not Donor,
+9,1,250,9,Not Donor,Not Donor
+4,2,500,29,Not Donor,
+11,2,500,17,Not Donor,Not Donor
+14,4,1000,26,Not Donor,Not Donor
+11,9,2250,72,Donor,
+11,5,1250,41,Not Donor,
+15,16,4000,82,Not Donor,
+9,5,1250,51,Donor,
+11,4,1000,34,Not Donor,
+14,8,2000,50,Donor,
+16,7,1750,38,Not Donor,
+14,2,500,16,Not Donor,
+2,2,500,41,Not Donor,
+14,16,4000,98,Not Donor,
+14,4,1000,28,Donor,
+16,7,1750,39,Not Donor,
+14,7,1750,47,Not Donor,
+16,6,1500,35,Not Donor,
+16,6,1500,35,Donor,
+11,7,1750,62,Donor,
+16,2,500,16,Not Donor,
+16,3,750,21,Donor,
+11,3,750,28,Not Donor,
+11,7,1750,64,Not Donor,Not Donor
+11,1,250,11,Donor,
+9,3,750,34,Not Donor,
+14,4,1000,30,Not Donor,
+23,38,9500,98,Not Donor,
+11,6,1500,58,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,Not Donor
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,Not Donor
+11,1,250,11,Not Donor,
+11,2,500,21,Not Donor,Not Donor
+11,5,1250,50,Not Donor,
+11,2,500,21,Not Donor,
+16,4,1000,28,Not Donor,
+4,2,500,41,Not Donor,
+16,6,1500,40,Not Donor,
+14,3,750,26,Not Donor,
+9,2,500,26,Not Donor,
+21,16,4000,64,Not Donor,Not Donor
+14,6,1500,51,Not Donor,Not Donor
+11,2,500,24,Not Donor,
+4,3,750,71,Not Donor,
+21,13,3250,57,Not Donor,
+11,6,1500,71,Not Donor,
+14,2,500,21,Donor,Not Donor
+23,15,3750,57,Not Donor,
+14,4,1000,38,Not Donor,
+11,2,500,26,Not Donor,
+16,5,1250,40,Donor,
+4,2,500,51,Donor,Not Donor
+14,3,750,31,Not Donor,Not Donor
+4,2,500,52,Not Donor,
+9,4,1000,65,Not Donor,
+14,4,1000,40,Not Donor,
+11,3,750,40,Donor,
+14,5,1250,50,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,Not Donor
+14,1,250,14,Not Donor,Not Donor
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+14,7,1750,72,Not Donor,Not Donor
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+9,3,750,52,Not Donor,Not Donor
+14,7,1750,73,Not Donor,
+11,4,1000,58,Not Donor,
+11,4,1000,59,Not Donor,Not Donor
+4,2,500,59,Not Donor,
+11,4,1000,61,Not Donor,
+16,4,1000,40,Not Donor,
+16,10,2500,89,Not Donor,
+21,2,500,21,Donor,
+21,3,750,26,Not Donor,
+16,8,2000,76,Not Donor,
+21,3,750,26,Donor,
+18,2,500,23,Not Donor,
+23,5,1250,33,Not Donor,
+23,8,2000,46,Not Donor,Not Donor
+16,3,750,34,Not Donor,
+14,5,1250,64,Not Donor,
+14,3,750,41,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,Not Donor
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,4,1000,45,Not Donor,
+16,1,250,16,Not Donor,Not Donor
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,Not Donor
+16,1,250,16,Not Donor,
+16,2,500,26,Not Donor,
+21,2,500,23,Not Donor,
+16,2,500,27,Not Donor,
+21,2,500,23,Not Donor,Not Donor
+21,2,500,23,Not Donor,
+14,4,1000,57,Not Donor,
+16,5,1250,60,Not Donor,
+23,2,500,23,Not Donor,
+14,5,1250,74,Not Donor,Not Donor
+23,3,750,28,Not Donor,
+16,3,750,40,Not Donor,Not Donor
+9,2,500,52,Not Donor,
+9,2,500,52,Not Donor,
+16,7,1750,87,Donor,
+14,4,1000,64,Not Donor,
+14,2,500,35,Not Donor,
+16,7,1750,93,Not Donor,
+21,2,500,25,Not Donor,
+14,3,750,52,Not Donor,
+23,14,3500,93,Not Donor,
+18,8,2000,95,Not Donor,
+16,3,750,46,Not Donor,
+11,3,750,76,Not Donor,Not Donor
+11,2,500,52,Not Donor,Not Donor
+11,3,750,76,Not Donor,
+23,12,3000,86,Not Donor,
+21,3,750,35,Not Donor,Not Donor
+23,2,500,26,Not Donor,
+23,2,500,26,Not Donor,
+23,8,2000,64,Not Donor,
+16,3,750,50,Not Donor,
+23,3,750,33,Not Donor,
+21,3,750,38,Not Donor,
+23,2,500,28,Not Donor,Not Donor
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,Not Donor
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,Not Donor
+21,1,250,21,Not Donor,Not Donor
+21,1,250,21,Not Donor,Not Donor
+21,1,250,21,Not Donor,
+21,1,250,21,Donor,
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,
+21,5,1250,60,Not Donor,
+23,4,1000,45,Not Donor,Not Donor
+21,4,1000,52,Not Donor,
+22,1,250,22,Donor,Not Donor
+11,2,500,70,Not Donor,
+23,5,1250,58,Not Donor,
+23,3,750,40,Not Donor,
+23,3,750,41,Not Donor,
+14,3,750,83,Not Donor,
+21,2,500,35,Not Donor,
+26,5,1250,49,Donor,
+23,6,1500,70,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,Not Donor
+23,4,1000,53,Not Donor,
+21,6,1500,86,Not Donor,
+23,3,750,48,Not Donor,
+21,2,500,41,Not Donor,
+21,3,750,64,Not Donor,
+16,2,500,70,Not Donor,Not Donor
+21,3,750,70,Not Donor,
+23,4,1000,87,Not Donor,
+23,3,750,89,Not Donor,
+23,2,500,87,Not Donor,
+35,3,750,64,Not Donor,
+38,1,250,38,Not Donor,Not Donor
+38,1,250,38,Not Donor,Not Donor
+40,1,250,40,Not Donor,
+74,1,250,74,Not Donor,
+2,43,10750,86,Donor,
+6,22,5500,28,Donor,
+2,34,8500,77,Donor,
+2,44,11000,98,Not Donor,
+0,26,6500,76,Donor,Not Donor
+2,41,10250,98,Donor,Donor
+3,21,5250,42,Donor,
+2,11,2750,23,Not Donor,
+2,21,5250,52,Donor,
+2,13,3250,32,Donor,
+4,4,1000,4,Donor,
+2,11,2750,26,Not Donor,
+2,11,2750,28,Not Donor,Not Donor
+3,14,3500,35,Not Donor,
+4,16,4000,38,Donor,Donor
+4,6,1500,14,Not Donor,Donor
+3,5,1250,12,Donor,
+4,33,8250,98,Donor,
+3,10,2500,33,Donor,
+4,10,2500,28,Donor,
+2,11,2750,40,Donor,Donor
+2,11,2750,41,Donor,
+4,13,3250,39,Donor,
+1,10,2500,43,Donor,
+4,9,2250,28,Not Donor,
+2,4,1000,11,Not Donor,Not Donor
+2,5,1250,16,Donor,Donor
+2,15,3750,64,Not Donor,
+5,24,6000,79,Not Donor,Not Donor
+2,6,1500,22,Donor,
+4,5,1250,16,Donor,
+2,4,1000,14,Donor,Not Donor
+4,8,2000,28,Not Donor,
+2,4,1000,14,Not Donor,
+2,6,1500,26,Not Donor,
+4,5,1250,16,Donor,Donor
+2,7,1750,32,Donor,Donor
+2,6,1500,26,Donor,
+2,8,2000,38,Donor,Donor
+2,2,500,4,Donor,Not Donor
+2,6,1500,28,Donor,Donor
+2,10,2500,52,Not Donor,
+4,16,4000,70,Donor,
+4,2,500,4,Donor,
+1,14,3500,95,Not Donor,
+4,2,500,4,Donor,
+7,14,3500,48,Not Donor,
+2,3,750,11,Not Donor,
+2,12,3000,70,Donor,
+4,7,1750,32,Donor,Not Donor
+4,4,1000,16,Not Donor,
+2,6,1500,35,Donor,
+4,6,1500,28,Donor,
+2,3,750,14,Not Donor,
+2,4,1000,23,Not Donor,Not Donor
+4,4,1000,18,Not Donor,
+5,6,1500,28,Not Donor,
+4,6,1500,30,Not Donor,
+14,5,1250,14,Not Donor,
+3,8,2000,50,Not Donor,
+4,11,2750,64,Donor,
+4,9,2250,52,Not Donor,
+4,16,4000,98,Donor,
+7,10,2500,47,Not Donor,
+4,14,3500,86,Not Donor,Not Donor
+2,9,2250,75,Not Donor,
+4,6,1500,35,Not Donor,
+4,9,2250,55,Not Donor,
+4,6,1500,35,Donor,
+2,6,1500,45,Not Donor,Not Donor
+2,6,1500,47,Not Donor,
+4,2,500,9,Not Donor,
+2,2,500,11,Donor,Not Donor
+2,2,500,11,Not Donor,
+2,2,500,11,Donor,
+4,6,1500,38,Donor,
+3,4,1000,29,Donor,
+9,9,2250,38,Not Donor,
+11,5,1250,18,Not Donor,Not Donor
+2,3,750,21,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,
+2,1,250,2,Not Donor,Not Donor
+2,1,250,2,Not Donor,
+11,11,2750,38,Not Donor,
+2,3,750,22,Not Donor,
+9,11,2750,49,Donor,
+5,11,2750,75,Not Donor,
+3,5,1250,38,Not Donor,
+3,1,250,3,Donor,
+4,6,1500,43,Not Donor,
+2,3,750,24,Not Donor,
+12,11,2750,39,Not Donor,Not Donor
+2,2,500,14,Not Donor,
+4,6,1500,46,Not Donor,
+9,3,750,14,Not Donor,
+14,8,2000,26,Not Donor,
+4,2,500,13,Not Donor,
+4,11,2750,95,Not Donor,
+2,7,1750,77,Not Donor,
+2,7,1750,77,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,Not Donor
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Not Donor,
+4,1,250,4,Donor,
+4,1,250,4,Not Donor,
+4,7,1750,62,Not Donor,Not Donor
+4,1,250,4,Not Donor,Not Donor
+4,4,1000,34,Donor,
+11,6,1500,28,Not Donor,
+13,3,750,14,Donor,
+7,5,1250,35,Not Donor,
+9,9,2250,54,Not Donor,Not Donor
+11,2,500,11,Not Donor,Not Donor
+2,5,1250,63,Not Donor,
+7,11,2750,89,Not Donor,Not Donor
+8,9,2250,64,Not Donor,
+2,2,500,22,Not Donor,
+6,3,750,26,Not Donor,
+12,15,3750,71,Not Donor,
+13,3,750,16,Not Donor,Donor
+11,16,4000,89,Not Donor,
+4,5,1250,58,Not Donor,
+14,7,1750,35,Not Donor,
+11,4,1000,27,Not Donor,
+7,9,2250,89,Donor,
+11,8,2000,52,Donor,
+7,5,1250,52,Not Donor,
+11,6,1500,41,Not Donor,
+10,5,1250,38,Not Donor,
+14,2,500,14,Donor,
+14,2,500,14,Not Donor,Not Donor
+14,2,500,14,Not Donor,Not Donor
+2,2,500,33,Not Donor,Not Donor
+11,3,750,23,Not Donor,
+14,8,2000,46,Not Donor,
+9,1,250,9,Not Donor,
+16,5,1250,27,Not Donor,
+14,4,1000,26,Not Donor,Not Donor
+4,2,500,30,Not Donor,
+14,3,750,21,Not Donor,Donor
+16,16,4000,77,Not Donor,Not Donor
+4,2,500,31,Not Donor,
+14,8,2000,50,Not Donor,
+11,3,750,26,Not Donor,
+14,7,1750,45,Not Donor,
+15,5,1250,33,Not Donor,
+16,2,500,16,Not Donor,
+16,3,750,21,Not Donor,Not Donor
+11,8,2000,72,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Not Donor,
+11,1,250,11,Donor,Not Donor
+11,1,250,11,Not Donor,Not Donor
+2,3,750,75,Donor,
+2,3,750,77,Not Donor,
+16,4,1000,28,Not Donor,
+16,15,3750,87,Not Donor,
+16,14,3500,83,Not Donor,
+16,10,2500,62,Not Donor,
+16,3,750,23,Not Donor,
+14,3,750,26,Not Donor,
+23,19,4750,62,Not Donor,Not Donor
+11,7,1750,75,Not Donor,
+14,3,750,28,Not Donor,
+20,14,3500,69,Donor,
+4,2,500,46,Not Donor,
+11,2,500,25,Not Donor,Not Donor
+11,3,750,37,Not Donor,
+16,4,1000,33,Not Donor,Not Donor
+21,7,1750,38,Not Donor,
+13,7,1750,76,Not Donor,
+16,6,1500,50,Not Donor,
+14,3,750,33,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,Not Donor
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+14,1,250,14,Not Donor,
+17,7,1750,58,Donor,
+14,3,750,35,Not Donor,
+14,3,750,35,Not Donor,
+16,7,1750,64,Not Donor,Not Donor
+21,2,500,21,Not Donor,
+16,3,750,35,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,
+16,1,250,16,Not Donor,Not Donor
+14,2,500,29,Not Donor,
+11,4,1000,74,Not Donor,
+11,2,500,38,Donor,
+21,6,1500,48,Not Donor,
+23,2,500,23,Not Donor,
+23,6,1500,45,Not Donor,
+14,2,500,35,Donor,
+16,6,1500,81,Not Donor,
+16,4,1000,58,Not Donor,
+16,5,1250,71,Not Donor,Not Donor
+21,2,500,26,Not Donor,
+21,3,750,35,Not Donor,
+21,3,750,35,Not Donor,
+23,8,2000,69,Not Donor,
+21,3,750,38,Not Donor,
+23,3,750,35,Not Donor,
+21,3,750,40,Not Donor,
+23,2,500,28,Not Donor,
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,
+25,6,1500,50,Not Donor,
+21,1,250,21,Not Donor,
+21,1,250,21,Not Donor,
+23,3,750,39,Not Donor,
+21,2,500,33,Not Donor,Not Donor
+14,3,750,79,Not Donor,
+23,1,250,23,Donor,Not Donor
+23,1,250,23,Not Donor,Not Donor
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,1,250,23,Not Donor,
+23,4,1000,52,Not Donor,Not Donor
+23,1,250,23,Not Donor,
+23,7,1750,88,Not Donor,
+16,3,750,86,Not Donor,Not Donor
+23,2,500,38,Not Donor,
+21,2,500,52,Not Donor,
+23,3,750,62,Not Donor,Not Donor
+39,1,250,39,Not Donor,
+72,1,250,72,Not Donor,

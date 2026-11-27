@@ -261,6 +261,56 @@
             ]
         }
     },
+    "correlation_matrix": {
+        "Study Time Goal": {
+            "Study Time Goal": 1.0,
+            "Repetition Goal": 0.0490226319,
+            "Study Time Related": -0.0518885069,
+            "Exam Performance Related": 0.1139565052,
+            "Exam Performance Goal": 0.1986292016,
+            "Knowledge Level (encoded)": 0.2174774878
+        },
+        "Repetition Goal": {
+            "Study Time Goal": 0.0490226319,
+            "Repetition Goal": 1.0,
+            "Study Time Related": 0.1212354742,
+            "Exam Performance Related": 0.1197163583,
+            "Exam Performance Goal": 0.1935655972,
+            "Knowledge Level (encoded)": 0.2490945083
+        },
+        "Study Time Related": {
+            "Study Time Goal": -0.0518885069,
+            "Repetition Goal": 0.1212354742,
+            "Study Time Related": 1.0,
+            "Exam Performance Related": 0.0834227466,
+            "Exam Performance Goal": 0.1483383742,
+            "Knowledge Level (encoded)": 0.2034523639
+        },
+        "Exam Performance Related": {
+            "Study Time Goal": 0.1139565052,
+            "Repetition Goal": 0.1197163583,
+            "Study Time Related": 0.0834227466,
+            "Exam Performance Related": 1.0,
+            "Exam Performance Goal": -0.0392830435,
+            "Knowledge Level (encoded)": 0.2479680787
+        },
+        "Exam Performance Goal": {
+            "Study Time Goal": 0.1986292016,
+            "Repetition Goal": 0.1935655972,
+            "Study Time Related": 0.1483383742,
+            "Exam Performance Related": -0.0392830435,
+            "Exam Performance Goal": 1.0,
+            "Knowledge Level (encoded)": 0.9194563104
+        },
+        "Knowledge Level (encoded)": {
+            "Study Time Goal": 0.2174774878,
+            "Repetition Goal": 0.2490945083,
+            "Study Time Related": 0.2034523639,
+            "Exam Performance Related": 0.2479680787,
+            "Exam Performance Goal": 0.9194563104,
+            "Knowledge Level (encoded)": 1.0
+        }
+    },
     "feature_importance": {
         "method": "Random Forest Feature Importance",
         "model": "Random Forest",
@@ -314,5 +364,5 @@
         "feature_columns": "ModelsOutcome/user_knowledge_feature_columns.joblib",
         "metadata": "Metadata/D02_user_knowledge.json"
     },
-    "run_timestamp": "2026-11-26 23:53:23"
+    "run_timestamp": "2026-11-27 07:02:09"
 }

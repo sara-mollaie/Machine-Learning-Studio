@@ -1,0 +1,396 @@
+{
+    "id": "D15",
+    "name": "Liver Disorders",
+    "level": "Intermediate",
+    "domain": "Healthcare",
+    "task": "Clustering",
+    "feature_decimals": {"sgot": 1},
+    "description": "Discover patterns in liver blood test measurements and analyze their relationship with alcohol consumption.",
+    "source": "Data Science Dojo",
+    "dataset_statistics": {
+        "rows": 345,
+        "columns": 7,
+        "column_names": [
+            "mcv",
+            "alkphos",
+            "sgpt",
+            "sgot",
+            "gammagt",
+            "drinks",
+            "selector"
+        ],
+        "data_types": {
+            "mcv": "int64",
+            "alkphos": "int64",
+            "sgpt": "int64",
+            "sgot": "int64",
+            "gammagt": "int64",
+            "drinks": "float64",
+            "selector": "int64"
+        },
+        "missing_values": {
+            "mcv": 0,
+            "alkphos": 0,
+            "sgpt": 0,
+            "sgot": 0,
+            "gammagt": 0,
+            "drinks": 0,
+            "selector": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "mcv": {
+                "count": 345.0,
+                "mean": 90.16,
+                "std": 4.45,
+                "min": 65.0,
+                "25%": 87.0,
+                "50%": 90.0,
+                "75%": 93.0,
+                "max": 103.0
+            },
+            "alkphos": {
+                "count": 345.0,
+                "mean": 69.87,
+                "std": 18.35,
+                "min": 23.0,
+                "25%": 57.0,
+                "50%": 67.0,
+                "75%": 80.0,
+                "max": 138.0
+            },
+            "sgpt": {
+                "count": 345.0,
+                "mean": 30.41,
+                "std": 19.51,
+                "min": 4.0,
+                "25%": 19.0,
+                "50%": 26.0,
+                "75%": 34.0,
+                "max": 155.0
+            },
+            "sgot": {
+                "count": 345.0,
+                "mean": 24.64,
+                "std": 10.06,
+                "min": 5.0,
+                "25%": 19.0,
+                "50%": 23.0,
+                "75%": 27.0,
+                "max": 82.0
+            },
+            "gammagt": {
+                "count": 345.0,
+                "mean": 38.28,
+                "std": 39.25,
+                "min": 5.0,
+                "25%": 15.0,
+                "50%": 25.0,
+                "75%": 46.0,
+                "max": 297.0
+            },
+            "drinks": {
+                "count": 345.0,
+                "mean": 3.46,
+                "std": 3.34,
+                "min": 0.0,
+                "25%": 0.5,
+                "50%": 3.0,
+                "75%": 6.0,
+                "max": 20.0
+            },
+            "selector": {
+                "count": 345.0,
+                "mean": 1.58,
+                "std": 0.49,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "mcv",
+            "alkphos",
+            "sgpt",
+            "sgot",
+            "gammagt"
+        ],
+        "analysis_only_columns": [
+            "drinks"
+        ],
+        "excluded_columns": [
+            "selector"
+        ]
+    },
+    "preprocessing": {
+        "method": "MinMaxScaler",
+        "input_features": [
+            "mcv",
+            "alkphos",
+            "sgpt",
+            "sgot",
+            "gammagt"
+        ],
+        "missing_value_method": "Median Imputation"
+    },
+    "k_selection": {
+        "k_range": [
+            2,
+            10
+        ],
+        "elbow_k": 3,
+        "best_k_silhouette": 2,
+        "best_k_calinski_harabasz": 2,
+        "best_k_davies_bouldin": 2,
+        "best_k_combined": 2,
+        "elbow_metric_support": {
+            "Silhouette": false,
+            "Calinski-Harabasz": false,
+            "Davies-Bouldin": false
+        },
+        "elbow_support_count": 0,
+        "elbow_supported_by_validation": false,
+        "final_k": 2,
+        "selection_method": "Elbow + internal validation consensus",
+        "selection_reason": "Elbow K was not supported by at least two validation metrics; combined ranking selected K.",
+        "manual_override": false,
+        "metrics_per_k": {
+            "1": {
+                "Inertia": 31.3079,
+                "Silhouette": null,
+                "Calinski-Harabasz": null,
+                "Davies-Bouldin": null
+            },
+            "2": {
+                "Inertia": 22.3721,
+                "Silhouette": 0.472,
+                "Calinski-Harabasz": 137.0011,
+                "Davies-Bouldin": 1.1346
+            },
+            "3": {
+                "Inertia": 17.4163,
+                "Silhouette": 0.284,
+                "Calinski-Harabasz": 136.3934,
+                "Davies-Bouldin": 1.2346
+            },
+            "4": {
+                "Inertia": 15.5523,
+                "Silhouette": 0.2785,
+                "Calinski-Harabasz": 115.1532,
+                "Davies-Bouldin": 1.3488
+            },
+            "5": {
+                "Inertia": 13.8254,
+                "Silhouette": 0.1983,
+                "Calinski-Harabasz": 107.4843,
+                "Davies-Bouldin": 1.369
+            },
+            "6": {
+                "Inertia": 12.2187,
+                "Silhouette": 0.2161,
+                "Calinski-Harabasz": 105.924,
+                "Davies-Bouldin": 1.2609
+            },
+            "7": {
+                "Inertia": 11.0997,
+                "Silhouette": 0.1981,
+                "Calinski-Harabasz": 102.561,
+                "Davies-Bouldin": 1.2407
+            },
+            "8": {
+                "Inertia": 10.343,
+                "Silhouette": 0.2004,
+                "Calinski-Harabasz": 97.5836,
+                "Davies-Bouldin": 1.2595
+            },
+            "9": {
+                "Inertia": 9.8296,
+                "Silhouette": 0.1851,
+                "Calinski-Harabasz": 91.7733,
+                "Davies-Bouldin": 1.2882
+            },
+            "10": {
+                "Inertia": 9.2928,
+                "Silhouette": 0.1822,
+                "Calinski-Harabasz": 88.1818,
+                "Davies-Bouldin": 1.3135
+            }
+        },
+        "combined_ranking": {
+            "2": {
+                "Silhouette": 1.0,
+                "Calinski-Harabasz": 1.0,
+                "Davies-Bouldin": 1.0,
+                "MeanRank": 1.0
+            },
+            "3": {
+                "Silhouette": 2.0,
+                "Calinski-Harabasz": 2.0,
+                "Davies-Bouldin": 2.0,
+                "MeanRank": 2.0
+            },
+            "4": {
+                "Silhouette": 3.0,
+                "Calinski-Harabasz": 3.0,
+                "Davies-Bouldin": 8.0,
+                "MeanRank": 4.67
+            },
+            "5": {
+                "Silhouette": 6.0,
+                "Calinski-Harabasz": 4.0,
+                "Davies-Bouldin": 9.0,
+                "MeanRank": 6.33
+            },
+            "6": {
+                "Silhouette": 4.0,
+                "Calinski-Harabasz": 5.0,
+                "Davies-Bouldin": 5.0,
+                "MeanRank": 4.67
+            },
+            "7": {
+                "Silhouette": 7.0,
+                "Calinski-Harabasz": 6.0,
+                "Davies-Bouldin": 3.0,
+                "MeanRank": 5.33
+            },
+            "8": {
+                "Silhouette": 5.0,
+                "Calinski-Harabasz": 7.0,
+                "Davies-Bouldin": 4.0,
+                "MeanRank": 5.33
+            },
+            "9": {
+                "Silhouette": 8.0,
+                "Calinski-Harabasz": 8.0,
+                "Davies-Bouldin": 6.0,
+                "MeanRank": 7.33
+            },
+            "10": {
+                "Silhouette": 9.0,
+                "Calinski-Harabasz": 9.0,
+                "Davies-Bouldin": 7.0,
+                "MeanRank": 8.33
+            }
+        }
+    },
+    "Clustering": {
+        "algorithm": "KMeans",
+        "n_clusters": 2,
+        "random_state": 42,
+        "n_init": 10,
+        "scaler": "MinMaxScaler",
+        "input_features": [
+            "mcv",
+            "alkphos",
+            "sgpt",
+            "sgot",
+            "gammagt"
+        ],
+        "analysis_variable": "drinks",
+        "excluded_columns": [
+            "selector"
+        ],
+        "cluster_label_column": "ClusterLabel",
+        "cluster_sizes": {
+            "0": 303,
+            "1": 42
+        },
+        "cluster_percentages": {
+            "0": 87.83,
+            "1": 12.17
+        },
+        "cluster_profiles": {
+            "0": {
+                "mcv": 89.87,
+                "alkphos": 68.82,
+                "sgpt": 25.64,
+                "sgot": 22.05,
+                "gammagt": 27.68,
+                "drinks": 2.99
+            },
+            "1": {
+                "mcv": 92.24,
+                "alkphos": 77.43,
+                "sgpt": 64.79,
+                "sgot": 43.36,
+                "gammagt": 114.79,
+                "drinks": 6.81
+            }
+        },
+        "inertia": 22.37206067995252,
+        "silhouette_score": 0.472,
+        "ssd": {
+            "total_ssd": 22.3721,
+            "total_sum_squares": 31.3079,
+            "between_cluster_ss": 8.9358,
+            "explained_variance_pct": 28.54,
+            "per_cluster_ssd": {
+                "0": 16.1658,
+                "1": 6.2062
+            },
+            "matches_kmeans_inertia": true
+        }
+    },
+    "model_verification": true,
+    "correlation_matrix": {
+        "mcv": {
+            "mcv": 1.0,
+            "alkphos": 0.0441,
+            "sgpt": 0.1477,
+            "sgot": 0.1878,
+            "gammagt": 0.2223,
+            "drinks": 0.3127
+        },
+        "alkphos": {
+            "mcv": 0.0441,
+            "alkphos": 1.0,
+            "sgpt": 0.0762,
+            "sgot": 0.1461,
+            "gammagt": 0.1331,
+            "drinks": 0.1008
+        },
+        "sgpt": {
+            "mcv": 0.1477,
+            "alkphos": 0.0762,
+            "sgpt": 1.0,
+            "sgot": 0.7397,
+            "gammagt": 0.5034,
+            "drinks": 0.2068
+        },
+        "sgot": {
+            "mcv": 0.1878,
+            "alkphos": 0.1461,
+            "sgpt": 0.7397,
+            "sgot": 1.0,
+            "gammagt": 0.5276,
+            "drinks": 0.2796
+        },
+        "gammagt": {
+            "mcv": 0.2223,
+            "alkphos": 0.1331,
+            "sgpt": 0.5034,
+            "sgot": 0.5276,
+            "gammagt": 1.0,
+            "drinks": 0.3412
+        },
+        "drinks": {
+            "mcv": 0.3127,
+            "alkphos": 0.1008,
+            "sgpt": 0.2068,
+            "sgot": 0.2796,
+            "gammagt": 0.3412,
+            "drinks": 1.0
+        }
+    },
+    "output_files": {
+        "original_dataset": "Datasets/bupa.data.csv",
+        "processed_dataset": "Datasets/Processed/liver_disorders_clustered.csv",
+        "trained_model": "ModelsOutcome/liver_disorders_kmeans.joblib",
+        "scaler": "ModelsOutcome/liver_disorders_scaler.joblib",
+        "feature_columns": "ModelsOutcome/liver_disorders_feature_columns.joblib"
+    }
+}

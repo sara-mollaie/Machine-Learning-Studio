@@ -1,0 +1,387 @@
+{
+    "id": "D13",
+    "name": "Echocardiogram",
+    "title": "Echocardiogram (D13)",
+    "level": "Intermediate",
+    "domain": "Healthcare",
+    "task": "Classification",
+    "description": "Predict survival for at least 12 months after a heart attack from baseline clinical features.",
+    "source": "UCI Machine Learning Repository",
+    "outcome_definition": "Survival >= 12 months; death before 12 months; unknown outcomes excluded",
+    "dataset_statistics": {
+        "rows": 96,
+        "columns": 8,
+        "column_names": [
+            "Age at Heart Attack",
+            "Pericardial Effusion",
+            "Fractional Shortening",
+            "EPSS",
+            "LVDD",
+            "Wall Motion Score",
+            "Wall Motion Index",
+            "Survived One Year"
+        ],
+        "data_types": {
+            "Age at Heart Attack": "float64",
+            "Pericardial Effusion": "int64",
+            "Fractional Shortening": "float64",
+            "EPSS": "float64",
+            "LVDD": "float64",
+            "Wall Motion Score": "float64",
+            "Wall Motion Index": "float64",
+            "Survived One Year": "str"
+        },
+        "missing_values": {
+            "Age at Heart Attack": 3,
+            "Pericardial Effusion": 0,
+            "Fractional Shortening": 3,
+            "EPSS": 9,
+            "LVDD": 4,
+            "Wall Motion Score": 1,
+            "Wall Motion Index": 0,
+            "Survived One Year": 0
+        },
+        "total_missing_values": 20,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Age at Heart Attack": {
+                "count": 93.0,
+                "mean": 61.5376,
+                "std": 7.9967,
+                "min": 35.0,
+                "25%": 57.0,
+                "50%": 61.0,
+                "75%": 66.0,
+                "max": 81.0
+            },
+            "Pericardial Effusion": {
+                "count": 96.0,
+                "mean": 0.1458,
+                "std": 0.3548,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "Fractional Shortening": {
+                "count": 93.0,
+                "mean": 0.2303,
+                "std": 0.1098,
+                "min": 0.03,
+                "25%": 0.15,
+                "50%": 0.228,
+                "75%": 0.29,
+                "max": 0.61
+            },
+            "EPSS": {
+                "count": 87.0,
+                "mean": 11.066,
+                "std": 6.9673,
+                "min": 0.0,
+                "25%": 6.3,
+                "50%": 9.4,
+                "75%": 13.95,
+                "max": 31.0
+            },
+            "LVDD": {
+                "count": 92.0,
+                "mean": 4.6863,
+                "std": 0.8264,
+                "min": 2.32,
+                "25%": 4.1675,
+                "50%": 4.555,
+                "75%": 5.2525,
+                "max": 6.78
+            },
+            "Wall Motion Score": {
+                "count": 95.0,
+                "mean": 13.5299,
+                "std": 3.7936,
+                "min": 2.0,
+                "25%": 11.0,
+                "50%": 13.5,
+                "75%": 15.0,
+                "max": 23.0
+            },
+            "Wall Motion Index": {
+                "count": 96.0,
+                "mean": 1.2693,
+                "std": 0.3463,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.14,
+                "75%": 1.3825,
+                "max": 2.39
+            }
+        },
+        "class_distribution": {
+            "Died Before One Year": 4,
+            "Survived One Year": 92
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Age at Heart Attack",
+            "Pericardial Effusion",
+            "Fractional Shortening",
+            "EPSS",
+            "LVDD",
+            "Wall Motion Score",
+            "Wall Motion Index"
+        ],
+        "target_column": "Survived One Year",
+        "feature_description": "Seven baseline clinical attributes; follow-up fields excluded to prevent leakage.",
+        "class_labels": [
+            "Died Before One Year",
+            "Survived One Year"
+        ],
+        "class_encoding": {
+            "Died Before One Year": 0,
+            "Survived One Year": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Age at Heart Attack",
+            "Pericardial Effusion",
+            "Fractional Shortening",
+            "EPSS",
+            "LVDD",
+            "Wall Motion Score",
+            "Wall Motion Index"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Label encoding (Died Before One Year=0, Survived One Year=1)"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 76,
+        "test_rows": 20,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over both survival classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.95,
+                "Accuracy Percentage": 95.0,
+                "F1": 0.957658,
+                "F1 Percentage": 95.765766,
+                "F1 Macro": 0.81982,
+                "CV Macro F1": 0.472995
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.95,
+                "Accuracy Percentage": 95.0,
+                "F1": 0.957658,
+                "F1 Percentage": 95.765766,
+                "F1 Macro": 0.81982,
+                "CV Macro F1": 0.482692
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.95,
+                "Accuracy Percentage": 95.0,
+                "F1": 0.925641,
+                "F1 Percentage": 92.564103,
+                "F1 Macro": 0.487179,
+                "CV Macro F1": 0.489929
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.95,
+                "Accuracy Percentage": 95.0,
+                "F1": 0.925641,
+                "F1 Percentage": 92.564103,
+                "F1 Macro": 0.487179,
+                "CV Macro F1": 0.486386
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.9,
+                "Accuracy Percentage": 90.0,
+                "F1": 0.922222,
+                "F1 Percentage": 92.222222,
+                "F1 Macro": 0.722222,
+                "CV Macro F1": 0.486386
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.45,
+                "Accuracy Percentage": 45.0,
+                "F1": 0.570655,
+                "F1 Percentage": 57.065527,
+                "F1 Macro": 0.373219,
+                "CV Macro F1": 0.474812
+            }
+        ],
+        "recommended_model": "Logistic",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "Died Before One Year": {
+                "precision": 0.5,
+                "recall": 1.0,
+                "f1": 0.666667,
+                "support": 1
+            },
+            "Survived One Year": {
+                "precision": 1.0,
+                "recall": 0.947368,
+                "f1": 0.972973,
+                "support": 19
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "Died Before One Year",
+                "Survived One Year"
+            ],
+            "matrix": [
+                [
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    18
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Age at Heart Attack": {
+            "Age at Heart Attack": 1.0,
+            "Pericardial Effusion": 0.0206916419,
+            "Fractional Shortening": -0.0646259068,
+            "EPSS": -0.0494354725,
+            "LVDD": 0.1717701295,
+            "Wall Motion Score": -0.0383624116,
+            "Wall Motion Index": 0.0381040014
+        },
+        "Pericardial Effusion": {
+            "Age at Heart Attack": 0.0206916419,
+            "Pericardial Effusion": 1.0,
+            "Fractional Shortening": -0.0237153916,
+            "EPSS": 0.1024171938,
+            "LVDD": 0.0409225695,
+            "Wall Motion Score": 0.12261593,
+            "Wall Motion Index": 0.1314704125
+        },
+        "Fractional Shortening": {
+            "Age at Heart Attack": -0.0646259068,
+            "Pericardial Effusion": -0.0237153916,
+            "Fractional Shortening": 1.0,
+            "EPSS": -0.3487374156,
+            "LVDD": -0.3412396047,
+            "Wall Motion Score": -0.0701862968,
+            "Wall Motion Index": -0.1573789218
+        },
+        "EPSS": {
+            "Age at Heart Attack": -0.0494354725,
+            "Pericardial Effusion": 0.1024171938,
+            "Fractional Shortening": -0.3487374156,
+            "EPSS": 1.0,
+            "LVDD": 0.5997948128,
+            "Wall Motion Score": 0.3138445975,
+            "Wall Motion Index": 0.380483395
+        },
+        "LVDD": {
+            "Age at Heart Attack": 0.1717701295,
+            "Pericardial Effusion": 0.0409225695,
+            "Fractional Shortening": -0.3412396047,
+            "EPSS": 0.5997948128,
+            "LVDD": 1.0,
+            "Wall Motion Score": 0.0749557836,
+            "Wall Motion Index": 0.1793042014
+        },
+        "Wall Motion Score": {
+            "Age at Heart Attack": -0.0383624116,
+            "Pericardial Effusion": 0.12261593,
+            "Fractional Shortening": -0.0701862968,
+            "EPSS": 0.3138445975,
+            "LVDD": 0.0749557836,
+            "Wall Motion Score": 1.0,
+            "Wall Motion Index": 0.7027882021
+        },
+        "Wall Motion Index": {
+            "Age at Heart Attack": 0.0381040014,
+            "Pericardial Effusion": 0.1314704125,
+            "Fractional Shortening": -0.1573789218,
+            "EPSS": 0.380483395,
+            "LVDD": 0.1793042014,
+            "Wall Motion Score": 0.7027882021,
+            "Wall Motion Index": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Wall Motion Score",
+                "Importance": 0.249204
+            },
+            {
+                "Feature": "LVDD",
+                "Importance": 0.227845
+            },
+            {
+                "Feature": "Age at Heart Attack",
+                "Importance": 0.174673
+            },
+            {
+                "Feature": "EPSS",
+                "Importance": 0.135912
+            },
+            {
+                "Feature": "Wall Motion Index",
+                "Importance": 0.118275
+            },
+            {
+                "Feature": "Fractional Shortening",
+                "Importance": 0.080456
+            },
+            {
+                "Feature": "Pericardial Effusion",
+                "Importance": 0.013635
+            }
+        ],
+        "most_influential_feature": "Wall Motion Score"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Echocardiogram (D13)",
+        "category": "Healthcare",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 96,
+        "columns": 8
+    },
+    "output_files": {
+        "original_dataset": "DataSets/echocardiogram.data",
+        "processed_dataset": "DataSets/Processed/echocardiogram_classification_results.csv",
+        "metrics": "DataSets/Processed/echocardiogram_metrics.csv",
+        "feature_importance": "DataSets/Processed/echocardiogram_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/echocardiogram_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/echocardiogram_feature_columns.joblib",
+        "metadata": "Metadata/D13_echocardiogram.json"
+    },
+    "run_timestamp": "2026-11-27 03:34:17"
+}

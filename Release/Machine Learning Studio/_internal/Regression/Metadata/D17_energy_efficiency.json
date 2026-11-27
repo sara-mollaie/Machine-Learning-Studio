@@ -1,0 +1,344 @@
+{
+    "id": "D17",
+    "name": "Energy Efficiency",
+    "title": "Energy Efficiency (D17)",
+    "level": "Intermediate",
+    "domain": "Energy",
+    "task": "Regression",
+    "description": "Predict the combined building energy load using building design features. Total Energy Load is calculated as Heating Load plus Cooling Load. The dataset is presented as one Energy Efficiency regression task.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 768,
+        "columns": 9,
+        "column_names": [
+            "Relative Compactness",
+            "Surface Area",
+            "Wall Area",
+            "Roof Area",
+            "Overall Height",
+            "Orientation",
+            "Glazing Area",
+            "Glazing Area Distribution",
+            "Total Energy Load"
+        ],
+        "data_types": {
+            "Relative Compactness": "float64",
+            "Surface Area": "float64",
+            "Wall Area": "float64",
+            "Roof Area": "float64",
+            "Overall Height": "float64",
+            "Orientation": "int64",
+            "Glazing Area": "float64",
+            "Glazing Area Distribution": "int64",
+            "Total Energy Load": "float64"
+        },
+        "missing_values": {
+            "Relative Compactness": 0,
+            "Surface Area": 0,
+            "Wall Area": 0,
+            "Roof Area": 0,
+            "Overall Height": 0,
+            "Orientation": 0,
+            "Glazing Area": 0,
+            "Glazing Area Distribution": 0,
+            "Total Energy Load": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Relative Compactness": {
+                "count": 768.0,
+                "mean": 0.7642,
+                "std": 0.1058,
+                "min": 0.62,
+                "25%": 0.6825,
+                "50%": 0.75,
+                "75%": 0.83,
+                "max": 0.98
+            },
+            "Surface Area": {
+                "count": 768.0,
+                "mean": 671.7083,
+                "std": 88.0861,
+                "min": 514.5,
+                "25%": 606.375,
+                "50%": 673.75,
+                "75%": 741.125,
+                "max": 808.5
+            },
+            "Wall Area": {
+                "count": 768.0,
+                "mean": 318.5,
+                "std": 43.6265,
+                "min": 245.0,
+                "25%": 294.0,
+                "50%": 318.5,
+                "75%": 343.0,
+                "max": 416.5
+            },
+            "Roof Area": {
+                "count": 768.0,
+                "mean": 176.6042,
+                "std": 45.166,
+                "min": 110.25,
+                "25%": 140.875,
+                "50%": 183.75,
+                "75%": 220.5,
+                "max": 220.5
+            },
+            "Overall Height": {
+                "count": 768.0,
+                "mean": 5.25,
+                "std": 1.7511,
+                "min": 3.5,
+                "25%": 3.5,
+                "50%": 5.25,
+                "75%": 7.0,
+                "max": 7.0
+            },
+            "Orientation": {
+                "count": 768.0,
+                "mean": 3.5,
+                "std": 1.1188,
+                "min": 2.0,
+                "25%": 2.75,
+                "50%": 3.5,
+                "75%": 4.25,
+                "max": 5.0
+            },
+            "Glazing Area": {
+                "count": 768.0,
+                "mean": 0.2344,
+                "std": 0.1332,
+                "min": 0.0,
+                "25%": 0.1,
+                "50%": 0.25,
+                "75%": 0.4,
+                "max": 0.4
+            },
+            "Glazing Area Distribution": {
+                "count": 768.0,
+                "mean": 2.8125,
+                "std": 1.551,
+                "min": 0.0,
+                "25%": 1.75,
+                "50%": 3.0,
+                "75%": 4.0,
+                "max": 5.0
+            },
+            "Total Energy Load": {
+                "count": 768.0,
+                "mean": 46.895,
+                "std": 19.485,
+                "min": 16.95,
+                "25%": 28.75,
+                "50%": 40.97,
+                "75%": 64.335,
+                "max": 89.95
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Relative Compactness",
+            "Surface Area",
+            "Wall Area",
+            "Roof Area",
+            "Overall Height",
+            "Orientation",
+            "Glazing Area",
+            "Glazing Area Distribution"
+        ],
+        "target_column": "Total Energy Load",
+        "target_formula": "Heating Load + Cooling Load",
+        "source_target_columns_combined": [
+            "Heating Load",
+            "Cooling Load"
+        ]
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Relative Compactness",
+            "Surface Area",
+            "Wall Area",
+            "Roof Area",
+            "Overall Height",
+            "Glazing Area"
+        ],
+        "categorical_features": [
+            "Orientation",
+            "Glazing Area Distribution"
+        ],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "categorical_method": "Most Frequent Imputation + OneHotEncoder"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "accuracy_definition": "RMSE-based normalized score = max(0, 100 * (1 - RMSE / test_target_range)). This is a project score, not a standard regression accuracy metric.",
+        "test_target_range": 69.894,
+        "results": [
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 1.078307,
+                "MSE": 2.365912,
+                "RMSE": 1.538152,
+                "R2": 0.993908,
+                "R2 Percentage": 99.390774,
+                "Accuracy": 97.799308
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 1.200041,
+                "MSE": 3.481312,
+                "RMSE": 1.865827,
+                "R2": 0.991036,
+                "R2 Percentage": 99.103557,
+                "Accuracy": 97.33049
+            },
+            {
+                "Model": "SVR",
+                "MAE": 2.027674,
+                "MSE": 10.906844,
+                "RMSE": 3.302551,
+                "R2": 0.971915,
+                "R2 Percentage": 97.19147,
+                "Accuracy": 95.274915
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 4.056227,
+                "MSE": 31.607486,
+                "RMSE": 5.622054,
+                "R2": 0.91861,
+                "R2 Percentage": 91.861021,
+                "Accuracy": 91.956315
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 4.075861,
+                "MSE": 31.871924,
+                "RMSE": 5.645522,
+                "R2": 0.917929,
+                "R2 Percentage": 91.792927,
+                "Accuracy": 91.922737
+            }
+        ],
+        "recommended_model": "Gradient Boosting",
+        "selection_rule": "Lowest RMSE on the held-out test set"
+    },
+    "feature_importance": {
+        "method": "Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "Overall Height",
+                "Coefficient": 14.357469,
+                "Absolute Coefficient": 14.357469
+            },
+            {
+                "Feature": "Relative Compactness",
+                "Coefficient": -14.057909,
+                "Absolute Coefficient": 14.057909
+            },
+            {
+                "Feature": "Roof Area",
+                "Coefficient": -8.028957,
+                "Absolute Coefficient": 8.028957
+            },
+            {
+                "Feature": "Surface Area",
+                "Coefficient": -7.746866,
+                "Absolute Coefficient": 7.746866
+            },
+            {
+                "Feature": "Glazing Area Distribution_0",
+                "Coefficient": -4.753014,
+                "Absolute Coefficient": 4.753014
+            },
+            {
+                "Feature": "Glazing Area",
+                "Coefficient": 4.121334,
+                "Absolute Coefficient": 4.121334
+            },
+            {
+                "Feature": "Glazing Area Distribution_2",
+                "Coefficient": 1.308961,
+                "Absolute Coefficient": 1.308961
+            },
+            {
+                "Feature": "Glazing Area Distribution_1",
+                "Coefficient": 1.101827,
+                "Absolute Coefficient": 1.101827
+            },
+            {
+                "Feature": "Glazing Area Distribution_3",
+                "Coefficient": 1.017213,
+                "Absolute Coefficient": 1.017213
+            },
+            {
+                "Feature": "Wall Area",
+                "Coefficient": 0.89982,
+                "Absolute Coefficient": 0.89982
+            },
+            {
+                "Feature": "Glazing Area Distribution_5",
+                "Coefficient": 0.739399,
+                "Absolute Coefficient": 0.739399
+            },
+            {
+                "Feature": "Glazing Area Distribution_4",
+                "Coefficient": 0.585613,
+                "Absolute Coefficient": 0.585613
+            },
+            {
+                "Feature": "Orientation_3",
+                "Coefficient": -0.383549,
+                "Absolute Coefficient": 0.383549
+            },
+            {
+                "Feature": "Orientation_2",
+                "Coefficient": 0.306757,
+                "Absolute Coefficient": 0.306757
+            },
+            {
+                "Feature": "Orientation_5",
+                "Coefficient": 0.135417,
+                "Absolute Coefficient": 0.135417
+            },
+            {
+                "Feature": "Orientation_4",
+                "Coefficient": -0.058625,
+                "Absolute Coefficient": 0.058625
+            }
+        ],
+        "most_influential_feature": "Overall Height"
+    },
+    "model_verification": true,
+    "ui_card": {
+        "title": "Energy Efficiency (D17)",
+        "category": "Energy",
+        "task": "Regression",
+        "level": "Intermediate",
+        "rows": 768,
+        "columns": 9
+    },
+    "output_files": {
+        "original_dataset": "DataSets/ENB2012_data.xlsx",
+        "processed_dataset": "DataSets/Processed/energy_efficiency_regression_results.csv",
+        "metrics": "DataSets/Processed/energy_efficiency_metrics.csv",
+        "feature_importance": "DataSets/Processed/energy_efficiency_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/energy_efficiency_regression_models.joblib",
+        "feature_columns": "ModelsOutcome/energy_efficiency_feature_columns.joblib",
+        "metadata": "Metadata/D17_energy_efficiency.json"
+    },
+    "run_timestamp": "2026-11-23 15:26:57"
+}

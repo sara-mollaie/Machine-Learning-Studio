@@ -192,6 +192,8 @@
         "test_rows": 20,
         "metrics": [
             "Accuracy",
+            "Precision",
+            "Recall",
             "F1",
             "F1 Macro",
             "CV Macro F1"
@@ -202,6 +204,10 @@
                 "Model": "KNN",
                 "Accuracy": 0.9,
                 "Accuracy Percentage": 90.0,
+                "Precision": 0.81,
+                "Precision Percentage": 81.0,
+                "Recall": 0.9,
+                "Recall Percentage": 90.0,
                 "F1": 0.852632,
                 "F1 Percentage": 85.263158,
                 "F1 Macro": 0.473684,
@@ -211,6 +217,10 @@
                 "Model": "Naive Bayes",
                 "Accuracy": 0.9,
                 "Accuracy Percentage": 90.0,
+                "Precision": 0.81,
+                "Precision Percentage": 81.0,
+                "Recall": 0.9,
+                "Recall Percentage": 90.0,
                 "F1": 0.852632,
                 "F1 Percentage": 85.263158,
                 "F1 Macro": 0.473684,
@@ -220,6 +230,10 @@
                 "Model": "Decision Tree",
                 "Accuracy": 0.85,
                 "Accuracy Percentage": 85.0,
+                "Precision": 0.880392,
+                "Precision Percentage": 88.039216,
+                "Recall": 0.85,
+                "Recall Percentage": 85.0,
                 "F1": 0.862857,
                 "F1 Percentage": 86.285714,
                 "F1 Macro": 0.657143,
@@ -229,6 +243,10 @@
                 "Model": "Random Forest",
                 "Accuracy": 0.85,
                 "Accuracy Percentage": 85.0,
+                "Precision": 0.805263,
+                "Precision Percentage": 80.526316,
+                "Recall": 0.85,
+                "Recall Percentage": 85.0,
                 "F1": 0.827027,
                 "F1 Percentage": 82.702703,
                 "F1 Macro": 0.459459,
@@ -238,6 +256,10 @@
                 "Model": "SVM",
                 "Accuracy": 0.75,
                 "Accuracy Percentage": 75.0,
+                "Precision": 0.86,
+                "Precision Percentage": 86.0,
+                "Recall": 0.75,
+                "Recall Percentage": 75.0,
                 "F1": 0.792208,
                 "F1 Percentage": 79.220779,
                 "F1 Macro": 0.5671,
@@ -247,6 +269,10 @@
                 "Model": "Logistic",
                 "Accuracy": 0.6,
                 "Accuracy Percentage": 60.0,
+                "Precision": 0.8375,
+                "Precision Percentage": 83.75,
+                "Recall": 0.6,
+                "Recall Percentage": 60.0,
                 "F1": 0.68,
                 "F1 Percentage": 68.0,
                 "F1 Macro": 0.466667,
@@ -268,6 +294,22 @@
                 "f1": 0.0,
                 "support": 2
             }
+        },
+        "confusion_matrix": {
+            "labels": [
+                "Normal",
+                "Altered"
+            ],
+            "matrix": [
+                [
+                    18,
+                    0
+                ],
+                [
+                    2,
+                    0
+                ]
+            ]
         },
         "best_model_confusion_matrix": {
             "labels": [
@@ -456,5 +498,5 @@
         "feature_columns": "ModelsOutcome/fertility_feature_columns.joblib",
         "metadata": "Metadata/D06_fertility.json"
     },
-    "run_timestamp": "2026-11-26 23:51:51"
+    "run_timestamp": "2026-11-27 06:19:05"
 }

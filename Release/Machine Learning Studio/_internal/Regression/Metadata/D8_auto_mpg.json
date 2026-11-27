@@ -1,0 +1,288 @@
+{
+    "id": "D8",
+    "run_timestamp": "2026-11-26 10:38:04.132918",
+    "name": "Auto MPG",
+    "level": "Intermediate",
+    "domain": "Automobiles",
+    "task": "Regression",
+    "description": "Predict fuel efficiency in miles per US gallon from vehicle specifications.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 398,
+        "columns": 9,
+        "column_names": [
+            "MPG",
+            "Cylinders",
+            "Displacement",
+            "Horsepower",
+            "Weight",
+            "Acceleration",
+            "Model year",
+            "Origin",
+            "Car name"
+        ],
+        "data_types": {
+            "MPG": "float64",
+            "Cylinders": "int64",
+            "Displacement": "float64",
+            "Horsepower": "float64",
+            "Weight": "float64",
+            "Acceleration": "float64",
+            "Model year": "int64",
+            "Origin": "int64",
+            "Car name": "str"
+        },
+        "missing_values": {
+            "MPG": 0,
+            "Cylinders": 0,
+            "Displacement": 0,
+            "Horsepower": 6,
+            "Weight": 0,
+            "Acceleration": 0,
+            "Model year": 0,
+            "Origin": 0,
+            "Car name": 0
+        },
+        "total_missing_values": 6,
+        "descriptive_statistics": {
+            "MPG": {
+                "count": 398.0,
+                "mean": 23.51,
+                "std": 7.82,
+                "min": 9.0,
+                "25%": 17.5,
+                "50%": 23.0,
+                "75%": 29.0,
+                "max": 46.6
+            },
+            "Cylinders": {
+                "count": 398.0,
+                "mean": 5.45,
+                "std": 1.7,
+                "min": 3.0,
+                "25%": 4.0,
+                "50%": 4.0,
+                "75%": 8.0,
+                "max": 8.0
+            },
+            "Displacement": {
+                "count": 398.0,
+                "mean": 193.43,
+                "std": 104.27,
+                "min": 68.0,
+                "25%": 104.25,
+                "50%": 148.5,
+                "75%": 262.0,
+                "max": 455.0
+            },
+            "Horsepower": {
+                "count": 392.0,
+                "mean": 104.47,
+                "std": 38.49,
+                "min": 46.0,
+                "25%": 75.0,
+                "50%": 93.5,
+                "75%": 126.0,
+                "max": 230.0
+            },
+            "Weight": {
+                "count": 398.0,
+                "mean": 2970.42,
+                "std": 846.84,
+                "min": 1613.0,
+                "25%": 2223.75,
+                "50%": 2803.5,
+                "75%": 3608.0,
+                "max": 5140.0
+            },
+            "Acceleration": {
+                "count": 398.0,
+                "mean": 15.57,
+                "std": 2.76,
+                "min": 8.0,
+                "25%": 13.82,
+                "50%": 15.5,
+                "75%": 17.18,
+                "max": 24.8
+            },
+            "Model year": {
+                "count": 398.0,
+                "mean": 76.01,
+                "std": 3.7,
+                "min": 70.0,
+                "25%": 73.0,
+                "50%": 76.0,
+                "75%": 79.0,
+                "max": 82.0
+            },
+            "Origin": {
+                "count": 398.0,
+                "mean": 1.57,
+                "std": 0.8,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 2.0,
+                "max": 3.0
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Cylinders",
+            "Displacement",
+            "Horsepower",
+            "Weight",
+            "Acceleration",
+            "Model year",
+            "Origin"
+        ],
+        "target_column": "MPG",
+        "excluded_columns": [
+            "Car name"
+        ]
+    },
+    "preprocessing": {
+        "numeric_method": "Median Imputation + StandardScaler",
+        "categorical_method": "Most Frequent Imputation + OneHotEncoder",
+        "missing_value_method": "Median for numeric features, mode for Origin"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "SVR",
+                "MAE": 1.612,
+                "MSE": 4.3134,
+                "RMSE": 2.0769,
+                "R2": 0.9198,
+                "R2 Percentage": 91.9775,
+                "Accuracy": 91.03
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 1.5822,
+                "MSE": 4.6531,
+                "RMSE": 2.1571,
+                "R2": 0.9135,
+                "R2 Percentage": 91.3458,
+                "Accuracy": 90.68
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 1.7497,
+                "MSE": 5.4636,
+                "RMSE": 2.3374,
+                "R2": 0.8984,
+                "R2 Percentage": 89.8383,
+                "Accuracy": 89.9
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 2.2882,
+                "MSE": 8.3387,
+                "RMSE": 2.8877,
+                "R2": 0.8449,
+                "R2 Percentage": 84.4909,
+                "Accuracy": 87.52
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 2.285,
+                "MSE": 8.3424,
+                "RMSE": 2.8883,
+                "R2": 0.8448,
+                "R2 Percentage": 84.484,
+                "Accuracy": 87.52
+            }
+        ],
+        "recommended_model": "SVR",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_definition": "RMSE-based normalized score: max(0, (1 - RMSE / mean(abs(y_test))) * 100); this is not a standard regression accuracy metric"
+    },
+    "feature_importance": {
+        "method": "Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "Weight",
+                "Coefficient": -5.9121,
+                "Absolute Coefficient": 5.9121,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "Model year",
+                "Coefficient": 2.9708,
+                "Absolute Coefficient": 2.9708,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "Displacement",
+                "Coefficient": 2.0358,
+                "Absolute Coefficient": 2.0358,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "Origin_1",
+                "Coefficient": -1.8738,
+                "Absolute Coefficient": 1.8738,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "Origin_2",
+                "Coefficient": 1.0741,
+                "Absolute Coefficient": 1.0741,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "Origin_3",
+                "Coefficient": 0.7997,
+                "Absolute Coefficient": 0.7997,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "Horsepower",
+                "Coefficient": -0.5448,
+                "Absolute Coefficient": 0.5448,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "Cylinders",
+                "Coefficient": -0.279,
+                "Absolute Coefficient": 0.279,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "Acceleration",
+                "Coefficient": 0.1857,
+                "Absolute Coefficient": 0.1857,
+                "Importance Rank": 9
+            }
+        ],
+        "most_influential_feature": "Weight"
+    },
+    "model_verification": true,
+    "model_verification_results": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
+    "output_files": {
+        "original_dataset": "DataSets/auto-mpg.data",
+        "processed_dataset": "DataSets/Processed/auto_mpg_regression_results.csv",
+        "metrics": "DataSets/Processed/auto_mpg_metrics.csv",
+        "metadata_latest": "Metadata/D8_auto_mpg.json",
+        "combined_models": "ModelsOutcome/auto_mpg_regression_models.joblib"
+    }
+}

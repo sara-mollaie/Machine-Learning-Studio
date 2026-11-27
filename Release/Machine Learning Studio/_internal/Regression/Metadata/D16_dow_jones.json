@@ -1,0 +1,662 @@
+{
+    "correlation_matrix": {
+        "percent_change_price": {
+            "percent_change_price": 1.0,
+            "percent_change_volume_over_last_wk": -0.3142981465,
+            "volume": -0.1354747134,
+            "previous_weeks_volume": -0.0450384768,
+            "weekly_range_pct": -0.1497320257,
+            "close_vs_open_pct": 1.0,
+            "percent_change_next_weeks_price": -0.0247251051
+        },
+        "percent_change_volume_over_last_wk": {
+            "percent_change_price": -0.3142981465,
+            "percent_change_volume_over_last_wk": 1.0,
+            "volume": 0.2143663232,
+            "previous_weeks_volume": -0.127189223,
+            "weekly_range_pct": 0.5702884381,
+            "close_vs_open_pct": -0.3142979436,
+            "percent_change_next_weeks_price": 0.0355312589
+        },
+        "volume": {
+            "percent_change_price": -0.1354747134,
+            "percent_change_volume_over_last_wk": 0.2143663232,
+            "volume": 1.0,
+            "previous_weeks_volume": 0.8666637414,
+            "weekly_range_pct": 0.378757539,
+            "close_vs_open_pct": -0.1354746888,
+            "percent_change_next_weeks_price": -0.0682423882
+        },
+        "previous_weeks_volume": {
+            "percent_change_price": -0.0450384768,
+            "percent_change_volume_over_last_wk": -0.127189223,
+            "volume": 0.8666637414,
+            "previous_weeks_volume": 1.0,
+            "weekly_range_pct": 0.173211109,
+            "close_vs_open_pct": -0.0450385209,
+            "percent_change_next_weeks_price": -0.1507590535
+        },
+        "weekly_range_pct": {
+            "percent_change_price": -0.1497320257,
+            "percent_change_volume_over_last_wk": 0.5702884381,
+            "volume": 0.378757539,
+            "previous_weeks_volume": 0.173211109,
+            "weekly_range_pct": 1.0,
+            "close_vs_open_pct": -0.1497318653,
+            "percent_change_next_weeks_price": -0.0158405236
+        },
+        "close_vs_open_pct": {
+            "percent_change_price": 1.0,
+            "percent_change_volume_over_last_wk": -0.3142979436,
+            "volume": -0.1354746888,
+            "previous_weeks_volume": -0.0450385209,
+            "weekly_range_pct": -0.1497318653,
+            "close_vs_open_pct": 1.0,
+            "percent_change_next_weeks_price": -0.024725178
+        },
+        "percent_change_next_weeks_price": {
+            "percent_change_price": -0.0247251051,
+            "percent_change_volume_over_last_wk": 0.0355312589,
+            "volume": -0.0682423882,
+            "previous_weeks_volume": -0.1507590535,
+            "weekly_range_pct": -0.0158405236,
+            "close_vs_open_pct": -0.024725178,
+            "percent_change_next_weeks_price": 1.0
+        }
+    },
+    "id": "D16",
+    "run_timestamp": "2026-11-25T15:53:49",
+    "name": "Dow Jones Index",
+    "level": "Intermediate",
+    "domain": "Business/Finance",
+    "task": "Regression",
+    "description": "Predict next-week stock returns and rank stocks within each week.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 750,
+        "columns": 16,
+        "column_names": [
+            "quarter",
+            "stock",
+            "date",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "percent_change_price",
+            "percent_change_volume_over_last_wk",
+            "previous_weeks_volume",
+            "next_weeks_open",
+            "next_weeks_close",
+            "percent_change_next_weeks_price",
+            "days_to_next_dividend",
+            "percent_return_next_dividend"
+        ],
+        "data_types": {
+            "quarter": "int64",
+            "stock": "str",
+            "date": "datetime64[us]",
+            "open": "float64",
+            "high": "float64",
+            "low": "float64",
+            "close": "float64",
+            "volume": "int64",
+            "percent_change_price": "float64",
+            "percent_change_volume_over_last_wk": "float64",
+            "previous_weeks_volume": "float64",
+            "next_weeks_open": "float64",
+            "next_weeks_close": "float64",
+            "percent_change_next_weeks_price": "float64",
+            "days_to_next_dividend": "int64",
+            "percent_return_next_dividend": "float64"
+        },
+        "missing_values": {
+            "quarter": 0,
+            "stock": 0,
+            "date": 0,
+            "open": 0,
+            "high": 0,
+            "low": 0,
+            "close": 0,
+            "volume": 0,
+            "percent_change_price": 0,
+            "percent_change_volume_over_last_wk": 30,
+            "previous_weeks_volume": 30,
+            "next_weeks_open": 0,
+            "next_weeks_close": 0,
+            "percent_change_next_weeks_price": 0,
+            "days_to_next_dividend": 0,
+            "percent_return_next_dividend": 0
+        },
+        "total_missing_values": 60,
+        "descriptive_statistics": {
+            "quarter": {
+                "count": 750.0,
+                "mean": 1.52,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0,
+                "std": 0.4999332399
+            },
+            "date": {
+                "count": 750,
+                "mean": 1301612544000,
+                "min": 1294358400000,
+                "25%": 1297987200000,
+                "50%": 1301616000000,
+                "75%": 1305244800000,
+                "max": 1308873600000,
+                "std": null
+            },
+            "open": {
+                "count": 750.0,
+                "mean": 53.65184,
+                "min": 10.59,
+                "25%": 29.83,
+                "50%": 45.97,
+                "75%": 72.715,
+                "max": 172.11,
+                "std": 32.6388518694
+            },
+            "high": {
+                "count": 750.0,
+                "mean": 54.6699866667,
+                "min": 10.94,
+                "25%": 30.6275,
+                "50%": 46.885,
+                "75%": 74.2875,
+                "max": 173.54,
+                "std": 33.2159935478
+            },
+            "low": {
+                "count": 750.0,
+                "mean": 52.64016,
+                "min": 10.4,
+                "25%": 28.72,
+                "50%": 44.8,
+                "75%": 71.0375,
+                "max": 167.82,
+                "std": 32.1192774382
+            },
+            "close": {
+                "count": 750.0,
+                "mean": 53.7292666667,
+                "min": 10.52,
+                "25%": 30.365,
+                "50%": 45.93,
+                "75%": 72.6675,
+                "max": 170.58,
+                "std": 32.7887866895
+            },
+            "volume": {
+                "count": 750.0,
+                "mean": 117547801.40666667,
+                "min": 9718851.0,
+                "25%": 30866243.25,
+                "50%": 53060885.0,
+                "75%": 132721823.75,
+                "max": 1453438639.0,
+                "std": 158438089.36082223
+            },
+            "percent_change_price": {
+                "count": 750.0,
+                "mean": 0.05026241,
+                "min": -15.4229,
+                "25%": -1.2880525,
+                "50%": 0.0,
+                "75%": 1.6508875,
+                "max": 9.88223,
+                "std": 2.517809207
+            },
+            "percent_change_volume_over_last_wk": {
+                "count": 720.0,
+                "mean": 5.5936265451,
+                "min": -61.43317522,
+                "25%": -19.8042843675,
+                "50%": 0.5125859305,
+                "75%": 21.800621785,
+                "max": 327.4089238,
+                "std": 40.5434781866
+            },
+            "previous_weeks_volume": {
+                "count": 720.0,
+                "mean": 117387644.83472222,
+                "min": 9718851.0,
+                "25%": 30678320.0,
+                "50%": 52945558.0,
+                "75%": 133322975.25,
+                "max": 1453438639.0,
+                "std": 159232227.99587056
+            },
+            "next_weeks_open": {
+                "count": 750.0,
+                "mean": 53.70244,
+                "min": 10.52,
+                "25%": 30.315,
+                "50%": 46.015,
+                "75%": 72.715,
+                "max": 172.11,
+                "std": 32.7781105244
+            },
+            "next_weeks_close": {
+                "count": 750.0,
+                "mean": 53.88908,
+                "min": 10.52,
+                "25%": 30.4625,
+                "50%": 46.125,
+                "75%": 72.915,
+                "max": 174.54,
+                "std": 33.0166765741
+            },
+            "percent_change_next_weeks_price": {
+                "count": 750.0,
+                "mean": 0.2384681039,
+                "min": -15.4229,
+                "25%": -1.2220675,
+                "50%": 0.10119265,
+                "75%": 1.8455625,
+                "max": 9.88223,
+                "std": 2.679538347
+            },
+            "days_to_next_dividend": {
+                "count": 750.0,
+                "mean": 52.5253333333,
+                "min": 0.0,
+                "25%": 24.0,
+                "50%": 47.0,
+                "75%": 69.0,
+                "max": 336.0,
+                "std": 46.3350977114
+            },
+            "percent_return_next_dividend": {
+                "count": 750.0,
+                "mean": 0.6918255848,
+                "min": 0.0655738,
+                "25%": 0.53454925,
+                "50%": 0.6810665,
+                "75%": 0.85429125,
+                "max": 1.56421,
+                "std": 0.3054818715
+            },
+            "weekly_range_pct": {
+                "count": 750.0,
+                "mean": 3.9708175527,
+                "min": 0.9670356404,
+                "25%": 2.6927339677,
+                "50%": 3.5510673461,
+                "75%": 4.8181793719,
+                "max": 29.6154975051,
+                "std": 2.2579470702
+            },
+            "close_vs_open_pct": {
+                "count": 750.0,
+                "mean": 0.0502624556,
+                "min": -15.4228855721,
+                "25%": -1.2880492958,
+                "50%": 0.0,
+                "75%": 1.6508896965,
+                "max": 9.8822324629,
+                "std": 2.517809198
+            }
+        }
+    },
+    "preprocessing": {
+        "numeric_method": "Median Imputation + StandardScaler",
+        "categorical_method": "OneHotEncoder for stock",
+        "feature_formulas": {
+            "weekly_range_pct": "100 * (high - low) / open",
+            "close_vs_open_pct": "100 * (close - open) / open"
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "stock",
+            "percent_change_price",
+            "percent_change_volume_over_last_wk",
+            "volume",
+            "previous_weeks_volume",
+            "weekly_range_pct",
+            "close_vs_open_pct"
+        ],
+        "target_column": "percent_change_next_weeks_price",
+        "excluded_future_columns": [
+            "next_weeks_open",
+            "next_weeks_close"
+        ]
+    },
+    "model_evaluation": {
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "Accuracy",
+            "R2",
+            "R2 Percentage",
+            "Direction Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "SVR",
+                "MAE": 1.8771337026,
+                "MSE": 6.594005242,
+                "RMSE": 2.5678795225,
+                "Accuracy": 86.3606040789,
+                "R2": 0.0390836261,
+                "R2 Percentage": 3.9083626067,
+                "Direction Accuracy": 56.6666666667
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 1.8407710336,
+                "MSE": 6.7344617561,
+                "RMSE": 2.595084152,
+                "Accuracy": 86.216105589,
+                "R2": 0.0186154949,
+                "R2 Percentage": 1.8615494896,
+                "Direction Accuracy": 65.0
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 1.958628651,
+                "MSE": 7.1524977025,
+                "RMSE": 2.6744153945,
+                "Accuracy": 85.7947344865,
+                "R2": -0.0423031078,
+                "R2 Percentage": -4.230310784,
+                "Direction Accuracy": 52.5
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 1.9322538902,
+                "MSE": 7.3832758486,
+                "RMSE": 2.7172184028,
+                "Accuracy": 85.5673845773,
+                "R2": -0.0759334268,
+                "R2 Percentage": -7.5933426762,
+                "Direction Accuracy": 55.8333333333
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 2.0127929857,
+                "MSE": 7.5552238863,
+                "RMSE": 2.7486767519,
+                "Accuracy": 85.4002922841,
+                "R2": -0.1009906839,
+                "R2 Percentage": -10.0990683902,
+                "Direction Accuracy": 54.1666666667
+            }
+        ],
+        "recommended_model": "SVR",
+        "selection_rule": "Lowest validation RMSE (equivalent to highest RMSE-based Accuracy)",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_validation) - min(y_validation))))",
+        "accuracy_calculation_note": "The same validation target range is used for all five models, so higher Accuracy corresponds exactly to lower RMSE.",
+        "split_method": "Chronological whole-week 60/20/20 with one-week boundary gaps",
+        "train_rows": 420,
+        "validation_rows": 120,
+        "test_rows": 150,
+        "refit_rows": 570,
+        "test_results": {
+            "MAE": 2.6972239537612714,
+            "MSE": 10.96302584702366,
+            "RMSE": 3.3110460351713114,
+            "Accuracy": 77.44179447197901,
+            "R2": -0.017201051171458648,
+            "R2 Percentage": -1.7201051171458648,
+            "Direction Accuracy": 45.33333333333333
+        },
+        "baseline_test_results": {
+            "MAE": 2.5985358780000003,
+            "MSE": 10.77906785893902,
+            "RMSE": 3.283149076563387,
+            "Accuracy": 77.63185686289702,
+            "R2": -0.00013256465485689262,
+            "R2 Percentage": -0.013256465485689262,
+            "Direction Accuracy": 0.6666666666666667
+        },
+        "direction_accuracy_definition": "100 * mean(sign(actual) == sign(predicted)); zero is a separate direction",
+        "ranking": {
+            "mean_weekly_spearman": 0.13601779755283647,
+            "mean_actual_top_pick_return_pct": -0.27005200000000007,
+            "test_weeks": 5
+        },
+        "model_verification_results": {
+            "Linear Regression": true,
+            "Ridge": true,
+            "Random Forest": true,
+            "Gradient Boosting": true,
+            "SVR": true
+        }
+    },
+    "feature_importance": {
+        "method": "Linear Regression coefficients after preprocessing",
+        "results": [
+            {
+                "Feature": "stock_BAC",
+                "Coefficient": -2.6249685022,
+                "Absolute Coefficient": 2.6249685022,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "stock_CSCO",
+                "Coefficient": -1.9031631187,
+                "Absolute Coefficient": 1.9031631187,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "stock_MSFT",
+                "Coefficient": -1.2601555396,
+                "Absolute Coefficient": 1.2601555396,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "stock_HPQ",
+                "Coefficient": -1.2243953904,
+                "Absolute Coefficient": 1.2243953904,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "stock_IBM",
+                "Coefficient": 0.9133275949,
+                "Absolute Coefficient": 0.9133275949,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "stock_KRFT",
+                "Coefficient": 0.9004505437,
+                "Absolute Coefficient": 0.9004505437,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "stock_TRV",
+                "Coefficient": 0.8554631515,
+                "Absolute Coefficient": 0.8554631515,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "stock_AA",
+                "Coefficient": -0.8396024783,
+                "Absolute Coefficient": 0.8396024783,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "volume",
+                "Coefficient": 0.7474217962,
+                "Absolute Coefficient": 0.7474217962,
+                "Importance Rank": 9
+            },
+            {
+                "Feature": "stock_AXP",
+                "Coefficient": 0.6738226472,
+                "Absolute Coefficient": 0.6738226472,
+                "Importance Rank": 10
+            },
+            {
+                "Feature": "stock_CVX",
+                "Coefficient": 0.6137139356,
+                "Absolute Coefficient": 0.6137139356,
+                "Importance Rank": 11
+            },
+            {
+                "Feature": "stock_KO",
+                "Coefficient": 0.5570539436,
+                "Absolute Coefficient": 0.5570539436,
+                "Importance Rank": 12
+            },
+            {
+                "Feature": "stock_GE",
+                "Coefficient": -0.5568023716,
+                "Absolute Coefficient": 0.5568023716,
+                "Importance Rank": 13
+            },
+            {
+                "Feature": "stock_UTX",
+                "Coefficient": 0.5443522626,
+                "Absolute Coefficient": 0.5443522626,
+                "Importance Rank": 14
+            },
+            {
+                "Feature": "previous_weeks_volume",
+                "Coefficient": -0.4473015603,
+                "Absolute Coefficient": 0.4473015603,
+                "Importance Rank": 15
+            },
+            {
+                "Feature": "stock_MCD",
+                "Coefficient": 0.4289320367,
+                "Absolute Coefficient": 0.4289320367,
+                "Importance Rank": 16
+            },
+            {
+                "Feature": "stock_MMM",
+                "Coefficient": 0.4242815133,
+                "Absolute Coefficient": 0.4242815133,
+                "Importance Rank": 17
+            },
+            {
+                "Feature": "stock_JNJ",
+                "Coefficient": 0.4034799295,
+                "Absolute Coefficient": 0.4034799295,
+                "Importance Rank": 18
+            },
+            {
+                "Feature": "stock_DD",
+                "Coefficient": 0.3848870648,
+                "Absolute Coefficient": 0.3848870648,
+                "Importance Rank": 19
+            },
+            {
+                "Feature": "percent_change_volume_over_last_wk",
+                "Coefficient": -0.3822949033,
+                "Absolute Coefficient": 0.3822949033,
+                "Importance Rank": 20
+            },
+            {
+                "Feature": "stock_WMT",
+                "Coefficient": 0.3654116324,
+                "Absolute Coefficient": 0.3654116324,
+                "Importance Rank": 21
+            },
+            {
+                "Feature": "stock_BA",
+                "Coefficient": 0.3587176276,
+                "Absolute Coefficient": 0.3587176276,
+                "Importance Rank": 22
+            },
+            {
+                "Feature": "stock_DIS",
+                "Coefficient": 0.3451879482,
+                "Absolute Coefficient": 0.3451879482,
+                "Importance Rank": 23
+            },
+            {
+                "Feature": "stock_PG",
+                "Coefficient": 0.2980850272,
+                "Absolute Coefficient": 0.2980850272,
+                "Importance Rank": 24
+            },
+            {
+                "Feature": "stock_HD",
+                "Coefficient": 0.272468677,
+                "Absolute Coefficient": 0.272468677,
+                "Importance Rank": 25
+            },
+            {
+                "Feature": "stock_VZ",
+                "Coefficient": -0.2367602095,
+                "Absolute Coefficient": 0.2367602095,
+                "Importance Rank": 26
+            },
+            {
+                "Feature": "stock_JPM",
+                "Coefficient": -0.2266756549,
+                "Absolute Coefficient": 0.2266756549,
+                "Importance Rank": 27
+            },
+            {
+                "Feature": "weekly_range_pct",
+                "Coefficient": 0.2174287182,
+                "Absolute Coefficient": 0.2174287182,
+                "Importance Rank": 28
+            },
+            {
+                "Feature": "stock_PFE",
+                "Coefficient": 0.2105678739,
+                "Absolute Coefficient": 0.2105678739,
+                "Importance Rank": 29
+            },
+            {
+                "Feature": "stock_XOM",
+                "Coefficient": 0.1804377246,
+                "Absolute Coefficient": 0.1804377246,
+                "Importance Rank": 30
+            },
+            {
+                "Feature": "stock_CAT",
+                "Coefficient": 0.1254301042,
+                "Absolute Coefficient": 0.1254301042,
+                "Importance Rank": 31
+            },
+            {
+                "Feature": "stock_MRK",
+                "Coefficient": -0.0994699518,
+                "Absolute Coefficient": 0.0994699518,
+                "Importance Rank": 32
+            },
+            {
+                "Feature": "stock_INTC",
+                "Coefficient": 0.077824622,
+                "Absolute Coefficient": 0.077824622,
+                "Importance Rank": 33
+            },
+            {
+                "Feature": "percent_change_price",
+                "Coefficient": -0.041375814,
+                "Absolute Coefficient": 0.041375814,
+                "Importance Rank": 34
+            },
+            {
+                "Feature": "close_vs_open_pct",
+                "Coefficient": -0.041374965,
+                "Absolute Coefficient": 0.041374965,
+                "Importance Rank": 35
+            },
+            {
+                "Feature": "stock_T",
+                "Coefficient": 0.0380973567,
+                "Absolute Coefficient": 0.0380973567,
+                "Importance Rank": 36
+            }
+        ]
+    },
+    "model_verification": true,
+    "output_files": {
+        "models": "ModelsOutcome/dow_jones_regression_models.joblib",
+        "original_dataset": "DataSets/dow_jones_index.data",
+        "metadata_latest": "Metadata/D16_dow_jones.json",
+        "metrics": "DataSets/Processed/dow_jones_metrics.csv",
+        "rankings": "DataSets/Processed/dow_jones_weekly_rankings.csv"
+    }
+}

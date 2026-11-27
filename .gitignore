@@ -1,18 +1,73 @@
-__pycache__/
-*.py[cod]
+
+# ==========================================
+# Machine Learning Studio
+# GitHub Repository - Release Only
+# ==========================================
+
+# Ignore everything by default
+/*
+
+# Repository files
+!/.gitignore
+!/.gitattributes
+!/README.md
+!/requirements.txt
+
+# Application assets
+!/assets/
+!/assets/**
+
+# Regression
+!/Regression/
+/Regression/*
+!/Regression/DataSets/
+!/Regression/DataSets/**
+!/Regression/Metadata/
+!/Regression/Metadata/**
+!/Regression/ModelsOutcome/
+!/Regression/ModelsOutcome/**
+
+# Classification
+!/Classification/
+/Classification/*
+!/Classification/DataSets/
+!/Classification/DataSets/**
+!/Classification/Metadata/
+!/Classification/Metadata/**
+!/Classification/ModelsOutcome/
+!/Classification/ModelsOutcome/**
+
+# Clustering
+!/Clustering/
+/Clustering/*
+!/Clustering/Datasets/
+!/Clustering/Datasets/**
+!/Clustering/Metadata/
+!/Clustering/Metadata/**
+!/Clustering/ModelsOutcome/
+!/Clustering/ModelsOutcome/**
+
+# Executable release
+!/Release/
+!/Release/**
+
+# Exclude Python source files
+*.py
+*.pyw
+*.pyc
 *.pyo
+*.ipynb
+*.spec
 
-.venv/
-venv/
-env/
-
-.idea/
-
+# Cache and temporary files
+__pycache__/
 .ipynb_checkpoints/
-
+.pytest_cache/
+.mypy_cache/
 *.log
 .DS_Store
 Thumbs.db
 
-.pytest_cache/
-.mypy_cache/
+# Preserve the complete executable distribution
+!/Release/
+!/Release/**

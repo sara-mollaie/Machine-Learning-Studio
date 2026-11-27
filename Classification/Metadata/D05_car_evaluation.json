@@ -286,6 +286,71 @@
             ]
         }
     },
+    "correlation_matrix": {
+        "Buying Price": {
+            "Buying Price": 1.0,
+            "Maintenance": -0.0,
+            "Doors": -3.433467502e-17,
+            "Persons": -1.530088864e-16,
+            "Luggage Boot": -1.045865709e-16,
+            "Safety": -4.082113805e-16,
+            "Acceptability (encoded)": -0.2827504044
+        },
+        "Maintenance": {
+            "Buying Price": -0.0,
+            "Maintenance": 1.0,
+            "Doors": -2.547345051e-16,
+            "Persons": -4.265105114e-17,
+            "Luggage Boot": 8.544286482e-17,
+            "Safety": -7.826397503e-17,
+            "Acceptability (encoded)": -0.2324215314
+        },
+        "Doors": {
+            "Buying Price": -3.433467502e-17,
+            "Maintenance": -2.547345051e-16,
+            "Doors": 1.0,
+            "Persons": 1.956599376e-17,
+            "Luggage Boot": -2.674488355e-18,
+            "Safety": 3.406453589e-17,
+            "Acceptability (encoded)": 0.0660566458
+        },
+        "Persons": {
+            "Buying Price": -1.530088864e-16,
+            "Maintenance": -4.265105114e-17,
+            "Doors": 1.956599376e-17,
+            "Persons": 1.0,
+            "Luggage Boot": -9.251858539e-18,
+            "Safety": 1.137207612e-17,
+            "Acceptability (encoded)": 0.3417067524
+        },
+        "Luggage Boot": {
+            "Buying Price": -1.045865709e-16,
+            "Maintenance": 8.544286482e-17,
+            "Doors": -2.674488355e-18,
+            "Persons": -9.251858539e-18,
+            "Luggage Boot": 1.0,
+            "Safety": 1.927470529e-18,
+            "Acceptability (encoded)": 0.1579316923
+        },
+        "Safety": {
+            "Buying Price": -4.082113805e-16,
+            "Maintenance": -7.826397503e-17,
+            "Doors": 3.406453589e-17,
+            "Persons": 1.137207612e-17,
+            "Luggage Boot": 1.927470529e-18,
+            "Safety": 1.0,
+            "Acceptability (encoded)": 0.4393372531
+        },
+        "Acceptability (encoded)": {
+            "Buying Price": -0.2827504044,
+            "Maintenance": -0.2324215314,
+            "Doors": 0.0660566458,
+            "Persons": 0.3417067524,
+            "Luggage Boot": 0.1579316923,
+            "Safety": 0.4393372531,
+            "Acceptability (encoded)": 1.0
+        }
+    },
     "feature_importance": {
         "method": "Random Forest Feature Importance (summed over one-hot columns)",
         "model": "Random Forest",
@@ -343,5 +408,5 @@
         "feature_columns": "ModelsOutcome/car_evaluation_feature_columns.joblib",
         "metadata": "Metadata/D05_car_evaluation.json"
     },
-    "run_timestamp": "2026-11-27 04:18:55"
+    "run_timestamp": "2026-11-27 07:03:11"
 }

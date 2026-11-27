@@ -1,0 +1,405 @@
+{
+    "id": "D10",
+    "name": "Daily Demand Forecasting Orders",
+    "run_timestamp": "2026-11-23T15:12:09",
+    "level": "Intermediate",
+    "domain": "Business",
+    "task": "Regression",
+    "source": "UCI Machine Learning Repository",
+    "description": "Forecast total orders for the next observed working day using calendar information and previously observed order totals.",
+    "dataset_statistics": {
+        "rows": 60,
+        "columns": 13,
+        "column_names": [
+            "Week of the month (first week, second, third, fourth or fifth week",
+            "Day of the week (Monday to Friday)",
+            "Non-urgent order",
+            "Urgent order",
+            "Order type A",
+            "Order type B",
+            "Order type C",
+            "Fiscal sector orders",
+            "Orders from the traffic controller sector",
+            "Banking orders (1)",
+            "Banking orders (2)",
+            "Banking orders (3)",
+            "Target (Total orders)"
+        ],
+        "data_types": {
+            "Week of the month (first week, second, third, fourth or fifth week": "int64",
+            "Day of the week (Monday to Friday)": "int64",
+            "Non-urgent order": "float64",
+            "Urgent order": "float64",
+            "Order type A": "float64",
+            "Order type B": "float64",
+            "Order type C": "float64",
+            "Fiscal sector orders": "float64",
+            "Orders from the traffic controller sector": "int64",
+            "Banking orders (1)": "int64",
+            "Banking orders (2)": "int64",
+            "Banking orders (3)": "int64",
+            "Target (Total orders)": "float64"
+        },
+        "missing_values": {
+            "Week of the month (first week, second, third, fourth or fifth week": 0,
+            "Day of the week (Monday to Friday)": 0,
+            "Non-urgent order": 0,
+            "Urgent order": 0,
+            "Order type A": 0,
+            "Order type B": 0,
+            "Order type C": 0,
+            "Fiscal sector orders": 0,
+            "Orders from the traffic controller sector": 0,
+            "Banking orders (1)": 0,
+            "Banking orders (2)": 0,
+            "Banking orders (3)": 0,
+            "Target (Total orders)": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Week of the month (first week, second, third, fourth or fifth week": {
+                "count": 60.0,
+                "mean": 3.017,
+                "std": 1.282,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 3.0,
+                "75%": 4.0,
+                "max": 5.0
+            },
+            "Day of the week (Monday to Friday)": {
+                "count": 60.0,
+                "mean": 4.033,
+                "std": 1.402,
+                "min": 2.0,
+                "25%": 3.0,
+                "50%": 4.0,
+                "75%": 5.0,
+                "max": 6.0
+            },
+            "Non-urgent order": {
+                "count": 60.0,
+                "mean": 172.555,
+                "std": 69.506,
+                "min": 43.651,
+                "25%": 125.348,
+                "50%": 151.062,
+                "75%": 194.606,
+                "max": 435.304
+            },
+            "Urgent order": {
+                "count": 60.0,
+                "mean": 118.921,
+                "std": 27.171,
+                "min": 77.371,
+                "25%": 100.888,
+                "50%": 113.114,
+                "75%": 132.108,
+                "max": 223.27
+            },
+            "Order type A": {
+                "count": 60.0,
+                "mean": 52.112,
+                "std": 18.83,
+                "min": 21.826,
+                "25%": 39.456,
+                "50%": 47.166,
+                "75%": 58.464,
+                "max": 118.178
+            },
+            "Order type B": {
+                "count": 60.0,
+                "mean": 109.23,
+                "std": 50.741,
+                "min": 25.125,
+                "25%": 74.916,
+                "50%": 99.482,
+                "75%": 132.171,
+                "max": 267.342
+            },
+            "Order type C": {
+                "count": 60.0,
+                "mean": 139.531,
+                "std": 41.443,
+                "min": 74.372,
+                "25%": 113.632,
+                "50%": 127.99,
+                "75%": 160.108,
+                "max": 302.448
+            },
+            "Fiscal sector orders": {
+                "count": 60.0,
+                "mean": 77.396,
+                "std": 186.502,
+                "min": 0.0,
+                "25%": 1.243,
+                "50%": 7.832,
+                "75%": 20.361,
+                "max": 865.0
+            },
+            "Orders from the traffic controller sector": {
+                "count": 60.0,
+                "mean": 44504.35,
+                "std": 12197.905,
+                "min": 11992.0,
+                "25%": 34994.25,
+                "50%": 44312.0,
+                "75%": 52111.75,
+                "max": 71772.0
+            },
+            "Banking orders (1)": {
+                "count": 60.0,
+                "mean": 46640.833,
+                "std": 45220.736,
+                "min": 3452.0,
+                "25%": 20130.0,
+                "50%": 32527.5,
+                "75%": 45118.75,
+                "max": 210508.0
+            },
+            "Banking orders (2)": {
+                "count": 60.0,
+                "mean": 79401.483,
+                "std": 40504.42,
+                "min": 16411.0,
+                "25%": 50680.5,
+                "50%": 67181.0,
+                "75%": 94787.75,
+                "max": 188411.0
+            },
+            "Banking orders (3)": {
+                "count": 60.0,
+                "mean": 23114.633,
+                "std": 13148.04,
+                "min": 7679.0,
+                "25%": 12609.75,
+                "50%": 18011.5,
+                "75%": 31047.75,
+                "max": 73839.0
+            },
+            "Target (Total orders)": {
+                "count": 60.0,
+                "mean": 300.873,
+                "std": 89.602,
+                "min": 129.412,
+                "25%": 238.195,
+                "50%": 288.034,
+                "75%": 334.237,
+                "max": 616.453
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Week of month",
+            "Day of week",
+            "Previous total",
+            "Mean of previous 5 observations"
+        ],
+        "target_column": "Target (Total orders)",
+        "calendar_features": [
+            "Week of month",
+            "Day of week"
+        ],
+        "history_features": [
+            "Previous total",
+            "Mean of previous 5 observations"
+        ],
+        "excluded_same_day_inputs": [
+            "Non-urgent order",
+            "Urgent order",
+            "Order type A",
+            "Order type B",
+            "Order type C",
+            "Fiscal sector orders",
+            "Orders from the traffic controller sector",
+            "Banking orders (1)",
+            "Banking orders (2)",
+            "Banking orders (3)"
+        ]
+    },
+    "preprocessing": {
+        "calendar_method": "OneHotEncoder",
+        "history_method": "StandardScaler",
+        "history_window": 5,
+        "forecast_horizon": "One observed working day; rolling one-step-ahead evaluation",
+        "observations_with_complete_history": 55
+    },
+    "model_evaluation": {
+        "recommended_model": "Random Forest",
+        "validation_method": "TimeSeriesSplit",
+        "cv_splits": 4,
+        "selection_rule": "Highest test Accuracy; ties use lower CV RMSE",
+        "training_rows": 43,
+        "test_rows": 12,
+        "test_days": 12,
+        "random_state": 42,
+        "metrics": [
+            "CV RMSE",
+            "CV RMSE Std",
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / training_target_range))",
+        "accuracy_normalization_range": 409.08899999999994,
+        "accuracy_note": "Project-specific RMSE-based regression score; it is not classification accuracy. The denominator is calculated from the training target range.",
+        "results": [
+            {
+                "Model": "Random Forest",
+                "CV RMSE": 96.856829,
+                "CV RMSE Std": 32.593684,
+                "MAE": 44.11212,
+                "MSE": 3334.212037,
+                "RMSE": 57.742636,
+                "R2": 0.081405,
+                "R2 Percentage": 8.140469,
+                "Accuracy": 85.885067
+            },
+            {
+                "Model": "Gradient Boosting",
+                "CV RMSE": 109.064674,
+                "CV RMSE Std": 30.646333,
+                "MAE": 49.965482,
+                "MSE": 3751.330377,
+                "RMSE": 61.248105,
+                "R2": -0.033514,
+                "R2 Percentage": -3.35139,
+                "Accuracy": 85.028171
+            },
+            {
+                "Model": "SVR",
+                "CV RMSE": 93.517377,
+                "CV RMSE Std": 43.527897,
+                "MAE": 48.357808,
+                "MSE": 3838.487764,
+                "RMSE": 61.955531,
+                "R2": -0.057526,
+                "R2 Percentage": -5.752628,
+                "Accuracy": 84.855244
+            },
+            {
+                "Model": "Ridge",
+                "CV RMSE": 86.906492,
+                "CV RMSE Std": 27.771546,
+                "MAE": 66.239932,
+                "MSE": 5878.876904,
+                "RMSE": 76.673835,
+                "R2": -0.619666,
+                "R2 Percentage": -61.966566,
+                "Accuracy": 81.25742
+            },
+            {
+                "Model": "Linear Regression",
+                "CV RMSE": 94.124386,
+                "CV RMSE Std": 29.687915,
+                "MAE": 76.093365,
+                "MSE": 7388.174657,
+                "RMSE": 85.954492,
+                "R2": -1.035486,
+                "R2 Percentage": -103.54862,
+                "Accuracy": 78.988804
+            }
+        ],
+        "baseline": {
+            "method": "Previous observed total",
+            "results": {
+                "MAE": 62.636749999999985,
+                "MSE": 6610.770326250001,
+                "RMSE": 81.30664380141393,
+                "R2": -0.8213066650911756,
+                "R2 Percentage": -82.13066650911756,
+                "Accuracy": 80.12494987608713
+            }
+        }
+    },
+    "feature_importance": {
+        "method": "Linear regression coefficients after preprocessing",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "Day of week_4",
+                "Coefficient": -148.51777,
+                "Absolute Coefficient": 148.51777,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "Day of week_5",
+                "Coefficient": -143.573435,
+                "Absolute Coefficient": 143.573435,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "Day of week_6",
+                "Coefficient": -135.292974,
+                "Absolute Coefficient": 135.292974,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "Day of week_3",
+                "Coefficient": -78.316565,
+                "Absolute Coefficient": 78.316565,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "Week of month_2",
+                "Coefficient": -47.763034,
+                "Absolute Coefficient": 47.763034,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "Mean of previous 5 observations",
+                "Coefficient": 26.169111,
+                "Absolute Coefficient": 26.169111,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "Week of month_4",
+                "Coefficient": 20.380692,
+                "Absolute Coefficient": 20.380692,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "Previous total",
+                "Coefficient": -18.709708,
+                "Absolute Coefficient": 18.709708,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "Week of month_3",
+                "Coefficient": -6.722166,
+                "Absolute Coefficient": 6.722166,
+                "Importance Rank": 9
+            },
+            {
+                "Feature": "Week of month_5",
+                "Coefficient": 5.213886,
+                "Absolute Coefficient": 5.213886,
+                "Importance Rank": 10
+            }
+        ],
+        "most_influential_feature": "Day of week_4"
+    },
+    "model_verification": {
+        "all_models_verified": true,
+        "individual_models": {
+            "Linear Regression": true,
+            "Ridge": true,
+            "Random Forest": true,
+            "Gradient Boosting": true,
+            "SVR": true
+        }
+    },
+    "output_files": {
+        "original_dataset": "DataSets/Daily_Demand_Forecasting_Orders.csv",
+        "processed_dataset": "DataSets/Processed/daily_demand_results.csv",
+        "metrics": "DataSets/Processed/daily_demand_metrics.csv",
+        "feature_columns": "ModelsOutcome/daily_demand_feature_columns.joblib",
+        "combined_models": "ModelsOutcome/daily_demand_regression_models.joblib",
+        "metadata_latest": "Metadata/D10_daily_demand.json"
+    }
+}

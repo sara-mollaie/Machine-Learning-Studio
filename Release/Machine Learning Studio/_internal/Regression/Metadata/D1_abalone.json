@@ -1,0 +1,319 @@
+{
+    "id": "D1",
+    "run_timestamp": "2026-11-25 04:21:23.932450",
+    "name": "Abalone",
+    "level": "Beginner",
+    "domain": "Environment",
+    "task": "Regression",
+    "description": "Estimate the age of an abalone from physical measurements.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 4177,
+        "columns": 10,
+        "column_names": [
+            "Sex",
+            "Length",
+            "Diameter",
+            "Height",
+            "Whole weight",
+            "Shucked weight",
+            "Viscera weight",
+            "Shell weight",
+            "Rings",
+            "Age"
+        ],
+        "data_types": {
+            "Sex": "str",
+            "Length": "float64",
+            "Diameter": "float64",
+            "Height": "float64",
+            "Whole weight": "float64",
+            "Shucked weight": "float64",
+            "Viscera weight": "float64",
+            "Shell weight": "float64",
+            "Rings": "int64",
+            "Age": "float64"
+        },
+        "missing_values": {
+            "Sex": 0,
+            "Length": 0,
+            "Diameter": 0,
+            "Height": 0,
+            "Whole weight": 0,
+            "Shucked weight": 0,
+            "Viscera weight": 0,
+            "Shell weight": 0,
+            "Rings": 0,
+            "Age": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "Length": {
+                "count": 4177.0,
+                "mean": 0.52,
+                "std": 0.12,
+                "min": 0.08,
+                "25%": 0.45,
+                "50%": 0.55,
+                "75%": 0.62,
+                "max": 0.82
+            },
+            "Diameter": {
+                "count": 4177.0,
+                "mean": 0.41,
+                "std": 0.1,
+                "min": 0.06,
+                "25%": 0.35,
+                "50%": 0.42,
+                "75%": 0.48,
+                "max": 0.65
+            },
+            "Height": {
+                "count": 4177.0,
+                "mean": 0.14,
+                "std": 0.04,
+                "min": 0.0,
+                "25%": 0.12,
+                "50%": 0.14,
+                "75%": 0.16,
+                "max": 1.13
+            },
+            "Whole weight": {
+                "count": 4177.0,
+                "mean": 0.83,
+                "std": 0.49,
+                "min": 0.0,
+                "25%": 0.44,
+                "50%": 0.8,
+                "75%": 1.15,
+                "max": 2.83
+            },
+            "Shucked weight": {
+                "count": 4177.0,
+                "mean": 0.36,
+                "std": 0.22,
+                "min": 0.0,
+                "25%": 0.19,
+                "50%": 0.34,
+                "75%": 0.5,
+                "max": 1.49
+            },
+            "Viscera weight": {
+                "count": 4177.0,
+                "mean": 0.18,
+                "std": 0.11,
+                "min": 0.0,
+                "25%": 0.09,
+                "50%": 0.17,
+                "75%": 0.25,
+                "max": 0.76
+            },
+            "Shell weight": {
+                "count": 4177.0,
+                "mean": 0.24,
+                "std": 0.14,
+                "min": 0.0,
+                "25%": 0.13,
+                "50%": 0.23,
+                "75%": 0.33,
+                "max": 1.0
+            },
+            "Rings": {
+                "count": 4177.0,
+                "mean": 9.93,
+                "std": 3.22,
+                "min": 1.0,
+                "25%": 8.0,
+                "50%": 9.0,
+                "75%": 11.0,
+                "max": 29.0
+            },
+            "Age": {
+                "count": 4177.0,
+                "mean": 11.43,
+                "std": 3.22,
+                "min": 2.5,
+                "25%": 9.5,
+                "50%": 10.5,
+                "75%": 12.5,
+                "max": 30.5
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Sex",
+            "Length",
+            "Diameter",
+            "Height",
+            "Whole weight",
+            "Shucked weight",
+            "Viscera weight",
+            "Shell weight"
+        ],
+        "target_column": "Age",
+        "raw_target_column": "Rings",
+        "excluded_columns": [
+            "Rings"
+        ]
+    },
+    "preprocessing": {
+        "numeric_method": "Median Imputation + StandardScaler",
+        "categorical_method": "Most Frequent Imputation + OneHotEncoder",
+        "missing_value_method": "Median for numeric features, mode for Sex",
+        "age_formula": "Age = Rings + 1.5"
+    },
+    "prediction_postprocessing": {
+        "round_decimals": 0,
+        "rounding_method": "nearest_even"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "SVR",
+                "MAE": 1.5478,
+                "MSE": 4.8959,
+                "RMSE": 2.2127,
+                "Accuracy": 88.94,
+                "R2": 0.5477,
+                "R2 Percentage": 54.7729
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 1.628,
+                "MSE": 4.9605,
+                "RMSE": 2.2272,
+                "Accuracy": 88.86,
+                "R2": 0.5418,
+                "R2 Percentage": 54.1762
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 1.6292,
+                "MSE": 4.9653,
+                "RMSE": 2.2283,
+                "Accuracy": 88.86,
+                "R2": 0.5413,
+                "R2 Percentage": 54.132
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 1.6089,
+                "MSE": 5.1041,
+                "RMSE": 2.2592,
+                "Accuracy": 88.7,
+                "R2": 0.5285,
+                "R2 Percentage": 52.8502
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 1.5993,
+                "MSE": 5.1041,
+                "RMSE": 2.2592,
+                "Accuracy": 88.7,
+                "R2": 0.5285,
+                "R2 Percentage": 52.8502
+            }
+        ],
+        "recommended_model": "SVR",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "primary_metric": "RMSE",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_unit": "percent",
+        "accuracy_decimal_places": 2,
+        "lower_is_better": true
+    },
+    "feature_importance": {
+        "method": "Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "Shucked weight",
+                "Coefficient": -4.5169,
+                "Absolute Coefficient": 4.5169,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "Whole weight",
+                "Coefficient": 4.3903,
+                "Absolute Coefficient": 4.3903,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "Shell weight",
+                "Coefficient": 1.2302,
+                "Absolute Coefficient": 1.2302,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "Diameter",
+                "Coefficient": 1.0976,
+                "Absolute Coefficient": 1.0976,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "Viscera weight",
+                "Coefficient": -1.046,
+                "Absolute Coefficient": 1.046,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "Sex_I",
+                "Coefficient": -0.5137,
+                "Absolute Coefficient": 0.5137,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "Height",
+                "Coefficient": 0.444,
+                "Absolute Coefficient": 0.444,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "Sex_M",
+                "Coefficient": 0.3085,
+                "Absolute Coefficient": 0.3085,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "Sex_F",
+                "Coefficient": 0.2052,
+                "Absolute Coefficient": 0.2052,
+                "Importance Rank": 9
+            },
+            {
+                "Feature": "Length",
+                "Coefficient": -0.024,
+                "Absolute Coefficient": 0.024,
+                "Importance Rank": 10
+            }
+        ],
+        "most_influential_feature": "Shucked weight"
+    },
+    "model_verification": true,
+    "output_files": {
+        "original_dataset": "Datasets/abalone.data.csv",
+        "processed_dataset": "Datasets/Processed/abalone_regression_results.csv",
+        "metrics": "Datasets/Processed/abalone_metrics.csv",
+        "metadata_latest": "Metadata/D1_abalone.json",
+        "model_bundle": "ModelsOutcome/abalone_regression_models.joblib",
+        "models_included": [
+            "Linear Regression",
+            "Ridge",
+            "Random Forest",
+            "Gradient Boosting",
+            "SVR"
+        ],
+        "recommended_model": "SVR"
+    }
+}

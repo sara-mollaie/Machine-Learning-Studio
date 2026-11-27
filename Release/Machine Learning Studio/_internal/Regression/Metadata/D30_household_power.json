@@ -1,0 +1,505 @@
+{
+    "correlation_matrix": {
+        "Current_Global_intensity": {
+            "Current_Global_intensity": 1.0,
+            "Power_Current_Hour": 0.9994232492,
+            "Power_Lag_1h": 0.7099759643,
+            "Current_Sub_metering_3": 0.6857152808,
+            "Power_Lag_168h": 0.4591831194,
+            "Power_Lag_24h": 0.4341518696,
+            "Power_Rolling_Mean_3h": 0.5577510866,
+            "Power_Rolling_Mean_24h": 0.3482978755,
+            "Power_Rolling_Mean_168h": 0.3154077793,
+            "Next_Hour_Global_Active_Power": 0.7136784685
+        },
+        "Power_Current_Hour": {
+            "Current_Global_intensity": 0.9994232492,
+            "Power_Current_Hour": 1.0,
+            "Power_Lag_1h": 0.7134127036,
+            "Current_Sub_metering_3": 0.6955065899,
+            "Power_Lag_168h": 0.4611138471,
+            "Power_Lag_24h": 0.43594084,
+            "Power_Rolling_Mean_3h": 0.5623705923,
+            "Power_Rolling_Mean_24h": 0.3548351067,
+            "Power_Rolling_Mean_168h": 0.3244574887,
+            "Next_Hour_Global_Active_Power": 0.7134555947
+        },
+        "Power_Lag_1h": {
+            "Current_Global_intensity": 0.7099759643,
+            "Power_Current_Hour": 0.7134127036,
+            "Power_Lag_1h": 1.0,
+            "Current_Sub_metering_3": 0.5176891209,
+            "Power_Lag_168h": 0.4002248033,
+            "Power_Lag_24h": 0.3759237746,
+            "Power_Rolling_Mean_3h": 0.8364202374,
+            "Power_Rolling_Mean_24h": 0.4051088422,
+            "Power_Rolling_Mean_168h": 0.3335094774,
+            "Next_Hour_Global_Active_Power": 0.4653625607
+        },
+        "Current_Sub_metering_3": {
+            "Current_Global_intensity": 0.6857152808,
+            "Power_Current_Hour": 0.6955065899,
+            "Power_Lag_1h": 0.5176891209,
+            "Current_Sub_metering_3": 1.0,
+            "Power_Lag_168h": 0.3152154806,
+            "Power_Lag_24h": 0.2741881098,
+            "Power_Rolling_Mean_3h": 0.3934078937,
+            "Power_Rolling_Mean_24h": 0.1985586753,
+            "Power_Rolling_Mean_168h": 0.1871453034,
+            "Next_Hour_Global_Active_Power": 0.4545545937
+        },
+        "Power_Lag_168h": {
+            "Current_Global_intensity": 0.4591831194,
+            "Power_Current_Hour": 0.4611138471,
+            "Power_Lag_1h": 0.4002248033,
+            "Current_Sub_metering_3": 0.3152154806,
+            "Power_Lag_168h": 1.0,
+            "Power_Lag_24h": 0.396011651,
+            "Power_Rolling_Mean_3h": 0.3219829775,
+            "Power_Rolling_Mean_24h": 0.2370152757,
+            "Power_Rolling_Mean_168h": 0.3336208861,
+            "Next_Hour_Global_Active_Power": 0.3976716697
+        },
+        "Power_Lag_24h": {
+            "Current_Global_intensity": 0.4341518696,
+            "Power_Current_Hour": 0.43594084,
+            "Power_Lag_1h": 0.3759237746,
+            "Current_Sub_metering_3": 0.2741881098,
+            "Power_Lag_168h": 0.396011651,
+            "Power_Lag_24h": 1.0,
+            "Power_Rolling_Mean_3h": 0.2992745183,
+            "Power_Rolling_Mean_24h": 0.4065900683,
+            "Power_Rolling_Mean_168h": 0.3565032,
+            "Next_Hour_Global_Active_Power": 0.3833175381
+        },
+        "Power_Rolling_Mean_3h": {
+            "Current_Global_intensity": 0.5577510866,
+            "Power_Current_Hour": 0.5623705923,
+            "Power_Lag_1h": 0.8364202374,
+            "Current_Sub_metering_3": 0.3934078937,
+            "Power_Lag_168h": 0.3219829775,
+            "Power_Lag_24h": 0.2992745183,
+            "Power_Rolling_Mean_3h": 1.0,
+            "Power_Rolling_Mean_24h": 0.4969424692,
+            "Power_Rolling_Mean_168h": 0.3894714217,
+            "Next_Hour_Global_Active_Power": 0.3462148181
+        },
+        "Power_Rolling_Mean_24h": {
+            "Current_Global_intensity": 0.3482978755,
+            "Power_Current_Hour": 0.3548351067,
+            "Power_Lag_1h": 0.4051088422,
+            "Current_Sub_metering_3": 0.1985586753,
+            "Power_Lag_168h": 0.2370152757,
+            "Power_Lag_24h": 0.4065900683,
+            "Power_Rolling_Mean_3h": 0.4969424692,
+            "Power_Rolling_Mean_24h": 1.0,
+            "Power_Rolling_Mean_168h": 0.7465268294,
+            "Next_Hour_Global_Active_Power": 0.3253897831
+        },
+        "Power_Rolling_Mean_168h": {
+            "Current_Global_intensity": 0.3154077793,
+            "Power_Current_Hour": 0.3244574887,
+            "Power_Lag_1h": 0.3335094774,
+            "Current_Sub_metering_3": 0.1871453034,
+            "Power_Lag_168h": 0.3336208861,
+            "Power_Lag_24h": 0.3565032,
+            "Power_Rolling_Mean_3h": 0.3894714217,
+            "Power_Rolling_Mean_24h": 0.7465268294,
+            "Power_Rolling_Mean_168h": 1.0,
+            "Next_Hour_Global_Active_Power": 0.3191142326
+        },
+        "Next_Hour_Global_Active_Power": {
+            "Current_Global_intensity": 0.7136784685,
+            "Power_Current_Hour": 0.7134555947,
+            "Power_Lag_1h": 0.4653625607,
+            "Current_Sub_metering_3": 0.4545545937,
+            "Power_Lag_168h": 0.3976716697,
+            "Power_Lag_24h": 0.3833175381,
+            "Power_Rolling_Mean_3h": 0.3462148181,
+            "Power_Rolling_Mean_24h": 0.3253897831,
+            "Power_Rolling_Mean_168h": 0.3191142326,
+            "Next_Hour_Global_Active_Power": 1.0
+        }
+    },
+    "id": "D30",
+    "run_timestamp": "2026-11-25 15:45:42.026544",
+    "name": "Household Power",
+    "source_dataset_name": "Individual Household Electric Power Consumption",
+    "title": "Household Power (D30)",
+    "level": "Advanced",
+    "domain": "Electricity",
+    "task": "Regression",
+    "description": "Predict next-hour average household active power (kW) using historical hourly observations.",
+    "source": "UCI Individual Household Electric Power Consumption",
+    "dataset_statistics": {
+        "rows": 2075259,
+        "columns": 9,
+        "column_names": [
+            "Date",
+            "Time",
+            "Global_active_power",
+            "Global_reactive_power",
+            "Voltage",
+            "Global_intensity",
+            "Sub_metering_1",
+            "Sub_metering_2",
+            "Sub_metering_3"
+        ],
+        "raw_missing_values": {
+            "Global_active_power": 25979,
+            "Global_reactive_power": 25979,
+            "Voltage": 25979,
+            "Global_intensity": 25979,
+            "Sub_metering_1": 25979,
+            "Sub_metering_2": 25979,
+            "Sub_metering_3": 25979
+        },
+        "hourly_rows": 34589,
+        "model_rows": 34167,
+        "data_types": {
+            "Global_active_power": "float64",
+            "Global_reactive_power": "float64",
+            "Voltage": "float64",
+            "Global_intensity": "float64",
+            "Sub_metering_1": "float64",
+            "Sub_metering_2": "float64",
+            "Sub_metering_3": "float64"
+        },
+        "missing_values": {
+            "Global_active_power": 421,
+            "Global_reactive_power": 421,
+            "Voltage": 421,
+            "Global_intensity": 421,
+            "Sub_metering_1": 421,
+            "Sub_metering_2": 421,
+            "Sub_metering_3": 421
+        },
+        "total_missing_values": 2947,
+        "descriptive_statistics": {
+            "Global_active_power": {
+                "count": 34168.0,
+                "mean": 1.0917,
+                "std": 0.8976,
+                "min": 0.124,
+                "25%": 0.3419,
+                "50%": 0.8029,
+                "75%": 1.5793,
+                "max": 6.5605
+            },
+            "Global_reactive_power": {
+                "count": 34168.0,
+                "mean": 0.1237,
+                "std": 0.0669,
+                "min": 0.0,
+                "25%": 0.078,
+                "50%": 0.1069,
+                "75%": 0.1494,
+                "max": 0.7743
+            },
+            "Voltage": {
+                "count": 34168.0,
+                "mean": 240.8394,
+                "std": 3.0011,
+                "min": 225.8345,
+                "25%": 239.1807,
+                "50%": 240.9778,
+                "75%": 242.695,
+                "max": 251.902
+            },
+            "Global_intensity": {
+                "count": 34168.0,
+                "mean": 4.6282,
+                "std": 3.7578,
+                "min": 0.5033,
+                "25%": 1.5133,
+                "50%": 3.4233,
+                "75%": 6.6067,
+                "max": 28.3833
+            },
+            "Sub_metering_1": {
+                "count": 34168.0,
+                "mean": 1.1216,
+                "std": 3.538,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 48.3667
+            },
+            "Sub_metering_2": {
+                "count": 34168.0,
+                "mean": 1.2986,
+                "std": 4.1929,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.3333,
+                "75%": 0.65,
+                "max": 46.4333
+            },
+            "Sub_metering_3": {
+                "count": 34168.0,
+                "mean": 6.4589,
+                "std": 7.3512,
+                "min": 0.0,
+                "25%": 0.65,
+                "50%": 1.65,
+                "75%": 14.2167,
+                "max": 21.55
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Hour",
+            "Day_Of_Week",
+            "Month",
+            "Is_Weekend",
+            "Hour_Sin",
+            "Hour_Cos",
+            "Power_Lag_1h",
+            "Power_Lag_2h",
+            "Power_Lag_24h",
+            "Power_Lag_168h",
+            "Power_Current_Hour",
+            "Power_Rolling_Mean_3h",
+            "Power_Rolling_Mean_24h",
+            "Power_Rolling_Mean_168h",
+            "Current_Global_reactive_power",
+            "Current_Voltage",
+            "Current_Global_intensity",
+            "Current_Sub_metering_1",
+            "Current_Sub_metering_2",
+            "Current_Sub_metering_3"
+        ],
+        "target_column": "Next_Hour_Global_Active_Power",
+        "raw_target_column": "Global_active_power",
+        "excluded_columns": [
+            "Date",
+            "Time",
+            "Next_Hour_Global_Active_Power"
+        ]
+    },
+    "preprocessing": {
+        "resampling": "Hourly means",
+        "numeric_method": "Training-only median imputation + StandardScaler",
+        "missing_value_method": "Training-set median"
+    },
+    "model_evaluation": {
+        "split_method": "Chronological 70/15/15 train/validation/test",
+        "training_rows": 23916,
+        "validation_rows": 5125,
+        "test_rows": 5126,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "Random Forest",
+                "MAE": 0.35462,
+                "MSE": 0.26811,
+                "RMSE": 0.5178,
+                "R2": 0.6626,
+                "R2 Percentage": 66.26026,
+                "Accuracy": 91.95536
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 0.37108,
+                "MSE": 0.27788,
+                "RMSE": 0.52715,
+                "R2": 0.65031,
+                "R2 Percentage": 65.03068,
+                "Accuracy": 91.81009
+            },
+            {
+                "Model": "SVR",
+                "MAE": 0.40513,
+                "MSE": 0.34679,
+                "RMSE": 0.58889,
+                "R2": 0.56359,
+                "R2 Percentage": 56.35916,
+                "Accuracy": 90.85082
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 0.43233,
+                "MSE": 0.3583,
+                "RMSE": 0.59858,
+                "R2": 0.54911,
+                "R2 Percentage": 54.91125,
+                "Accuracy": 90.70028
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 0.43234,
+                "MSE": 0.35832,
+                "RMSE": 0.5986,
+                "R2": 0.54908,
+                "R2 Percentage": 54.90829,
+                "Accuracy": 90.69998
+            }
+        ],
+        "recommended_model": "Random Forest",
+        "selection_rule": "Lowest validation RMSE; equivalent to highest RMSE-based normalized score",
+        "accuracy_definition": "RMSE-based normalized score = max(0, 100 * (1 - RMSE / training_target_range)); training_target_range is computed from the training partition only. This is a project comparison score, not a standard regression accuracy metric.",
+        "rmse_scale_training_range": 6.436533333333334,
+        "test_metrics": {
+            "MAE": 0.3149900601348592,
+            "MSE": 0.2104463905847949,
+            "RMSE": 0.4587443630005658,
+            "R2": 0.5823168248825885,
+            "R2 Percentage": 58.231682488258855,
+            "Accuracy": 92.87280374009977
+        },
+        "svr_training_cap": 12000
+    },
+    "feature_importance": {
+        "method": "Standardized Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "Power_Current_Hour",
+                "Coefficient": 0.59091,
+                "Absolute Coefficient": 0.59091,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "Current_Global_intensity",
+                "Coefficient": 0.30951,
+                "Absolute Coefficient": 0.30951,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "Current_Sub_metering_3",
+                "Coefficient": -0.17166,
+                "Absolute Coefficient": 0.17166,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "Power_Rolling_Mean_3h",
+                "Coefficient": -0.17132,
+                "Absolute Coefficient": 0.17132,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "Current_Sub_metering_2",
+                "Coefficient": -0.14303,
+                "Absolute Coefficient": 0.14303,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "Current_Sub_metering_1",
+                "Coefficient": -0.12622,
+                "Absolute Coefficient": 0.12622,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "Hour_Cos",
+                "Coefficient": -0.11364,
+                "Absolute Coefficient": 0.11364,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "Power_Lag_2h",
+                "Coefficient": 0.06539,
+                "Absolute Coefficient": 0.06539,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "Power_Rolling_Mean_168h",
+                "Coefficient": 0.06305,
+                "Absolute Coefficient": 0.06305,
+                "Importance Rank": 9
+            },
+            {
+                "Feature": "Power_Rolling_Mean_24h",
+                "Coefficient": 0.06035,
+                "Absolute Coefficient": 0.06035,
+                "Importance Rank": 10
+            },
+            {
+                "Feature": "Current_Global_reactive_power",
+                "Coefficient": 0.04613,
+                "Absolute Coefficient": 0.04613,
+                "Importance Rank": 11
+            },
+            {
+                "Feature": "Power_Lag_168h",
+                "Coefficient": 0.0303,
+                "Absolute Coefficient": 0.0303,
+                "Importance Rank": 12
+            },
+            {
+                "Feature": "Hour_Sin",
+                "Coefficient": -0.02883,
+                "Absolute Coefficient": 0.02883,
+                "Importance Rank": 13
+            },
+            {
+                "Feature": "Power_Lag_1h",
+                "Coefficient": -0.02757,
+                "Absolute Coefficient": 0.02757,
+                "Importance Rank": 14
+            },
+            {
+                "Feature": "Is_Weekend",
+                "Coefficient": 0.02223,
+                "Absolute Coefficient": 0.02223,
+                "Importance Rank": 15
+            },
+            {
+                "Feature": "Current_Voltage",
+                "Coefficient": -0.02077,
+                "Absolute Coefficient": 0.02077,
+                "Importance Rank": 16
+            },
+            {
+                "Feature": "Day_Of_Week",
+                "Coefficient": 0.00477,
+                "Absolute Coefficient": 0.00477,
+                "Importance Rank": 17
+            },
+            {
+                "Feature": "Power_Lag_24h",
+                "Coefficient": 0.00341,
+                "Absolute Coefficient": 0.00341,
+                "Importance Rank": 18
+            },
+            {
+                "Feature": "Hour",
+                "Coefficient": -0.00277,
+                "Absolute Coefficient": 0.00277,
+                "Importance Rank": 19
+            },
+            {
+                "Feature": "Month",
+                "Coefficient": 0.0002,
+                "Absolute Coefficient": 0.0002,
+                "Importance Rank": 20
+            }
+        ],
+        "most_influential_feature": "Power_Current_Hour"
+    },
+    "model_verification": true,
+    "ui_card": {
+        "title": "Household Power (D30)",
+        "category": "Electricity",
+        "task": "Regression",
+        "level": "Advanced",
+        "rows": 34167,
+        "columns": 21
+    },
+    "output_files": {
+        "original_dataset": "DataSets/household_power_consumption.txt",
+        "processed_dataset": "DataSets/Processed/household_power_regression_results.csv",
+        "metrics": "DataSets/Processed/household_power_validation_metrics.csv",
+        "metadata_latest": "Metadata/D30_household_power.json",
+        "feature_columns": "ModelsOutcome/household_power_feature_columns.joblib",
+        "models_bundle": "ModelsOutcome/household_power_regression_models.joblib"
+    }
+}

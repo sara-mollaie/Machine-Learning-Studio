@@ -1,0 +1,1316 @@
+{
+    "id": "D31",
+    "run_timestamp": "2026-11-23 18:04:39.906392",
+    "name": "Online News Popularity",
+    "level": "Advanced",
+    "domain": "Business/Web",
+    "task": "Regression",
+    "description": "Predict the number of social-network shares of a Mashable article using pre-publication article features.",
+    "source": "UCI Online News Popularity Dataset",
+    "dataset_statistics": {
+        "rows": 39644,
+        "columns": 61,
+        "column_names": [
+            "url",
+            "timedelta",
+            "n_tokens_title",
+            "n_tokens_content",
+            "n_unique_tokens",
+            "n_non_stop_words",
+            "n_non_stop_unique_tokens",
+            "num_hrefs",
+            "num_self_hrefs",
+            "num_imgs",
+            "num_videos",
+            "average_token_length",
+            "num_keywords",
+            "data_channel_is_lifestyle",
+            "data_channel_is_entertainment",
+            "data_channel_is_bus",
+            "data_channel_is_socmed",
+            "data_channel_is_tech",
+            "data_channel_is_world",
+            "kw_min_min",
+            "kw_max_min",
+            "kw_avg_min",
+            "kw_min_max",
+            "kw_max_max",
+            "kw_avg_max",
+            "kw_min_avg",
+            "kw_max_avg",
+            "kw_avg_avg",
+            "self_reference_min_shares",
+            "self_reference_max_shares",
+            "self_reference_avg_sharess",
+            "weekday_is_monday",
+            "weekday_is_tuesday",
+            "weekday_is_wednesday",
+            "weekday_is_thursday",
+            "weekday_is_friday",
+            "weekday_is_saturday",
+            "weekday_is_sunday",
+            "is_weekend",
+            "LDA_00",
+            "LDA_01",
+            "LDA_02",
+            "LDA_03",
+            "LDA_04",
+            "global_subjectivity",
+            "global_sentiment_polarity",
+            "global_rate_positive_words",
+            "global_rate_negative_words",
+            "rate_positive_words",
+            "rate_negative_words",
+            "avg_positive_polarity",
+            "min_positive_polarity",
+            "max_positive_polarity",
+            "avg_negative_polarity",
+            "min_negative_polarity",
+            "max_negative_polarity",
+            "title_subjectivity",
+            "title_sentiment_polarity",
+            "abs_title_subjectivity",
+            "abs_title_sentiment_polarity",
+            "shares"
+        ],
+        "data_types": {
+            "url": "str",
+            "timedelta": "float64",
+            "n_tokens_title": "float64",
+            "n_tokens_content": "float64",
+            "n_unique_tokens": "float64",
+            "n_non_stop_words": "float64",
+            "n_non_stop_unique_tokens": "float64",
+            "num_hrefs": "float64",
+            "num_self_hrefs": "float64",
+            "num_imgs": "float64",
+            "num_videos": "float64",
+            "average_token_length": "float64",
+            "num_keywords": "float64",
+            "data_channel_is_lifestyle": "float64",
+            "data_channel_is_entertainment": "float64",
+            "data_channel_is_bus": "float64",
+            "data_channel_is_socmed": "float64",
+            "data_channel_is_tech": "float64",
+            "data_channel_is_world": "float64",
+            "kw_min_min": "float64",
+            "kw_max_min": "float64",
+            "kw_avg_min": "float64",
+            "kw_min_max": "float64",
+            "kw_max_max": "float64",
+            "kw_avg_max": "float64",
+            "kw_min_avg": "float64",
+            "kw_max_avg": "float64",
+            "kw_avg_avg": "float64",
+            "self_reference_min_shares": "float64",
+            "self_reference_max_shares": "float64",
+            "self_reference_avg_sharess": "float64",
+            "weekday_is_monday": "float64",
+            "weekday_is_tuesday": "float64",
+            "weekday_is_wednesday": "float64",
+            "weekday_is_thursday": "float64",
+            "weekday_is_friday": "float64",
+            "weekday_is_saturday": "float64",
+            "weekday_is_sunday": "float64",
+            "is_weekend": "float64",
+            "LDA_00": "float64",
+            "LDA_01": "float64",
+            "LDA_02": "float64",
+            "LDA_03": "float64",
+            "LDA_04": "float64",
+            "global_subjectivity": "float64",
+            "global_sentiment_polarity": "float64",
+            "global_rate_positive_words": "float64",
+            "global_rate_negative_words": "float64",
+            "rate_positive_words": "float64",
+            "rate_negative_words": "float64",
+            "avg_positive_polarity": "float64",
+            "min_positive_polarity": "float64",
+            "max_positive_polarity": "float64",
+            "avg_negative_polarity": "float64",
+            "min_negative_polarity": "float64",
+            "max_negative_polarity": "float64",
+            "title_subjectivity": "float64",
+            "title_sentiment_polarity": "float64",
+            "abs_title_subjectivity": "float64",
+            "abs_title_sentiment_polarity": "float64",
+            "shares": "int64"
+        },
+        "missing_values": {
+            "url": 0,
+            "timedelta": 0,
+            "n_tokens_title": 0,
+            "n_tokens_content": 0,
+            "n_unique_tokens": 0,
+            "n_non_stop_words": 0,
+            "n_non_stop_unique_tokens": 0,
+            "num_hrefs": 0,
+            "num_self_hrefs": 0,
+            "num_imgs": 0,
+            "num_videos": 0,
+            "average_token_length": 0,
+            "num_keywords": 0,
+            "data_channel_is_lifestyle": 0,
+            "data_channel_is_entertainment": 0,
+            "data_channel_is_bus": 0,
+            "data_channel_is_socmed": 0,
+            "data_channel_is_tech": 0,
+            "data_channel_is_world": 0,
+            "kw_min_min": 0,
+            "kw_max_min": 0,
+            "kw_avg_min": 0,
+            "kw_min_max": 0,
+            "kw_max_max": 0,
+            "kw_avg_max": 0,
+            "kw_min_avg": 0,
+            "kw_max_avg": 0,
+            "kw_avg_avg": 0,
+            "self_reference_min_shares": 0,
+            "self_reference_max_shares": 0,
+            "self_reference_avg_sharess": 0,
+            "weekday_is_monday": 0,
+            "weekday_is_tuesday": 0,
+            "weekday_is_wednesday": 0,
+            "weekday_is_thursday": 0,
+            "weekday_is_friday": 0,
+            "weekday_is_saturday": 0,
+            "weekday_is_sunday": 0,
+            "is_weekend": 0,
+            "LDA_00": 0,
+            "LDA_01": 0,
+            "LDA_02": 0,
+            "LDA_03": 0,
+            "LDA_04": 0,
+            "global_subjectivity": 0,
+            "global_sentiment_polarity": 0,
+            "global_rate_positive_words": 0,
+            "global_rate_negative_words": 0,
+            "rate_positive_words": 0,
+            "rate_negative_words": 0,
+            "avg_positive_polarity": 0,
+            "min_positive_polarity": 0,
+            "max_positive_polarity": 0,
+            "avg_negative_polarity": 0,
+            "min_negative_polarity": 0,
+            "max_negative_polarity": 0,
+            "title_subjectivity": 0,
+            "title_sentiment_polarity": 0,
+            "abs_title_subjectivity": 0,
+            "abs_title_sentiment_polarity": 0,
+            "shares": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "timedelta": {
+                "count": 39644.0,
+                "mean": 354.53,
+                "std": 214.16,
+                "min": 8.0,
+                "25%": 164.0,
+                "50%": 339.0,
+                "75%": 542.0,
+                "max": 731.0
+            },
+            "n_tokens_title": {
+                "count": 39644.0,
+                "mean": 10.4,
+                "std": 2.11,
+                "min": 2.0,
+                "25%": 9.0,
+                "50%": 10.0,
+                "75%": 12.0,
+                "max": 23.0
+            },
+            "n_tokens_content": {
+                "count": 39644.0,
+                "mean": 546.51,
+                "std": 471.11,
+                "min": 0.0,
+                "25%": 246.0,
+                "50%": 409.0,
+                "75%": 716.0,
+                "max": 8474.0
+            },
+            "n_unique_tokens": {
+                "count": 39644.0,
+                "mean": 0.55,
+                "std": 3.52,
+                "min": 0.0,
+                "25%": 0.47,
+                "50%": 0.54,
+                "75%": 0.61,
+                "max": 701.0
+            },
+            "n_non_stop_words": {
+                "count": 39644.0,
+                "mean": 1.0,
+                "std": 5.23,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 1042.0
+            },
+            "n_non_stop_unique_tokens": {
+                "count": 39644.0,
+                "mean": 0.69,
+                "std": 3.26,
+                "min": 0.0,
+                "25%": 0.63,
+                "50%": 0.69,
+                "75%": 0.75,
+                "max": 650.0
+            },
+            "num_hrefs": {
+                "count": 39644.0,
+                "mean": 10.88,
+                "std": 11.33,
+                "min": 0.0,
+                "25%": 4.0,
+                "50%": 8.0,
+                "75%": 14.0,
+                "max": 304.0
+            },
+            "num_self_hrefs": {
+                "count": 39644.0,
+                "mean": 3.29,
+                "std": 3.86,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 3.0,
+                "75%": 4.0,
+                "max": 116.0
+            },
+            "num_imgs": {
+                "count": 39644.0,
+                "mean": 4.54,
+                "std": 8.31,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 4.0,
+                "max": 128.0
+            },
+            "num_videos": {
+                "count": 39644.0,
+                "mean": 1.25,
+                "std": 4.11,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 1.0,
+                "max": 91.0
+            },
+            "average_token_length": {
+                "count": 39644.0,
+                "mean": 4.55,
+                "std": 0.84,
+                "min": 0.0,
+                "25%": 4.48,
+                "50%": 4.66,
+                "75%": 4.85,
+                "max": 8.04
+            },
+            "num_keywords": {
+                "count": 39644.0,
+                "mean": 7.22,
+                "std": 1.91,
+                "min": 1.0,
+                "25%": 6.0,
+                "50%": 7.0,
+                "75%": 9.0,
+                "max": 10.0
+            },
+            "data_channel_is_lifestyle": {
+                "count": 39644.0,
+                "mean": 0.05,
+                "std": 0.22,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "data_channel_is_entertainment": {
+                "count": 39644.0,
+                "mean": 0.18,
+                "std": 0.38,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "data_channel_is_bus": {
+                "count": 39644.0,
+                "mean": 0.16,
+                "std": 0.36,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "data_channel_is_socmed": {
+                "count": 39644.0,
+                "mean": 0.06,
+                "std": 0.23,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "data_channel_is_tech": {
+                "count": 39644.0,
+                "mean": 0.19,
+                "std": 0.39,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "data_channel_is_world": {
+                "count": 39644.0,
+                "mean": 0.21,
+                "std": 0.41,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "kw_min_min": {
+                "count": 39644.0,
+                "mean": 26.11,
+                "std": 69.63,
+                "min": -1.0,
+                "25%": -1.0,
+                "50%": -1.0,
+                "75%": 4.0,
+                "max": 377.0
+            },
+            "kw_max_min": {
+                "count": 39644.0,
+                "mean": 1153.95,
+                "std": 3857.99,
+                "min": 0.0,
+                "25%": 445.0,
+                "50%": 660.0,
+                "75%": 1000.0,
+                "max": 298400.0
+            },
+            "kw_avg_min": {
+                "count": 39644.0,
+                "mean": 312.37,
+                "std": 620.78,
+                "min": -1.0,
+                "25%": 141.75,
+                "50%": 235.5,
+                "75%": 357.0,
+                "max": 42827.86
+            },
+            "kw_min_max": {
+                "count": 39644.0,
+                "mean": 13612.35,
+                "std": 57986.03,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1400.0,
+                "75%": 7900.0,
+                "max": 843300.0
+            },
+            "kw_max_max": {
+                "count": 39644.0,
+                "mean": 752324.07,
+                "std": 214502.13,
+                "min": 0.0,
+                "25%": 843300.0,
+                "50%": 843300.0,
+                "75%": 843300.0,
+                "max": 843300.0
+            },
+            "kw_avg_max": {
+                "count": 39644.0,
+                "mean": 259281.94,
+                "std": 135102.25,
+                "min": 0.0,
+                "25%": 172846.88,
+                "50%": 244572.22,
+                "75%": 330980.0,
+                "max": 843300.0
+            },
+            "kw_min_avg": {
+                "count": 39644.0,
+                "mean": 1117.15,
+                "std": 1137.46,
+                "min": -1.0,
+                "25%": 0.0,
+                "50%": 1023.64,
+                "75%": 2056.78,
+                "max": 3613.04
+            },
+            "kw_max_avg": {
+                "count": 39644.0,
+                "mean": 5657.21,
+                "std": 6098.87,
+                "min": 0.0,
+                "25%": 3562.1,
+                "50%": 4355.69,
+                "75%": 6019.95,
+                "max": 298400.0
+            },
+            "kw_avg_avg": {
+                "count": 39644.0,
+                "mean": 3135.86,
+                "std": 1318.15,
+                "min": 0.0,
+                "25%": 2382.45,
+                "50%": 2870.07,
+                "75%": 3600.23,
+                "max": 43567.66
+            },
+            "self_reference_min_shares": {
+                "count": 39644.0,
+                "mean": 3998.76,
+                "std": 19738.67,
+                "min": 0.0,
+                "25%": 639.0,
+                "50%": 1200.0,
+                "75%": 2600.0,
+                "max": 843300.0
+            },
+            "self_reference_max_shares": {
+                "count": 39644.0,
+                "mean": 10329.21,
+                "std": 41027.58,
+                "min": 0.0,
+                "25%": 1100.0,
+                "50%": 2800.0,
+                "75%": 8000.0,
+                "max": 843300.0
+            },
+            "self_reference_avg_sharess": {
+                "count": 39644.0,
+                "mean": 6401.7,
+                "std": 24211.33,
+                "min": 0.0,
+                "25%": 981.19,
+                "50%": 2200.0,
+                "75%": 5200.0,
+                "max": 843300.0
+            },
+            "weekday_is_monday": {
+                "count": 39644.0,
+                "mean": 0.17,
+                "std": 0.37,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "weekday_is_tuesday": {
+                "count": 39644.0,
+                "mean": 0.19,
+                "std": 0.39,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "weekday_is_wednesday": {
+                "count": 39644.0,
+                "mean": 0.19,
+                "std": 0.39,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "weekday_is_thursday": {
+                "count": 39644.0,
+                "mean": 0.18,
+                "std": 0.39,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "weekday_is_friday": {
+                "count": 39644.0,
+                "mean": 0.14,
+                "std": 0.35,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "weekday_is_saturday": {
+                "count": 39644.0,
+                "mean": 0.06,
+                "std": 0.24,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "weekday_is_sunday": {
+                "count": 39644.0,
+                "mean": 0.07,
+                "std": 0.25,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "is_weekend": {
+                "count": 39644.0,
+                "mean": 0.13,
+                "std": 0.34,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "LDA_00": {
+                "count": 39644.0,
+                "mean": 0.18,
+                "std": 0.26,
+                "min": 0.0,
+                "25%": 0.03,
+                "50%": 0.03,
+                "75%": 0.24,
+                "max": 0.93
+            },
+            "LDA_01": {
+                "count": 39644.0,
+                "mean": 0.14,
+                "std": 0.22,
+                "min": 0.0,
+                "25%": 0.03,
+                "50%": 0.03,
+                "75%": 0.15,
+                "max": 0.93
+            },
+            "LDA_02": {
+                "count": 39644.0,
+                "mean": 0.22,
+                "std": 0.28,
+                "min": 0.0,
+                "25%": 0.03,
+                "50%": 0.04,
+                "75%": 0.33,
+                "max": 0.92
+            },
+            "LDA_03": {
+                "count": 39644.0,
+                "mean": 0.22,
+                "std": 0.3,
+                "min": 0.0,
+                "25%": 0.03,
+                "50%": 0.04,
+                "75%": 0.38,
+                "max": 0.93
+            },
+            "LDA_04": {
+                "count": 39644.0,
+                "mean": 0.23,
+                "std": 0.29,
+                "min": 0.0,
+                "25%": 0.03,
+                "50%": 0.04,
+                "75%": 0.4,
+                "max": 0.93
+            },
+            "global_subjectivity": {
+                "count": 39644.0,
+                "mean": 0.44,
+                "std": 0.12,
+                "min": 0.0,
+                "25%": 0.4,
+                "50%": 0.45,
+                "75%": 0.51,
+                "max": 1.0
+            },
+            "global_sentiment_polarity": {
+                "count": 39644.0,
+                "mean": 0.12,
+                "std": 0.1,
+                "min": -0.39,
+                "25%": 0.06,
+                "50%": 0.12,
+                "75%": 0.18,
+                "max": 0.73
+            },
+            "global_rate_positive_words": {
+                "count": 39644.0,
+                "mean": 0.04,
+                "std": 0.02,
+                "min": 0.0,
+                "25%": 0.03,
+                "50%": 0.04,
+                "75%": 0.05,
+                "max": 0.16
+            },
+            "global_rate_negative_words": {
+                "count": 39644.0,
+                "mean": 0.02,
+                "std": 0.01,
+                "min": 0.0,
+                "25%": 0.01,
+                "50%": 0.02,
+                "75%": 0.02,
+                "max": 0.18
+            },
+            "rate_positive_words": {
+                "count": 39644.0,
+                "mean": 0.68,
+                "std": 0.19,
+                "min": 0.0,
+                "25%": 0.6,
+                "50%": 0.71,
+                "75%": 0.8,
+                "max": 1.0
+            },
+            "rate_negative_words": {
+                "count": 39644.0,
+                "mean": 0.29,
+                "std": 0.16,
+                "min": 0.0,
+                "25%": 0.19,
+                "50%": 0.28,
+                "75%": 0.38,
+                "max": 1.0
+            },
+            "avg_positive_polarity": {
+                "count": 39644.0,
+                "mean": 0.35,
+                "std": 0.1,
+                "min": 0.0,
+                "25%": 0.31,
+                "50%": 0.36,
+                "75%": 0.41,
+                "max": 1.0
+            },
+            "min_positive_polarity": {
+                "count": 39644.0,
+                "mean": 0.1,
+                "std": 0.07,
+                "min": 0.0,
+                "25%": 0.05,
+                "50%": 0.1,
+                "75%": 0.1,
+                "max": 1.0
+            },
+            "max_positive_polarity": {
+                "count": 39644.0,
+                "mean": 0.76,
+                "std": 0.25,
+                "min": 0.0,
+                "25%": 0.6,
+                "50%": 0.8,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "avg_negative_polarity": {
+                "count": 39644.0,
+                "mean": -0.26,
+                "std": 0.13,
+                "min": -1.0,
+                "25%": -0.33,
+                "50%": -0.25,
+                "75%": -0.19,
+                "max": 0.0
+            },
+            "min_negative_polarity": {
+                "count": 39644.0,
+                "mean": -0.52,
+                "std": 0.29,
+                "min": -1.0,
+                "25%": -0.7,
+                "50%": -0.5,
+                "75%": -0.3,
+                "max": 0.0
+            },
+            "max_negative_polarity": {
+                "count": 39644.0,
+                "mean": -0.11,
+                "std": 0.1,
+                "min": -1.0,
+                "25%": -0.12,
+                "50%": -0.1,
+                "75%": -0.05,
+                "max": 0.0
+            },
+            "title_subjectivity": {
+                "count": 39644.0,
+                "mean": 0.28,
+                "std": 0.32,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.15,
+                "75%": 0.5,
+                "max": 1.0
+            },
+            "title_sentiment_polarity": {
+                "count": 39644.0,
+                "mean": 0.07,
+                "std": 0.27,
+                "min": -1.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.15,
+                "max": 1.0
+            },
+            "abs_title_subjectivity": {
+                "count": 39644.0,
+                "mean": 0.34,
+                "std": 0.19,
+                "min": 0.0,
+                "25%": 0.17,
+                "50%": 0.5,
+                "75%": 0.5,
+                "max": 0.5
+            },
+            "abs_title_sentiment_polarity": {
+                "count": 39644.0,
+                "mean": 0.16,
+                "std": 0.23,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.25,
+                "max": 1.0
+            },
+            "shares": {
+                "count": 39644.0,
+                "mean": 3395.38,
+                "std": 11626.95,
+                "min": 1.0,
+                "25%": 946.0,
+                "50%": 1400.0,
+                "75%": 2800.0,
+                "max": 843300.0
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "n_tokens_title",
+            "n_tokens_content",
+            "n_unique_tokens",
+            "n_non_stop_words",
+            "n_non_stop_unique_tokens",
+            "num_hrefs",
+            "num_self_hrefs",
+            "num_imgs",
+            "num_videos",
+            "average_token_length",
+            "num_keywords",
+            "data_channel_is_lifestyle",
+            "data_channel_is_entertainment",
+            "data_channel_is_bus",
+            "data_channel_is_socmed",
+            "data_channel_is_tech",
+            "data_channel_is_world",
+            "kw_min_min",
+            "kw_max_min",
+            "kw_avg_min",
+            "kw_min_max",
+            "kw_max_max",
+            "kw_avg_max",
+            "kw_min_avg",
+            "kw_max_avg",
+            "kw_avg_avg",
+            "self_reference_min_shares",
+            "self_reference_max_shares",
+            "self_reference_avg_sharess",
+            "weekday_is_monday",
+            "weekday_is_tuesday",
+            "weekday_is_wednesday",
+            "weekday_is_thursday",
+            "weekday_is_friday",
+            "weekday_is_saturday",
+            "weekday_is_sunday",
+            "is_weekend",
+            "LDA_00",
+            "LDA_01",
+            "LDA_02",
+            "LDA_03",
+            "LDA_04",
+            "global_subjectivity",
+            "global_sentiment_polarity",
+            "global_rate_positive_words",
+            "global_rate_negative_words",
+            "rate_positive_words",
+            "rate_negative_words",
+            "avg_positive_polarity",
+            "min_positive_polarity",
+            "max_positive_polarity",
+            "avg_negative_polarity",
+            "min_negative_polarity",
+            "max_negative_polarity",
+            "title_subjectivity",
+            "title_sentiment_polarity",
+            "abs_title_subjectivity",
+            "abs_title_sentiment_polarity"
+        ],
+        "target_column": "shares",
+        "excluded_columns": [
+            "url",
+            "timedelta"
+        ]
+    },
+    "preprocessing": {
+        "numeric_method": "Training-only median imputation + StandardScaler",
+        "split_method": "Original article order 80/20, no shuffling"
+    },
+    "model_evaluation": {
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / (max(y_test) - min(y_test))))",
+        "accuracy_target_range": 284695.0,
+        "accuracy_note": "Custom regression score; not classification accuracy. Sensitive to target outliers.",
+        "test_size": 0.2,
+        "training_rows": 31715,
+        "test_rows": 7929,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "Linear Regression",
+                "MAE": 2928.525104,
+                "MSE": 65044221.829046,
+                "RMSE": 8064.999803,
+                "R2": 0.016355,
+                "R2 Percentage": 1.635459,
+                "Accuracy": 97.167144
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 2931.878539,
+                "MSE": 65055661.853647,
+                "RMSE": 8065.709011,
+                "R2": 0.016182,
+                "R2 Percentage": 1.618159,
+                "Accuracy": 97.166895
+            },
+            {
+                "Model": "SVR",
+                "MAE": 2037.845811,
+                "MSE": 67623843.130783,
+                "RMSE": 8223.371762,
+                "R2": -0.022656,
+                "R2 Percentage": -2.265629,
+                "Accuracy": 97.111515
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 2875.688716,
+                "MSE": 70339789.490084,
+                "RMSE": 8386.881989,
+                "R2": -0.063729,
+                "R2 Percentage": -6.372878,
+                "Accuracy": 97.054082
+            },
+            {
+                "Model": "Random Forest",
+                "MAE": 3305.910445,
+                "MSE": 74533610.022261,
+                "RMSE": 8633.285008,
+                "R2": -0.127151,
+                "R2 Percentage": -12.715075,
+                "Accuracy": 96.967532
+            }
+        ],
+        "recommended_model": "Linear Regression",
+        "selection_rule": "Lowest RMSE on the held-out test set",
+        "accuracy_caveat": "Descriptive regression score, not classification accuracy."
+    },
+    "feature_importance": {
+        "method": "Standardized Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "n_unique_tokens",
+                "Coefficient": 12462.742,
+                "Absolute Coefficient": 12462.742,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "LDA_04",
+                "Coefficient": -9965.7646,
+                "Absolute Coefficient": 9965.7646,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "LDA_03",
+                "Coefficient": -9847.986,
+                "Absolute Coefficient": 9847.986,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "LDA_02",
+                "Coefficient": -9437.5571,
+                "Absolute Coefficient": 9437.5571,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "LDA_00",
+                "Coefficient": -8978.313,
+                "Absolute Coefficient": 8978.313,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "n_non_stop_words",
+                "Coefficient": -8692.3015,
+                "Absolute Coefficient": 8692.3015,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "LDA_01",
+                "Coefficient": -7560.4087,
+                "Absolute Coefficient": 7560.4087,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "n_non_stop_unique_tokens",
+                "Coefficient": -3923.9227,
+                "Absolute Coefficient": 3923.9227,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "kw_avg_avg",
+                "Coefficient": 2403.3629,
+                "Absolute Coefficient": 2403.3629,
+                "Importance Rank": 9
+            },
+            {
+                "Feature": "kw_max_avg",
+                "Coefficient": -1423.4528,
+                "Absolute Coefficient": 1423.4528,
+                "Importance Rank": 10
+            },
+            {
+                "Feature": "self_reference_min_shares",
+                "Coefficient": 698.2058,
+                "Absolute Coefficient": 698.2058,
+                "Importance Rank": 11
+            },
+            {
+                "Feature": "kw_min_avg",
+                "Coefficient": -451.6732,
+                "Absolute Coefficient": 451.6732,
+                "Importance Rank": 12
+            },
+            {
+                "Feature": "kw_max_min",
+                "Coefficient": 444.3239,
+                "Absolute Coefficient": 444.3239,
+                "Importance Rank": 13
+            },
+            {
+                "Feature": "data_channel_is_entertainment",
+                "Coefficient": -424.2251,
+                "Absolute Coefficient": 424.2251,
+                "Importance Rank": 14
+            },
+            {
+                "Feature": "rate_negative_words",
+                "Coefficient": 370.4652,
+                "Absolute Coefficient": 370.4652,
+                "Importance Rank": 15
+            },
+            {
+                "Feature": "self_reference_max_shares",
+                "Coefficient": 364.1056,
+                "Absolute Coefficient": 364.1056,
+                "Importance Rank": 16
+            },
+            {
+                "Feature": "rate_positive_words",
+                "Coefficient": 351.9639,
+                "Absolute Coefficient": 351.9639,
+                "Importance Rank": 17
+            },
+            {
+                "Feature": "self_reference_avg_sharess",
+                "Coefficient": -343.2863,
+                "Absolute Coefficient": 343.2863,
+                "Importance Rank": 18
+            },
+            {
+                "Feature": "n_tokens_content",
+                "Coefficient": 331.9784,
+                "Absolute Coefficient": 331.9784,
+                "Importance Rank": 19
+            },
+            {
+                "Feature": "num_hrefs",
+                "Coefficient": 321.9226,
+                "Absolute Coefficient": 321.9226,
+                "Importance Rank": 20
+            },
+            {
+                "Feature": "kw_avg_min",
+                "Coefficient": -320.3264,
+                "Absolute Coefficient": 320.3264,
+                "Importance Rank": 21
+            },
+            {
+                "Feature": "average_token_length",
+                "Coefficient": -301.858,
+                "Absolute Coefficient": 301.858,
+                "Importance Rank": 22
+            },
+            {
+                "Feature": "data_channel_is_bus",
+                "Coefficient": -290.7966,
+                "Absolute Coefficient": 290.7966,
+                "Importance Rank": 23
+            },
+            {
+                "Feature": "avg_negative_polarity",
+                "Coefficient": -277.1841,
+                "Absolute Coefficient": 277.1841,
+                "Importance Rank": 24
+            },
+            {
+                "Feature": "num_self_hrefs",
+                "Coefficient": -271.0453,
+                "Absolute Coefficient": 271.0453,
+                "Importance Rank": 25
+            },
+            {
+                "Feature": "data_channel_is_world",
+                "Coefficient": -240.735,
+                "Absolute Coefficient": 240.735,
+                "Importance Rank": 26
+            },
+            {
+                "Feature": "global_subjectivity",
+                "Coefficient": 235.289,
+                "Absolute Coefficient": 235.289,
+                "Importance Rank": 27
+            },
+            {
+                "Feature": "global_rate_positive_words",
+                "Coefficient": -227.2435,
+                "Absolute Coefficient": 227.2435,
+                "Importance Rank": 28
+            },
+            {
+                "Feature": "data_channel_is_lifestyle",
+                "Coefficient": -211.2028,
+                "Absolute Coefficient": 211.2028,
+                "Importance Rank": 29
+            },
+            {
+                "Feature": "n_tokens_title",
+                "Coefficient": 195.2069,
+                "Absolute Coefficient": 195.2069,
+                "Importance Rank": 30
+            },
+            {
+                "Feature": "data_channel_is_tech",
+                "Coefficient": -188.2785,
+                "Absolute Coefficient": 188.2785,
+                "Importance Rank": 31
+            },
+            {
+                "Feature": "abs_title_sentiment_polarity",
+                "Coefficient": 174.0946,
+                "Absolute Coefficient": 174.0946,
+                "Importance Rank": 32
+            },
+            {
+                "Feature": "min_positive_polarity",
+                "Coefficient": -164.3664,
+                "Absolute Coefficient": 164.3664,
+                "Importance Rank": 33
+            },
+            {
+                "Feature": "data_channel_is_socmed",
+                "Coefficient": -163.7362,
+                "Absolute Coefficient": 163.7362,
+                "Importance Rank": 34
+            },
+            {
+                "Feature": "kw_min_min",
+                "Coefficient": 160.0256,
+                "Absolute Coefficient": 160.0256,
+                "Importance Rank": 35
+            },
+            {
+                "Feature": "abs_title_subjectivity",
+                "Coefficient": 156.7753,
+                "Absolute Coefficient": 156.7753,
+                "Importance Rank": 36
+            },
+            {
+                "Feature": "avg_positive_polarity",
+                "Coefficient": -154.081,
+                "Absolute Coefficient": 154.081,
+                "Importance Rank": 37
+            },
+            {
+                "Feature": "weekday_is_monday",
+                "Coefficient": 150.1295,
+                "Absolute Coefficient": 150.1295,
+                "Importance Rank": 38
+            },
+            {
+                "Feature": "kw_avg_max",
+                "Coefficient": -146.6679,
+                "Absolute Coefficient": 146.6679,
+                "Importance Rank": 39
+            },
+            {
+                "Feature": "kw_min_max",
+                "Coefficient": -135.3624,
+                "Absolute Coefficient": 135.3624,
+                "Importance Rank": 40
+            },
+            {
+                "Feature": "weekday_is_saturday",
+                "Coefficient": 118.5099,
+                "Absolute Coefficient": 118.5099,
+                "Importance Rank": 41
+            },
+            {
+                "Feature": "global_sentiment_polarity",
+                "Coefficient": 116.9282,
+                "Absolute Coefficient": 116.9282,
+                "Importance Rank": 42
+            },
+            {
+                "Feature": "kw_max_max",
+                "Coefficient": -96.0637,
+                "Absolute Coefficient": 96.0637,
+                "Importance Rank": 43
+            },
+            {
+                "Feature": "num_imgs",
+                "Coefficient": 91.5006,
+                "Absolute Coefficient": 91.5006,
+                "Importance Rank": 44
+            },
+            {
+                "Feature": "weekday_is_thursday",
+                "Coefficient": -79.4588,
+                "Absolute Coefficient": 79.4588,
+                "Importance Rank": 45
+            },
+            {
+                "Feature": "weekday_is_tuesday",
+                "Coefficient": -70.788,
+                "Absolute Coefficient": 70.788,
+                "Importance Rank": 46
+            },
+            {
+                "Feature": "min_negative_polarity",
+                "Coefficient": 70.7391,
+                "Absolute Coefficient": 70.7391,
+                "Importance Rank": 47
+            },
+            {
+                "Feature": "weekday_is_friday",
+                "Coefficient": -63.0401,
+                "Absolute Coefficient": 63.0401,
+                "Importance Rank": 48
+            },
+            {
+                "Feature": "num_keywords",
+                "Coefficient": 60.6564,
+                "Absolute Coefficient": 60.6564,
+                "Importance Rank": 49
+            },
+            {
+                "Feature": "is_weekend",
+                "Coefficient": 54.8016,
+                "Absolute Coefficient": 54.8016,
+                "Importance Rank": 50
+            },
+            {
+                "Feature": "max_positive_polarity",
+                "Coefficient": 44.817,
+                "Absolute Coefficient": 44.817,
+                "Importance Rank": 51
+            },
+            {
+                "Feature": "title_sentiment_polarity",
+                "Coefficient": 39.9618,
+                "Absolute Coefficient": 39.9618,
+                "Importance Rank": 52
+            },
+            {
+                "Feature": "weekday_is_sunday",
+                "Coefficient": -38.9914,
+                "Absolute Coefficient": 38.9914,
+                "Importance Rank": 53
+            },
+            {
+                "Feature": "max_negative_polarity",
+                "Coefficient": -24.9248,
+                "Absolute Coefficient": 24.9248,
+                "Importance Rank": 54
+            },
+            {
+                "Feature": "num_videos",
+                "Coefficient": 21.888,
+                "Absolute Coefficient": 21.888,
+                "Importance Rank": 55
+            },
+            {
+                "Feature": "weekday_is_wednesday",
+                "Coefficient": 15.5818,
+                "Absolute Coefficient": 15.5818,
+                "Importance Rank": 56
+            },
+            {
+                "Feature": "global_rate_negative_words",
+                "Coefficient": 11.4714,
+                "Absolute Coefficient": 11.4714,
+                "Importance Rank": 57
+            },
+            {
+                "Feature": "title_subjectivity",
+                "Coefficient": 0.1455,
+                "Absolute Coefficient": 0.1455,
+                "Importance Rank": 58
+            }
+        ],
+        "most_influential_feature": "n_unique_tokens"
+    },
+    "model_verification": true,
+    "model_verification_results": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
+    "prediction_postprocessing": {
+        "clip_min": 0.0
+    },
+    "output_files": {
+        "original_dataset": "DataSets\\OnlineNewsPopularity.csv",
+        "processed_dataset": "DataSets\\Processed\\online_news_popularity_regression_results.csv",
+        "metrics": "DataSets\\Processed\\online_news_popularity_metrics.csv",
+        "model_bundle": "ModelsOutcome/online_news_popularity_regression_models.joblib",
+        "metadata_latest": "Metadata/D31_online_news_popularity.json"
+    }
+}

@@ -117,6 +117,8 @@
         "test_rows": 150,
         "metrics": [
             "Accuracy",
+            "Precision",
+            "Recall",
             "F1",
             "F1 Macro",
             "CV Macro F1"
@@ -127,6 +129,10 @@
                 "Model": "KNN",
                 "Accuracy": 0.766667,
                 "Accuracy Percentage": 76.666667,
+                "Precision": 0.752237,
+                "Precision Percentage": 75.22371,
+                "Recall": 0.766667,
+                "Recall Percentage": 76.666667,
                 "F1": 0.757578,
                 "F1 Percentage": 75.757774,
                 "F1 Macro": 0.656301,
@@ -136,6 +142,10 @@
                 "Model": "Naive Bayes",
                 "Accuracy": 0.76,
                 "Accuracy Percentage": 76.0,
+                "Precision": 0.717941,
+                "Precision Percentage": 71.794118,
+                "Recall": 0.76,
+                "Recall Percentage": 76.0,
                 "F1": 0.71776,
                 "F1 Percentage": 71.776,
                 "F1 Macro": 0.568,
@@ -145,6 +155,10 @@
                 "Model": "SVM",
                 "Accuracy": 0.746667,
                 "Accuracy Percentage": 74.666667,
+                "Precision": 0.784,
+                "Precision Percentage": 78.4,
+                "Recall": 0.746667,
+                "Recall Percentage": 74.666667,
                 "F1": 0.759,
                 "F1 Percentage": 75.900022,
                 "F1 Macro": 0.690285,
@@ -154,6 +168,10 @@
                 "Model": "Decision Tree",
                 "Accuracy": 0.726667,
                 "Accuracy Percentage": 72.666667,
+                "Precision": 0.787753,
+                "Precision Percentage": 78.775325,
+                "Recall": 0.726667,
+                "Recall Percentage": 72.666667,
                 "F1": 0.743662,
                 "F1 Percentage": 74.366215,
                 "F1 Macro": 0.680536,
@@ -163,6 +181,10 @@
                 "Model": "Logistic",
                 "Accuracy": 0.72,
                 "Accuracy Percentage": 72.0,
+                "Precision": 0.814805,
+                "Precision Percentage": 81.480519,
+                "Recall": 0.72,
+                "Recall Percentage": 72.0,
                 "F1": 0.739964,
                 "F1 Percentage": 73.996435,
                 "F1 Macro": 0.688057,
@@ -172,6 +194,10 @@
                 "Model": "Random Forest",
                 "Accuracy": 0.7,
                 "Accuracy Percentage": 70.0,
+                "Precision": 0.756364,
+                "Precision Percentage": 75.636364,
+                "Recall": 0.7,
+                "Recall Percentage": 70.0,
                 "F1": 0.717682,
                 "F1 Percentage": 71.768232,
                 "F1 Macro": 0.645092,
@@ -193,6 +219,22 @@
                 "f1": 0.461538,
                 "support": 36
             }
+        },
+        "confusion_matrix": {
+            "labels": [
+                "Not Donor",
+                "Donor"
+            ],
+            "matrix": [
+                [
+                    100,
+                    14
+                ],
+                [
+                    21,
+                    15
+                ]
+            ]
         },
         "best_model_confusion_matrix": {
             "labels": [
@@ -286,5 +328,5 @@
         "feature_columns": "ModelsOutcome/blood_transfusion_feature_columns.joblib",
         "metadata": "Metadata/D11_blood_transfusion.json"
     },
-    "run_timestamp": "2026-11-27 00:26:14"
+    "run_timestamp": "2026-11-27 06:20:22"
 }

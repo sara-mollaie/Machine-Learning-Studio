@@ -1,0 +1,502 @@
+{
+    "id": "D06",
+    "name": "Fertility",
+    "title": "Fertility (D06)",
+    "level": "Beginner",
+    "domain": "Healthcare/Life",
+    "task": "Classification",
+    "description": "Educational binary classification of normal versus altered seminal quality from questionnaire attributes; not a clinical diagnostic tool.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 100,
+        "columns": 10,
+        "column_names": [
+            "Season",
+            "Age",
+            "Childish Diseases",
+            "Accident or Trauma",
+            "Surgical Intervention",
+            "High Fevers",
+            "Alcohol Consumption",
+            "Smoking Habit",
+            "Sitting Hours",
+            "Diagnosis"
+        ],
+        "data_types": {
+            "Season": "float64",
+            "Age": "float64",
+            "Childish Diseases": "float64",
+            "Accident or Trauma": "float64",
+            "Surgical Intervention": "float64",
+            "High Fevers": "float64",
+            "Alcohol Consumption": "float64",
+            "Smoking Habit": "float64",
+            "Sitting Hours": "float64",
+            "Diagnosis": "str"
+        },
+        "missing_values": {
+            "Season": 0,
+            "Age": 0,
+            "Childish Diseases": 0,
+            "Accident or Trauma": 0,
+            "Surgical Intervention": 0,
+            "High Fevers": 0,
+            "Alcohol Consumption": 0,
+            "Smoking Habit": 0,
+            "Sitting Hours": 0,
+            "Diagnosis": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Season": {
+                "count": 100.0,
+                "mean": -0.0789,
+                "std": 0.7967,
+                "min": -1.0,
+                "25%": -1.0,
+                "50%": -0.33,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "Age": {
+                "count": 100.0,
+                "mean": 0.669,
+                "std": 0.1213,
+                "min": 0.5,
+                "25%": 0.56,
+                "50%": 0.67,
+                "75%": 0.75,
+                "max": 1.0
+            },
+            "Childish Diseases": {
+                "count": 100.0,
+                "mean": 0.87,
+                "std": 0.338,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "Accident or Trauma": {
+                "count": 100.0,
+                "mean": 0.44,
+                "std": 0.4989,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "Surgical Intervention": {
+                "count": 100.0,
+                "mean": 0.51,
+                "std": 0.5024,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "High Fevers": {
+                "count": 100.0,
+                "mean": 0.19,
+                "std": 0.5808,
+                "min": -1.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "Alcohol Consumption": {
+                "count": 100.0,
+                "mean": 0.832,
+                "std": 0.1675,
+                "min": 0.2,
+                "25%": 0.8,
+                "50%": 0.8,
+                "75%": 1.0,
+                "max": 1.0
+            },
+            "Smoking Habit": {
+                "count": 100.0,
+                "mean": -0.35,
+                "std": 0.8087,
+                "min": -1.0,
+                "25%": -1.0,
+                "50%": -1.0,
+                "75%": 0.0,
+                "max": 1.0
+            },
+            "Sitting Hours": {
+                "count": 100.0,
+                "mean": 0.4068,
+                "std": 0.1864,
+                "min": 0.06,
+                "25%": 0.25,
+                "50%": 0.38,
+                "75%": 0.5,
+                "max": 1.0
+            }
+        },
+        "class_distribution": {
+            "Normal": 88,
+            "Altered": 12
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Season",
+            "Age",
+            "Childish Diseases",
+            "Accident or Trauma",
+            "Surgical Intervention",
+            "High Fevers",
+            "Alcohol Consumption",
+            "Smoking Habit",
+            "Sitting Hours"
+        ],
+        "target_column": "Diagnosis",
+        "feature_description": "Nine questionnaire attributes in the original UCI numeric encoding.",
+        "class_labels": [
+            "Normal",
+            "Altered"
+        ],
+        "class_encoding": {
+            "Normal": 0,
+            "Altered": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Season",
+            "Age",
+            "Childish Diseases",
+            "Accident or Trauma",
+            "Surgical Intervention",
+            "High Fevers",
+            "Alcohol Consumption",
+            "Smoking Habit",
+            "Sitting Hours"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Label encoding (Normal=0, Altered=1)"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 80,
+        "test_rows": 20,
+        "metrics": [
+            "Accuracy",
+            "Precision",
+            "Recall",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over both diagnosis classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "KNN",
+                "Accuracy": 0.9,
+                "Accuracy Percentage": 90.0,
+                "Precision": 0.81,
+                "Precision Percentage": 81.0,
+                "Recall": 0.9,
+                "Recall Percentage": 90.0,
+                "F1": 0.852632,
+                "F1 Percentage": 85.263158,
+                "F1 Macro": 0.473684,
+                "CV Macro F1": 0.462989
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.9,
+                "Accuracy Percentage": 90.0,
+                "Precision": 0.81,
+                "Precision Percentage": 81.0,
+                "Recall": 0.9,
+                "Recall Percentage": 90.0,
+                "F1": 0.852632,
+                "F1 Percentage": 85.263158,
+                "F1 Macro": 0.473684,
+                "CV Macro F1": 0.378862
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.85,
+                "Accuracy Percentage": 85.0,
+                "Precision": 0.880392,
+                "Precision Percentage": 88.039216,
+                "Recall": 0.85,
+                "Recall Percentage": 85.0,
+                "F1": 0.862857,
+                "F1 Percentage": 86.285714,
+                "F1 Macro": 0.657143,
+                "CV Macro F1": 0.529201
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.85,
+                "Accuracy Percentage": 85.0,
+                "Precision": 0.805263,
+                "Precision Percentage": 80.526316,
+                "Recall": 0.85,
+                "Recall Percentage": 85.0,
+                "F1": 0.827027,
+                "F1 Percentage": 82.702703,
+                "F1 Macro": 0.459459,
+                "CV Macro F1": 0.553548
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.75,
+                "Accuracy Percentage": 75.0,
+                "Precision": 0.86,
+                "Precision Percentage": 86.0,
+                "Recall": 0.75,
+                "Recall Percentage": 75.0,
+                "F1": 0.792208,
+                "F1 Percentage": 79.220779,
+                "F1 Macro": 0.5671,
+                "CV Macro F1": 0.535336
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.6,
+                "Accuracy Percentage": 60.0,
+                "Precision": 0.8375,
+                "Precision Percentage": 83.75,
+                "Recall": 0.6,
+                "Recall Percentage": 60.0,
+                "F1": 0.68,
+                "F1 Percentage": 68.0,
+                "F1 Macro": 0.466667,
+                "CV Macro F1": 0.510068
+            }
+        ],
+        "recommended_model": "KNN",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "Normal": {
+                "precision": 0.9,
+                "recall": 1.0,
+                "f1": 0.947368,
+                "support": 18
+            },
+            "Altered": {
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 2
+            }
+        },
+        "confusion_matrix": {
+            "labels": [
+                "Normal",
+                "Altered"
+            ],
+            "matrix": [
+                [
+                    18,
+                    0
+                ],
+                [
+                    2,
+                    0
+                ]
+            ]
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "Normal",
+                "Altered"
+            ],
+            "matrix": [
+                [
+                    18,
+                    0
+                ],
+                [
+                    2,
+                    0
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Season": {
+            "Season": 1.0,
+            "Age": 0.065409511,
+            "Childish Diseases": -0.1765089068,
+            "Accident or Trauma": -0.0962740335,
+            "Surgical Intervention": -0.0062101512,
+            "High Fevers": -0.2218184462,
+            "Alcohol Consumption": -0.0412904406,
+            "Smoking Habit": -0.0280847536,
+            "Sitting Hours": -0.0190209828
+        },
+        "Age": {
+            "Season": 0.065409511,
+            "Age": 1.0,
+            "Childish Diseases": 0.0805511548,
+            "Accident or Trauma": 0.2159579745,
+            "Surgical Intervention": 0.2719448094,
+            "High Fevers": 0.1202843352,
+            "Alcohol Consumption": -0.247940181,
+            "Smoking Habit": 0.0725812681,
+            "Sitting Hours": -0.4424519514
+        },
+        "Childish Diseases": {
+            "Season": -0.1765089068,
+            "Age": 0.0805511548,
+            "Childish Diseases": 1.0,
+            "Accident or Trauma": 0.1629360748,
+            "Surgical Intervention": -0.1409723422,
+            "High Fevers": 0.0756445812,
+            "Alcohol Consumption": 0.0385378602,
+            "Smoking Habit": 0.0905346643,
+            "Sitting Hours": -0.1477606213
+        },
+        "Accident or Trauma": {
+            "Season": -0.0962740335,
+            "Age": 0.2159579745,
+            "Childish Diseases": 0.1629360748,
+            "Accident or Trauma": 1.0,
+            "Surgical Intervention": 0.1031659747,
+            "High Fevers": -0.0822779461,
+            "Alcohol Consumption": -0.242721644,
+            "Smoking Habit": 0.1101570859,
+            "Sitting Hours": 0.0131218216
+        },
+        "Surgical Intervention": {
+            "Season": -0.0062101512,
+            "Age": 0.2719448094,
+            "Childish Diseases": -0.1409723422,
+            "Accident or Trauma": 0.1031659747,
+            "Surgical Intervention": 1.0,
+            "High Fevers": -0.2315979869,
+            "Alcohol Consumption": -0.0758576,
+            "Smoking Habit": -0.0534484906,
+            "Sitting Hours": -0.1927260235
+        },
+        "High Fevers": {
+            "Season": -0.2218184462,
+            "Age": 0.1202843352,
+            "Childish Diseases": 0.0756445812,
+            "Accident or Trauma": -0.0822779461,
+            "Surgical Intervention": -0.2315979869,
+            "High Fevers": 1.0,
+            "Alcohol Consumption": -0.0008307052,
+            "Smoking Habit": -0.0075273125,
+            "Sitting Hours": -0.1510914297
+        },
+        "Alcohol Consumption": {
+            "Season": -0.0412904406,
+            "Age": -0.247940181,
+            "Childish Diseases": 0.0385378602,
+            "Accident or Trauma": -0.242721644,
+            "Surgical Intervention": -0.0758576,
+            "High Fevers": -0.0008307052,
+            "Alcohol Consumption": 1.0,
+            "Smoking Habit": -0.1849255601,
+            "Sitting Hours": 0.1113714891
+        },
+        "Smoking Habit": {
+            "Season": -0.0280847536,
+            "Age": 0.0725812681,
+            "Childish Diseases": 0.0905346643,
+            "Accident or Trauma": 0.1101570859,
+            "Surgical Intervention": -0.0534484906,
+            "High Fevers": -0.0075273125,
+            "Alcohol Consumption": -0.1849255601,
+            "Smoking Habit": 1.0,
+            "Sitting Hours": -0.1060069008
+        },
+        "Sitting Hours": {
+            "Season": -0.0190209828,
+            "Age": -0.4424519514,
+            "Childish Diseases": -0.1477606213,
+            "Accident or Trauma": 0.0131218216,
+            "Surgical Intervention": -0.1927260235,
+            "High Fevers": -0.1510914297,
+            "Alcohol Consumption": 0.1113714891,
+            "Smoking Habit": -0.1060069008,
+            "Sitting Hours": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Age",
+                "Importance": 0.257521
+            },
+            {
+                "Feature": "Season",
+                "Importance": 0.198656
+            },
+            {
+                "Feature": "Sitting Hours",
+                "Importance": 0.183416
+            },
+            {
+                "Feature": "Accident or Trauma",
+                "Importance": 0.08283
+            },
+            {
+                "Feature": "Alcohol Consumption",
+                "Importance": 0.072021
+            },
+            {
+                "Feature": "High Fevers",
+                "Importance": 0.065916
+            },
+            {
+                "Feature": "Surgical Intervention",
+                "Importance": 0.061467
+            },
+            {
+                "Feature": "Smoking Habit",
+                "Importance": 0.057591
+            },
+            {
+                "Feature": "Childish Diseases",
+                "Importance": 0.020582
+            }
+        ],
+        "most_influential_feature": "Age"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Fertility (D06)",
+        "category": "Healthcare/Life",
+        "task": "Classification",
+        "level": "Beginner",
+        "rows": 100,
+        "columns": 10
+    },
+    "output_files": {
+        "original_dataset": "DataSets/fertility_Diagnosis.txt",
+        "processed_dataset": "DataSets/Processed/fertility_classification_results.csv",
+        "metrics": "DataSets/Processed/fertility_metrics.csv",
+        "feature_importance": "DataSets/Processed/fertility_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/fertility_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/fertility_feature_columns.joblib",
+        "metadata": "Metadata/D06_fertility.json"
+    },
+    "run_timestamp": "2026-11-27 06:19:05"
+}

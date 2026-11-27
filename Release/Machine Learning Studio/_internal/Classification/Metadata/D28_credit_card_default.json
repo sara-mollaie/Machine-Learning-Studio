@@ -1,0 +1,860 @@
+{
+    "id": "D28",
+    "name": "Default of Credit Card Clients",
+    "title": "Default of Credit Card Clients (D28)",
+    "level": "Advanced",
+    "domain": "Business/Finance",
+    "task": "Classification",
+    "description": "Predict next-month credit card payment default from historical client attributes. Educational use only.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 30000,
+        "columns": 24,
+        "column_names": [
+            "LIMIT_BAL",
+            "SEX",
+            "EDUCATION",
+            "MARRIAGE",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6",
+            "Default Payment"
+        ],
+        "data_types": {
+            "LIMIT_BAL": "int64",
+            "SEX": "int64",
+            "EDUCATION": "int64",
+            "MARRIAGE": "int64",
+            "AGE": "int64",
+            "PAY_0": "int64",
+            "PAY_2": "int64",
+            "PAY_3": "int64",
+            "PAY_4": "int64",
+            "PAY_5": "int64",
+            "PAY_6": "int64",
+            "BILL_AMT1": "int64",
+            "BILL_AMT2": "int64",
+            "BILL_AMT3": "int64",
+            "BILL_AMT4": "int64",
+            "BILL_AMT5": "int64",
+            "BILL_AMT6": "int64",
+            "PAY_AMT1": "int64",
+            "PAY_AMT2": "int64",
+            "PAY_AMT3": "int64",
+            "PAY_AMT4": "int64",
+            "PAY_AMT5": "int64",
+            "PAY_AMT6": "int64",
+            "Default Payment": "str"
+        },
+        "missing_values": {
+            "LIMIT_BAL": 0,
+            "SEX": 0,
+            "EDUCATION": 0,
+            "MARRIAGE": 0,
+            "AGE": 0,
+            "PAY_0": 0,
+            "PAY_2": 0,
+            "PAY_3": 0,
+            "PAY_4": 0,
+            "PAY_5": 0,
+            "PAY_6": 0,
+            "BILL_AMT1": 0,
+            "BILL_AMT2": 0,
+            "BILL_AMT3": 0,
+            "BILL_AMT4": 0,
+            "BILL_AMT5": 0,
+            "BILL_AMT6": 0,
+            "PAY_AMT1": 0,
+            "PAY_AMT2": 0,
+            "PAY_AMT3": 0,
+            "PAY_AMT4": 0,
+            "PAY_AMT5": 0,
+            "PAY_AMT6": 0,
+            "Default Payment": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 35,
+        "descriptive_statistics": {
+            "LIMIT_BAL": {
+                "count": 30000.0,
+                "mean": 167484.32266666667,
+                "std": 129747.66156720239,
+                "min": 10000.0,
+                "25%": 50000.0,
+                "50%": 140000.0,
+                "75%": 240000.0,
+                "max": 1000000.0
+            },
+            "AGE": {
+                "count": 30000.0,
+                "mean": 35.4855,
+                "std": 9.21790406809,
+                "min": 21.0,
+                "25%": 28.0,
+                "50%": 34.0,
+                "75%": 41.0,
+                "max": 79.0
+            },
+            "BILL_AMT1": {
+                "count": 30000.0,
+                "mean": 51223.3309,
+                "std": 73635.86057552956,
+                "min": -165580.0,
+                "25%": 3558.75,
+                "50%": 22381.5,
+                "75%": 67091.0,
+                "max": 964511.0
+            },
+            "BILL_AMT2": {
+                "count": 30000.0,
+                "mean": 49179.07516666667,
+                "std": 71173.76878252835,
+                "min": -69777.0,
+                "25%": 2984.75,
+                "50%": 21200.0,
+                "75%": 64006.25,
+                "max": 983931.0
+            },
+            "BILL_AMT3": {
+                "count": 30000.0,
+                "mean": 47013.1548,
+                "std": 69349.38742703684,
+                "min": -157264.0,
+                "25%": 2666.25,
+                "50%": 20088.5,
+                "75%": 60164.75,
+                "max": 1664089.0
+            },
+            "BILL_AMT4": {
+                "count": 30000.0,
+                "mean": 43262.94896666666,
+                "std": 64332.85613391631,
+                "min": -170000.0,
+                "25%": 2326.75,
+                "50%": 19052.0,
+                "75%": 54506.0,
+                "max": 891586.0
+            },
+            "BILL_AMT5": {
+                "count": 30000.0,
+                "mean": 40311.40096666667,
+                "std": 60797.15577026487,
+                "min": -81334.0,
+                "25%": 1763.0,
+                "50%": 18104.5,
+                "75%": 50190.5,
+                "max": 927171.0
+            },
+            "BILL_AMT6": {
+                "count": 30000.0,
+                "mean": 38871.7604,
+                "std": 59554.10753674573,
+                "min": -339603.0,
+                "25%": 1256.0,
+                "50%": 17071.0,
+                "75%": 49198.25,
+                "max": 961664.0
+            },
+            "PAY_AMT1": {
+                "count": 30000.0,
+                "mean": 5663.5805,
+                "std": 16563.280354025766,
+                "min": 0.0,
+                "25%": 1000.0,
+                "50%": 2100.0,
+                "75%": 5006.0,
+                "max": 873552.0
+            },
+            "PAY_AMT2": {
+                "count": 30000.0,
+                "mean": 5921.1635,
+                "std": 23040.870402057237,
+                "min": 0.0,
+                "25%": 833.0,
+                "50%": 2009.0,
+                "75%": 5000.0,
+                "max": 1684259.0
+            },
+            "PAY_AMT3": {
+                "count": 30000.0,
+                "mean": 5225.6815,
+                "std": 17606.961469803104,
+                "min": 0.0,
+                "25%": 390.0,
+                "50%": 1800.0,
+                "75%": 4505.0,
+                "max": 896040.0
+            },
+            "PAY_AMT4": {
+                "count": 30000.0,
+                "mean": 4826.076866666666,
+                "std": 15666.159744032007,
+                "min": 0.0,
+                "25%": 296.0,
+                "50%": 1500.0,
+                "75%": 4013.25,
+                "max": 621000.0
+            },
+            "PAY_AMT5": {
+                "count": 30000.0,
+                "mean": 4799.387633333334,
+                "std": 15278.30567914479,
+                "min": 0.0,
+                "25%": 252.5,
+                "50%": 1500.0,
+                "75%": 4031.5,
+                "max": 426529.0
+            },
+            "PAY_AMT6": {
+                "count": 30000.0,
+                "mean": 5215.502566666667,
+                "std": 17777.4657754353,
+                "min": 0.0,
+                "25%": 117.75,
+                "50%": 1500.0,
+                "75%": 4000.0,
+                "max": 528666.0
+            }
+        },
+        "class_distribution": {
+            "No Default": 23364,
+            "Default": 6636
+        }
+    },
+    "feature_categories": {
+        "SEX": [
+            1,
+            2
+        ],
+        "EDUCATION": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ],
+        "MARRIAGE": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "PAY_0": [
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "PAY_2": [
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "PAY_3": [
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "PAY_4": [
+            -2,
+            -1,
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "PAY_5": [
+            -2,
+            -1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ],
+        "PAY_6": [
+            -2,
+            -1,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+        ]
+    },
+    "feature_selection": {
+        "selected_features": [
+            "LIMIT_BAL",
+            "SEX",
+            "EDUCATION",
+            "MARRIAGE",
+            "AGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+        ],
+        "target_column": "Default Payment",
+        "feature_description": "23 features: fourteen numeric and nine categorical attributes; ID excluded.",
+        "class_labels": [
+            "No Default",
+            "Default"
+        ],
+        "class_descriptions": {
+            "No Default": "No default next month",
+            "Default": "Default next month"
+        },
+        "class_encoding": {
+            "No Default": 0,
+            "Default": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "LIMIT_BAL",
+            "AGE",
+            "BILL_AMT1",
+            "BILL_AMT2",
+            "BILL_AMT3",
+            "BILL_AMT4",
+            "BILL_AMT5",
+            "BILL_AMT6",
+            "PAY_AMT1",
+            "PAY_AMT2",
+            "PAY_AMT3",
+            "PAY_AMT4",
+            "PAY_AMT5",
+            "PAY_AMT6"
+        ],
+        "categorical_features": [
+            "SEX",
+            "EDUCATION",
+            "MARRIAGE",
+            "PAY_0",
+            "PAY_2",
+            "PAY_3",
+            "PAY_4",
+            "PAY_5",
+            "PAY_6"
+        ],
+        "categorical_method": "Most frequent imputation + OneHotEncoder",
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "No Default mapped to 0; Default mapped to 1"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 24000,
+        "test_rows": 6000,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over two default classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "SVM",
+                "Accuracy": 0.816,
+                "Accuracy Percentage": 81.6,
+                "F1": 0.794774,
+                "F1 Percentage": 79.477383,
+                "F1 Macro": 0.676007
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.797,
+                "Accuracy Percentage": 79.7,
+                "F1": 0.792197,
+                "F1 Percentage": 79.219677,
+                "F1 Macro": 0.691749
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.794833,
+                "Accuracy Percentage": 79.483333,
+                "F1": 0.774284,
+                "F1 Percentage": 77.428391,
+                "F1 Macro": 0.646717
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.790333,
+                "Accuracy Percentage": 79.033333,
+                "F1": 0.730287,
+                "F1 Percentage": 73.028706,
+                "F1 Macro": 0.542516
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.7735,
+                "Accuracy Percentage": 77.35,
+                "F1": 0.778295,
+                "F1 Percentage": 77.829454,
+                "F1 Macro": 0.685563
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.7505,
+                "Accuracy Percentage": 75.05,
+                "F1": 0.761613,
+                "F1 Percentage": 76.161331,
+                "F1 Macro": 0.67244
+            }
+        ],
+        "recommended_model": "SVM",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "No Default": {
+                "precision": 0.838551,
+                "recall": 0.945859,
+                "f1": 0.888978,
+                "support": 4673
+            },
+            "Default": {
+                "precision": 0.652949,
+                "recall": 0.358704,
+                "f1": 0.463035,
+                "support": 1327
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "No Default",
+                "Default"
+            ],
+            "matrix": [
+                [
+                    4420,
+                    253
+                ],
+                [
+                    851,
+                    476
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "LIMIT_BAL": {
+            "LIMIT_BAL": 1.0,
+            "AGE": 0.1447127976,
+            "BILL_AMT1": 0.285429865,
+            "BILL_AMT2": 0.278314364,
+            "BILL_AMT3": 0.2832357836,
+            "BILL_AMT4": 0.2939876237,
+            "BILL_AMT5": 0.2955623377,
+            "BILL_AMT6": 0.2903889506,
+            "PAY_AMT1": 0.1952359152,
+            "PAY_AMT2": 0.1784079537,
+            "PAY_AMT3": 0.2101667477,
+            "PAY_AMT4": 0.2032424102,
+            "PAY_AMT5": 0.2172024324,
+            "PAY_AMT6": 0.2195953686
+        },
+        "AGE": {
+            "LIMIT_BAL": 0.1447127976,
+            "AGE": 1.0,
+            "BILL_AMT1": 0.0562385333,
+            "BILL_AMT2": 0.0542830744,
+            "BILL_AMT3": 0.0537097052,
+            "BILL_AMT4": 0.0513530932,
+            "BILL_AMT5": 0.0493450481,
+            "BILL_AMT6": 0.047612678,
+            "PAY_AMT1": 0.0261466791,
+            "PAY_AMT2": 0.0217848934,
+            "PAY_AMT3": 0.029247353,
+            "PAY_AMT4": 0.0213790056,
+            "PAY_AMT5": 0.0228499736,
+            "PAY_AMT6": 0.019478153
+        },
+        "BILL_AMT1": {
+            "LIMIT_BAL": 0.285429865,
+            "AGE": 0.0562385333,
+            "BILL_AMT1": 1.0,
+            "BILL_AMT2": 0.9514836728,
+            "BILL_AMT3": 0.8922785291,
+            "BILL_AMT4": 0.860272189,
+            "BILL_AMT5": 0.8297786058,
+            "BILL_AMT6": 0.8026501886,
+            "PAY_AMT1": 0.1402772776,
+            "PAY_AMT2": 0.099355035,
+            "PAY_AMT3": 0.1568871385,
+            "PAY_AMT4": 0.1583025333,
+            "PAY_AMT5": 0.1670257121,
+            "PAY_AMT6": 0.179341122
+        },
+        "BILL_AMT2": {
+            "LIMIT_BAL": 0.278314364,
+            "AGE": 0.0542830744,
+            "BILL_AMT1": 0.9514836728,
+            "BILL_AMT2": 1.0,
+            "BILL_AMT3": 0.9283262593,
+            "BILL_AMT4": 0.8924822913,
+            "BILL_AMT5": 0.8597783073,
+            "BILL_AMT6": 0.8315935591,
+            "PAY_AMT1": 0.280365357,
+            "PAY_AMT2": 0.1008508775,
+            "PAY_AMT3": 0.1507181937,
+            "PAY_AMT4": 0.1473981042,
+            "PAY_AMT5": 0.1579574116,
+            "PAY_AMT6": 0.1742561656
+        },
+        "BILL_AMT3": {
+            "LIMIT_BAL": 0.2832357836,
+            "AGE": 0.0537097052,
+            "BILL_AMT1": 0.8922785291,
+            "BILL_AMT2": 0.9283262593,
+            "BILL_AMT3": 1.0,
+            "BILL_AMT4": 0.9239694566,
+            "BILL_AMT5": 0.8839096974,
+            "BILL_AMT6": 0.8533200906,
+            "PAY_AMT1": 0.2443352376,
+            "PAY_AMT2": 0.3169359772,
+            "PAY_AMT3": 0.1300111816,
+            "PAY_AMT4": 0.143404605,
+            "PAY_AMT5": 0.1797123504,
+            "PAY_AMT6": 0.1823259662
+        },
+        "BILL_AMT4": {
+            "LIMIT_BAL": 0.2939876237,
+            "AGE": 0.0513530932,
+            "BILL_AMT1": 0.860272189,
+            "BILL_AMT2": 0.8924822913,
+            "BILL_AMT3": 0.9239694566,
+            "BILL_AMT4": 1.0,
+            "BILL_AMT5": 0.9401344041,
+            "BILL_AMT6": 0.9009409548,
+            "PAY_AMT1": 0.2330118522,
+            "PAY_AMT2": 0.207563729,
+            "PAY_AMT3": 0.3000225291,
+            "PAY_AMT4": 0.1301914078,
+            "PAY_AMT5": 0.1604330376,
+            "PAY_AMT6": 0.1776369942
+        },
+        "BILL_AMT5": {
+            "LIMIT_BAL": 0.2955623377,
+            "AGE": 0.0493450481,
+            "BILL_AMT1": 0.8297786058,
+            "BILL_AMT2": 0.8597783073,
+            "BILL_AMT3": 0.8839096974,
+            "BILL_AMT4": 0.9401344041,
+            "BILL_AMT5": 1.0,
+            "BILL_AMT6": 0.9461968071,
+            "PAY_AMT1": 0.2170308238,
+            "PAY_AMT2": 0.1812464911,
+            "PAY_AMT3": 0.2523048617,
+            "PAY_AMT4": 0.2931184632,
+            "PAY_AMT5": 0.14157418,
+            "PAY_AMT6": 0.1641844504
+        },
+        "BILL_AMT6": {
+            "LIMIT_BAL": 0.2903889506,
+            "AGE": 0.047612678,
+            "BILL_AMT1": 0.8026501886,
+            "BILL_AMT2": 0.8315935591,
+            "BILL_AMT3": 0.8533200906,
+            "BILL_AMT4": 0.9009409548,
+            "BILL_AMT5": 0.9461968071,
+            "BILL_AMT6": 1.0,
+            "PAY_AMT1": 0.1999650062,
+            "PAY_AMT2": 0.1726629374,
+            "PAY_AMT3": 0.2337697933,
+            "PAY_AMT4": 0.2502368249,
+            "PAY_AMT5": 0.3077288895,
+            "PAY_AMT6": 0.1154941669
+        },
+        "PAY_AMT1": {
+            "LIMIT_BAL": 0.1952359152,
+            "AGE": 0.0261466791,
+            "BILL_AMT1": 0.1402772776,
+            "BILL_AMT2": 0.280365357,
+            "BILL_AMT3": 0.2443352376,
+            "BILL_AMT4": 0.2330118522,
+            "BILL_AMT5": 0.2170308238,
+            "BILL_AMT6": 0.1999650062,
+            "PAY_AMT1": 1.0,
+            "PAY_AMT2": 0.2855755287,
+            "PAY_AMT3": 0.252191139,
+            "PAY_AMT4": 0.1995579312,
+            "PAY_AMT5": 0.148459275,
+            "PAY_AMT6": 0.1857352554
+        },
+        "PAY_AMT2": {
+            "LIMIT_BAL": 0.1784079537,
+            "AGE": 0.0217848934,
+            "BILL_AMT1": 0.099355035,
+            "BILL_AMT2": 0.1008508775,
+            "BILL_AMT3": 0.3169359772,
+            "BILL_AMT4": 0.207563729,
+            "BILL_AMT5": 0.1812464911,
+            "BILL_AMT6": 0.1726629374,
+            "PAY_AMT1": 0.2855755287,
+            "PAY_AMT2": 1.0,
+            "PAY_AMT3": 0.2447704503,
+            "PAY_AMT4": 0.1801067436,
+            "PAY_AMT5": 0.1809077526,
+            "PAY_AMT6": 0.1576339163
+        },
+        "PAY_AMT3": {
+            "LIMIT_BAL": 0.2101667477,
+            "AGE": 0.029247353,
+            "BILL_AMT1": 0.1568871385,
+            "BILL_AMT2": 0.1507181937,
+            "BILL_AMT3": 0.1300111816,
+            "BILL_AMT4": 0.3000225291,
+            "BILL_AMT5": 0.2523048617,
+            "BILL_AMT6": 0.2337697933,
+            "PAY_AMT1": 0.252191139,
+            "PAY_AMT2": 0.2447704503,
+            "PAY_AMT3": 1.0,
+            "PAY_AMT4": 0.2163250917,
+            "PAY_AMT5": 0.1592137203,
+            "PAY_AMT6": 0.1627400333
+        },
+        "PAY_AMT4": {
+            "LIMIT_BAL": 0.2032424102,
+            "AGE": 0.0213790056,
+            "BILL_AMT1": 0.1583025333,
+            "BILL_AMT2": 0.1473981042,
+            "BILL_AMT3": 0.143404605,
+            "BILL_AMT4": 0.1301914078,
+            "BILL_AMT5": 0.2931184632,
+            "BILL_AMT6": 0.2502368249,
+            "PAY_AMT1": 0.1995579312,
+            "PAY_AMT2": 0.1801067436,
+            "PAY_AMT3": 0.2163250917,
+            "PAY_AMT4": 1.0,
+            "PAY_AMT5": 0.1518304358,
+            "PAY_AMT6": 0.1578339156
+        },
+        "PAY_AMT5": {
+            "LIMIT_BAL": 0.2172024324,
+            "AGE": 0.0228499736,
+            "BILL_AMT1": 0.1670257121,
+            "BILL_AMT2": 0.1579574116,
+            "BILL_AMT3": 0.1797123504,
+            "BILL_AMT4": 0.1604330376,
+            "BILL_AMT5": 0.14157418,
+            "BILL_AMT6": 0.3077288895,
+            "PAY_AMT1": 0.148459275,
+            "PAY_AMT2": 0.1809077526,
+            "PAY_AMT3": 0.1592137203,
+            "PAY_AMT4": 0.1518304358,
+            "PAY_AMT5": 1.0,
+            "PAY_AMT6": 0.1548955253
+        },
+        "PAY_AMT6": {
+            "LIMIT_BAL": 0.2195953686,
+            "AGE": 0.019478153,
+            "BILL_AMT1": 0.179341122,
+            "BILL_AMT2": 0.1742561656,
+            "BILL_AMT3": 0.1823259662,
+            "BILL_AMT4": 0.1776369942,
+            "BILL_AMT5": 0.1641844504,
+            "BILL_AMT6": 0.1154941669,
+            "PAY_AMT1": 0.1857352554,
+            "PAY_AMT2": 0.1576339163,
+            "PAY_AMT3": 0.1627400333,
+            "PAY_AMT4": 0.1578339156,
+            "PAY_AMT5": 0.1548955253,
+            "PAY_AMT6": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "PAY_0",
+                "Importance": 0.086688
+            },
+            {
+                "Feature": "LIMIT_BAL",
+                "Importance": 0.063149
+            },
+            {
+                "Feature": "AGE",
+                "Importance": 0.059824
+            },
+            {
+                "Feature": "BILL_AMT1",
+                "Importance": 0.057809
+            },
+            {
+                "Feature": "BILL_AMT2",
+                "Importance": 0.051159
+            },
+            {
+                "Feature": "PAY_AMT1",
+                "Importance": 0.051117
+            },
+            {
+                "Feature": "PAY_AMT2",
+                "Importance": 0.048392
+            },
+            {
+                "Feature": "BILL_AMT3",
+                "Importance": 0.048186
+            },
+            {
+                "Feature": "BILL_AMT4",
+                "Importance": 0.047767
+            },
+            {
+                "Feature": "BILL_AMT5",
+                "Importance": 0.047504
+            },
+            {
+                "Feature": "BILL_AMT6",
+                "Importance": 0.047417
+            },
+            {
+                "Feature": "PAY_AMT3",
+                "Importance": 0.046275
+            },
+            {
+                "Feature": "PAY_AMT6",
+                "Importance": 0.044924
+            },
+            {
+                "Feature": "PAY_2",
+                "Importance": 0.04388
+            },
+            {
+                "Feature": "PAY_AMT4",
+                "Importance": 0.041932
+            },
+            {
+                "Feature": "PAY_AMT5",
+                "Importance": 0.041559
+            },
+            {
+                "Feature": "PAY_3",
+                "Importance": 0.032275
+            },
+            {
+                "Feature": "PAY_4",
+                "Importance": 0.029379
+            },
+            {
+                "Feature": "EDUCATION",
+                "Importance": 0.028145
+            },
+            {
+                "Feature": "PAY_6",
+                "Importance": 0.024177
+            },
+            {
+                "Feature": "PAY_5",
+                "Importance": 0.021693
+            },
+            {
+                "Feature": "MARRIAGE",
+                "Importance": 0.019651
+            },
+            {
+                "Feature": "SEX",
+                "Importance": 0.017096
+            }
+        ],
+        "most_influential_feature": "PAY_0"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Default of Credit Card Clients (D28)",
+        "category": "Business/Finance",
+        "task": "Classification",
+        "level": "Advanced",
+        "rows": 30000,
+        "columns": 24
+    },
+    "output_files": {
+        "original_dataset": "DataSets/default of credit card clients.csv",
+        "source_files": [
+            "DataSets/default of credit card clients.csv"
+        ],
+        "processed_dataset": "DataSets/Processed/credit_card_default_classification_results.csv",
+        "metrics": "DataSets/Processed/credit_card_default_metrics.csv",
+        "feature_importance": "DataSets/Processed/credit_card_default_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/credit_card_default_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/credit_card_default_feature_columns.joblib",
+        "metadata": "Metadata/D28_credit_card_default.json"
+    },
+    "run_timestamp": "2026-11-27 05:44:08"
+}

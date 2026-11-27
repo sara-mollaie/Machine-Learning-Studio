@@ -1,0 +1,431 @@
+{
+    "id": "D23",
+    "run_timestamp": "2026-11-23 15:00:08.222383",
+    "name": "Bike Sharing",
+    "level": "Intermediate",
+    "domain": "Social",
+    "task": "Regression",
+    "description": "Predict hourly or daily rental bike count from weather, seasonal and calendar features.",
+    "source": "UCI Bike Sharing Dataset",
+    "granularity": "Hourly",
+    "dataset_statistics": {
+        "rows": 17379,
+        "columns": 17,
+        "column_names": [
+            "instant",
+            "dteday",
+            "season",
+            "yr",
+            "mnth",
+            "hr",
+            "holiday",
+            "weekday",
+            "workingday",
+            "weathersit",
+            "temp",
+            "atemp",
+            "hum",
+            "windspeed",
+            "casual",
+            "registered",
+            "cnt"
+        ],
+        "data_types": {
+            "instant": "int64",
+            "dteday": "datetime64[us]",
+            "season": "int64",
+            "yr": "int64",
+            "mnth": "int64",
+            "hr": "int64",
+            "holiday": "int64",
+            "weekday": "int64",
+            "workingday": "int64",
+            "weathersit": "int64",
+            "temp": "float64",
+            "atemp": "float64",
+            "hum": "float64",
+            "windspeed": "float64",
+            "casual": "int64",
+            "registered": "int64",
+            "cnt": "int64"
+        },
+        "missing_values": {
+            "instant": 0,
+            "dteday": 0,
+            "season": 0,
+            "yr": 0,
+            "mnth": 0,
+            "hr": 0,
+            "holiday": 0,
+            "weekday": 0,
+            "workingday": 0,
+            "weathersit": 0,
+            "temp": 0,
+            "atemp": 0,
+            "hum": 0,
+            "windspeed": 0,
+            "casual": 0,
+            "registered": 0,
+            "cnt": 0
+        },
+        "total_missing_values": 0,
+        "descriptive_statistics": {
+            "instant": {
+                "count": 17379.0,
+                "mean": 8690.0,
+                "min": 1.0,
+                "25%": 4345.5,
+                "50%": 8690.0,
+                "75%": 13034.5,
+                "max": 17379.0,
+                "std": 5017.03
+            },
+            "dteday": {
+                "count": 17379,
+                "mean": 1325477314552,
+                "min": 1293840000000,
+                "25%": 1309737600000,
+                "50%": 1325462400000,
+                "75%": 1341187200000,
+                "max": 1356912000000,
+                "std": null
+            },
+            "season": {
+                "count": 17379.0,
+                "mean": 2.5,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 3.0,
+                "75%": 3.0,
+                "max": 4.0,
+                "std": 1.11
+            },
+            "yr": {
+                "count": 17379.0,
+                "mean": 0.5,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 1.0,
+                "std": 0.5
+            },
+            "mnth": {
+                "count": 17379.0,
+                "mean": 6.54,
+                "min": 1.0,
+                "25%": 4.0,
+                "50%": 7.0,
+                "75%": 10.0,
+                "max": 12.0,
+                "std": 3.44
+            },
+            "hr": {
+                "count": 17379.0,
+                "mean": 11.55,
+                "min": 0.0,
+                "25%": 6.0,
+                "50%": 12.0,
+                "75%": 18.0,
+                "max": 23.0,
+                "std": 6.91
+            },
+            "holiday": {
+                "count": 17379.0,
+                "mean": 0.03,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 1.0,
+                "std": 0.17
+            },
+            "weekday": {
+                "count": 17379.0,
+                "mean": 3.0,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 3.0,
+                "75%": 5.0,
+                "max": 6.0,
+                "std": 2.01
+            },
+            "workingday": {
+                "count": 17379.0,
+                "mean": 0.68,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 1.0,
+                "std": 0.47
+            },
+            "weathersit": {
+                "count": 17379.0,
+                "mean": 1.43,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 2.0,
+                "max": 4.0,
+                "std": 0.64
+            },
+            "temp": {
+                "count": 17379.0,
+                "mean": 0.5,
+                "min": 0.02,
+                "25%": 0.34,
+                "50%": 0.5,
+                "75%": 0.66,
+                "max": 1.0,
+                "std": 0.19
+            },
+            "atemp": {
+                "count": 17379.0,
+                "mean": 0.48,
+                "min": 0.0,
+                "25%": 0.33,
+                "50%": 0.48,
+                "75%": 0.62,
+                "max": 1.0,
+                "std": 0.17
+            },
+            "hum": {
+                "count": 17379.0,
+                "mean": 0.63,
+                "min": 0.0,
+                "25%": 0.48,
+                "50%": 0.63,
+                "75%": 0.78,
+                "max": 1.0,
+                "std": 0.19
+            },
+            "windspeed": {
+                "count": 17379.0,
+                "mean": 0.19,
+                "min": 0.0,
+                "25%": 0.1,
+                "50%": 0.19,
+                "75%": 0.25,
+                "max": 0.85,
+                "std": 0.12
+            },
+            "casual": {
+                "count": 17379.0,
+                "mean": 35.68,
+                "min": 0.0,
+                "25%": 4.0,
+                "50%": 17.0,
+                "75%": 48.0,
+                "max": 367.0,
+                "std": 49.31
+            },
+            "registered": {
+                "count": 17379.0,
+                "mean": 153.79,
+                "min": 0.0,
+                "25%": 34.0,
+                "50%": 115.0,
+                "75%": 220.0,
+                "max": 886.0,
+                "std": 151.36
+            },
+            "cnt": {
+                "count": 17379.0,
+                "mean": 189.46,
+                "min": 1.0,
+                "25%": 40.0,
+                "50%": 142.0,
+                "75%": 281.0,
+                "max": 977.0,
+                "std": 181.39
+            }
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "season",
+            "yr",
+            "mnth",
+            "hr",
+            "holiday",
+            "weekday",
+            "workingday",
+            "weathersit",
+            "temp",
+            "atemp",
+            "hum",
+            "windspeed"
+        ],
+        "target_column": "cnt",
+        "excluded_columns": [
+            "instant",
+            "dteday",
+            "casual",
+            "registered"
+        ]
+    },
+    "preprocessing": {
+        "numeric_method": "Training-only median imputation + StandardScaler",
+        "split_method": "Chronological 80/20, no shuffling"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "training_rows": 13903,
+        "test_rows": 3476,
+        "metrics": [
+            "MAE",
+            "MSE",
+            "RMSE",
+            "R2",
+            "R2 Percentage",
+            "Accuracy"
+        ],
+        "results": [
+            {
+                "Model": "Random Forest",
+                "MAE": 44.879259,
+                "MSE": 4847.131029,
+                "RMSE": 69.62134,
+                "R2": 0.900293,
+                "R2 Percentage": 90.02926,
+                "Accuracy": 72.012039
+            },
+            {
+                "Model": "Gradient Boosting",
+                "MAE": 73.61651,
+                "MSE": 11542.869339,
+                "RMSE": 107.437746,
+                "R2": 0.762559,
+                "R2 Percentage": 76.255862,
+                "Accuracy": 56.809745
+            },
+            {
+                "Model": "SVR",
+                "MAE": 114.215096,
+                "MSE": 31537.069424,
+                "RMSE": 177.586794,
+                "R2": 0.35127,
+                "R2 Percentage": 35.127004,
+                "Accuracy": 28.609645
+            },
+            {
+                "Model": "Linear Regression",
+                "MAE": 138.291753,
+                "MSE": 33590.769315,
+                "RMSE": 183.277847,
+                "R2": 0.309025,
+                "R2 Percentage": 30.902462,
+                "Accuracy": 26.321827
+            },
+            {
+                "Model": "Ridge",
+                "MAE": 138.291777,
+                "MSE": 33591.285685,
+                "RMSE": 183.279256,
+                "R2": 0.309014,
+                "R2 Percentage": 30.9014,
+                "Accuracy": 26.32126
+            }
+        ],
+        "recommended_model": "Random Forest",
+        "selection_rule": "Highest RMSE-based Accuracy, lowest RMSE as tie-breaker",
+        "accuracy_definition": "max(0, 100 * (1 - RMSE / mean(abs(actual))))",
+        "accuracy_reference_value": 248.75460299194475,
+        "accuracy_caveat": "Custom descriptive regression score, not classification accuracy."
+    },
+    "feature_importance": {
+        "method": "Standardized Linear Regression Coefficients",
+        "model": "Linear Regression",
+        "results": [
+            {
+                "Feature": "hr",
+                "Coefficient": 50.103,
+                "Absolute Coefficient": 50.103,
+                "Importance Rank": 1
+            },
+            {
+                "Feature": "atemp",
+                "Coefficient": 37.8732,
+                "Absolute Coefficient": 37.8732,
+                "Importance Rank": 2
+            },
+            {
+                "Feature": "yr",
+                "Coefficient": 37.2442,
+                "Absolute Coefficient": 37.2442,
+                "Importance Rank": 3
+            },
+            {
+                "Feature": "hum",
+                "Coefficient": -33.4526,
+                "Absolute Coefficient": 33.4526,
+                "Importance Rank": 4
+            },
+            {
+                "Feature": "temp",
+                "Coefficient": 15.8287,
+                "Absolute Coefficient": 15.8287,
+                "Importance Rank": 5
+            },
+            {
+                "Feature": "season",
+                "Coefficient": 8.5535,
+                "Absolute Coefficient": 8.5535,
+                "Importance Rank": 6
+            },
+            {
+                "Feature": "mnth",
+                "Coefficient": 8.0635,
+                "Absolute Coefficient": 8.0635,
+                "Importance Rank": 7
+            },
+            {
+                "Feature": "windspeed",
+                "Coefficient": 4.1017,
+                "Absolute Coefficient": 4.1017,
+                "Importance Rank": 8
+            },
+            {
+                "Feature": "holiday",
+                "Coefficient": -3.4545,
+                "Absolute Coefficient": 3.4545,
+                "Importance Rank": 9
+            },
+            {
+                "Feature": "weathersit",
+                "Coefficient": -3.4064,
+                "Absolute Coefficient": 3.4064,
+                "Importance Rank": 10
+            },
+            {
+                "Feature": "weekday",
+                "Coefficient": 2.5169,
+                "Absolute Coefficient": 2.5169,
+                "Importance Rank": 11
+            },
+            {
+                "Feature": "workingday",
+                "Coefficient": 0.3834,
+                "Absolute Coefficient": 0.3834,
+                "Importance Rank": 12
+            }
+        ],
+        "most_influential_feature": "hr"
+    },
+    "model_verification": true,
+    "individual_model_verification": {
+        "Linear Regression": true,
+        "Ridge": true,
+        "Random Forest": true,
+        "Gradient Boosting": true,
+        "SVR": true
+    },
+    "output_files": {
+        "original_dataset": "DataSets\\hour.csv",
+        "processed_dataset": "DataSets\\Processed\\bike_sharing_regression_results.csv",
+        "metrics": "DataSets\\Processed\\bike_sharing_metrics.csv",
+        "models_bundle": "ModelsOutcome\\bike_sharing_regression_models.joblib",
+        "metadata_latest": "Metadata/D23_bike_sharing.json"
+    }
+}

@@ -1,0 +1,97 @@
+Age at Heart Attack,Pericardial Effusion,Fractional Shortening,EPSS,LVDD,Wall Motion Score,Wall Motion Index,Survived One Year,Predicted_Survival
+71.0,0,0.26,9.0,4.6,14.0,1.0,Died Before One Year,
+72.0,0,0.38,6.0,4.1,14.0,1.7,Survived One Year,
+55.0,0,0.26,4.0,3.42,14.0,1.0,Survived One Year,Survived One Year
+60.0,0,0.253,12.062,4.603,16.0,1.45,Survived One Year,Survived One Year
+57.0,0,0.16,22.0,5.75,18.0,2.25,Survived One Year,
+68.0,0,0.26,5.0,4.31,12.0,1.0,Survived One Year,
+62.0,0,0.23,31.0,5.43,22.5,1.875,Survived One Year,
+60.0,0,0.33,8.0,5.25,14.0,1.0,Survived One Year,
+46.0,0,0.34,0.0,5.09,16.0,1.14,Survived One Year,
+54.0,0,0.14,13.0,4.49,15.5,1.19,Survived One Year,
+62.0,1,0.45,9.0,3.6,16.0,1.14,Survived One Year,
+73.0,0,0.33,6.0,4.0,14.0,1.0,Survived One Year,
+60.0,0,0.15,10.0,3.73,14.0,1.0,Survived One Year,
+55.0,1,0.25,12.063,4.29,14.0,1.0,Survived One Year,
+66.0,0,0.09,17.0,5.819,8.0,1.333,Survived One Year,
+64.0,0,0.19,5.9,3.48,10.0,1.11,Survived One Year,
+54.0,0,0.3,7.0,3.85,10.0,1.667,Survived One Year,
+35.0,0,0.3,5.0,4.17,14.0,1.0,Survived One Year,
+55.0,0,,7.0,,2.0,1.0,Survived One Year,
+55.0,1,0.21,4.2,4.16,14.0,1.56,Survived One Year,
+47.0,0,0.4,5.12,3.1,12.0,1.0,Survived One Year,
+63.0,0,,10.0,,14.0,1.17,Survived One Year,Survived One Year
+61.0,0,0.61,13.1,4.07,13.0,1.625,Survived One Year,Survived One Year
+63.0,1,,,5.31,5.0,1.0,Survived One Year,
+68.0,0,0.51,,3.88,15.0,1.67,Survived One Year,Survived One Year
+80.0,0,0.41,5.4,4.36,,1.0,Survived One Year,
+54.0,0,0.35,9.3,3.63,11.0,1.222,Survived One Year,
+70.0,1,0.27,4.7,4.49,22.0,2.0,Survived One Year,
+79.0,0,0.15,17.5,4.27,13.0,1.3,Survived One Year,
+56.0,0,0.33,,3.59,14.0,1.0,Survived One Year,
+64.0,0,0.09,,,12.0,2.0,Survived One Year,Survived One Year
+81.0,0,0.12,,,9.0,1.25,Survived One Year,
+59.0,0,0.03,21.3,6.29,17.0,1.31,Survived One Year,
+57.0,0,0.24,14.8,5.26,18.0,1.38,Died Before One Year,
+58.0,0,0.3,9.4,3.49,14.0,1.0,Survived One Year,Survived One Year
+66.0,0,0.29,15.6,6.15,14.0,1.0,Died Before One Year,Died Before One Year
+63.0,0,0.15,13.0,4.57,13.0,1.08,Survived One Year,
+57.0,0,0.13,18.6,4.37,12.33,1.37,Survived One Year,
+70.0,0,0.1,9.8,5.3,23.0,2.3,Survived One Year,
+68.0,0,0.29,,4.41,14.0,1.167,Survived One Year,
+79.0,0,0.17,11.9,5.15,10.5,1.05,Survived One Year,Survived One Year
+73.0,0,0.12,,6.78,16.67,1.39,Died Before One Year,
+72.0,0,0.187,12.0,5.02,13.0,1.18,Survived One Year,
+67.0,1,0.11,10.3,4.68,11.0,1.0,Survived One Year,
+51.0,0,0.16,13.2,5.26,11.0,1.0,Survived One Year,
+70.0,1,0.25,9.7,5.57,5.5,1.1,Survived One Year,
+65.0,0,0.36,8.8,5.78,12.0,1.0,Survived One Year,
+78.0,0,0.06,16.1,5.62,13.67,1.367,Survived One Year,
+56.0,0,0.25,11.0,4.72,11.0,1.0,Survived One Year,
+60.0,0,0.12,10.2,4.31,15.0,1.67,Survived One Year,
+59.0,0,0.29,7.5,4.75,13.0,1.08,Survived One Year,
+50.0,0,0.06,30.1,5.95,21.5,2.39,Survived One Year,
+54.0,0,0.217,17.9,4.54,16.5,1.18,Survived One Year,
+64.0,0,0.2,7.1,4.58,14.0,1.0,Survived One Year,
+63.0,0,0.2,5.0,5.2,8.0,1.0,Survived One Year,
+65.0,0,0.06,23.6,6.74,12.0,1.09,Survived One Year,
+54.0,1,0.07,16.8,4.16,18.0,1.5,Survived One Year,Survived One Year
+62.0,0,0.25,6.0,4.48,11.0,1.0,Survived One Year,
+52.0,0,0.14,25.0,6.21,11.5,1.15,Survived One Year,
+70.0,1,0.16,19.2,5.25,11.0,1.0,Survived One Year,
+55.0,0,0.28,5.5,4.48,22.0,1.83,Survived One Year,
+60.0,0,0.18,8.7,4.56,13.5,1.04,Survived One Year,
+64.0,0,0.3,6.6,4.36,14.0,1.27,Survived One Year,
+59.0,0,0.344,9.1,4.04,9.0,1.0,Survived One Year,Survived One Year
+46.0,0,0.272,16.5,5.36,12.67,1.06,Survived One Year,Survived One Year
+63.0,0,0.25,5.6,3.87,18.0,1.5,Survived One Year,
+74.0,0,0.2,4.8,4.56,12.5,1.04,Survived One Year,
+59.0,0,0.5,9.1,3.42,18.0,1.5,Survived One Year,Survived One Year
+53.0,0,0.17,,4.69,10.0,1.0,Survived One Year,
+66.0,0,0.2,,4.23,12.0,1.0,Survived One Year,
+70.0,0,0.38,0.0,4.55,10.0,1.0,Survived One Year,
+62.0,0,0.258,11.8,4.87,11.0,1.0,Survived One Year,
+59.0,0,0.17,14.3,5.49,13.5,1.5,Survived One Year,
+57.0,0,0.228,9.7,4.29,11.0,1.0,Survived One Year,
+57.0,0,0.036,7.0,4.12,13.5,1.23,Survived One Year,
+62.0,0,0.22,12.1,3.92,11.0,1.0,Survived One Year,Survived One Year
+66.0,0,0.24,13.6,4.38,22.0,2.2,Survived One Year,
+61.0,0,0.27,9.0,4.06,12.0,1.0,Survived One Year,
+59.0,1,0.4,9.2,5.36,12.0,1.0,Survived One Year,Survived One Year
+57.0,0,0.29,9.4,4.77,9.0,1.0,Survived One Year,
+62.0,1,0.19,28.9,6.63,19.5,1.95,Survived One Year,
+,0,0.26,0.0,4.38,9.0,1.0,Survived One Year,
+54.0,0,0.43,9.3,4.79,10.0,1.0,Survived One Year,
+62.0,1,0.24,28.6,5.86,21.5,1.95,Survived One Year,
+,0,0.23,19.1,5.49,12.0,1.2,Survived One Year,Survived One Year
+64.0,0,0.15,6.6,4.17,14.0,1.27,Survived One Year,
+57.0,1,0.12,0.0,2.32,16.5,1.375,Survived One Year,Survived One Year
+61.0,0,0.18,0.0,4.48,11.0,1.375,Survived One Year,
+61.0,1,0.19,13.2,5.04,19.0,1.73,Survived One Year,
+48.0,0,0.15,12.0,3.66,10.0,1.0,Survived One Year,
+,0,0.09,6.8,4.96,13.0,1.08,Survived One Year,Survived One Year
+61.0,0,0.14,25.5,5.16,14.0,1.27,Survived One Year,Survived One Year
+64.0,0,0.28,5.4,5.47,11.0,1.1,Survived One Year,
+69.0,0,0.2,7.0,5.05,14.5,1.21,Survived One Year,Died Before One Year
+57.0,0,0.14,16.1,4.36,15.0,1.36,Survived One Year,
+62.0,0,0.15,0.0,4.51,15.5,1.409,Survived One Year,

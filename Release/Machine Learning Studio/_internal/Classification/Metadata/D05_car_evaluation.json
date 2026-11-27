@@ -1,0 +1,412 @@
+{
+    "id": "D05",
+    "name": "Car Evaluation",
+    "title": "Car Evaluation (D05)",
+    "level": "Beginner",
+    "domain": "Automobile",
+    "task": "Classification",
+    "description": "Predict the acceptability of a car (unacc, acc, good, vgood) from six categorical attributes: buying price, maintenance cost, number of doors, passenger capacity, luggage boot size and safety.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 1728,
+        "columns": 7,
+        "column_names": [
+            "Buying Price",
+            "Maintenance",
+            "Doors",
+            "Persons",
+            "Luggage Boot",
+            "Safety",
+            "Acceptability"
+        ],
+        "data_types": {
+            "Buying Price": "str",
+            "Maintenance": "str",
+            "Doors": "str",
+            "Persons": "str",
+            "Luggage Boot": "str",
+            "Safety": "str",
+            "Acceptability": "str"
+        },
+        "missing_values": {
+            "Buying Price": 0,
+            "Maintenance": 0,
+            "Doors": 0,
+            "Persons": 0,
+            "Luggage Boot": 0,
+            "Safety": 0,
+            "Acceptability": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 0,
+        "category_counts": {
+            "Buying Price": {
+                "low": 432,
+                "med": 432,
+                "high": 432,
+                "vhigh": 432
+            },
+            "Maintenance": {
+                "low": 432,
+                "med": 432,
+                "high": 432,
+                "vhigh": 432
+            },
+            "Doors": {
+                "2": 432,
+                "3": 432,
+                "4": 432,
+                "5more": 432
+            },
+            "Persons": {
+                "2": 576,
+                "4": 576,
+                "more": 576
+            },
+            "Luggage Boot": {
+                "small": 576,
+                "med": 576,
+                "big": 576
+            },
+            "Safety": {
+                "low": 576,
+                "med": 576,
+                "high": 576
+            }
+        },
+        "class_distribution": {
+            "unacc": 1210,
+            "acc": 384,
+            "good": 69,
+            "vgood": 65
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Buying Price",
+            "Maintenance",
+            "Doors",
+            "Persons",
+            "Luggage Boot",
+            "Safety"
+        ],
+        "target_column": "Acceptability",
+        "feature_categories": {
+            "Buying Price": [
+                "low",
+                "med",
+                "high",
+                "vhigh"
+            ],
+            "Maintenance": [
+                "low",
+                "med",
+                "high",
+                "vhigh"
+            ],
+            "Doors": [
+                "2",
+                "3",
+                "4",
+                "5more"
+            ],
+            "Persons": [
+                "2",
+                "4",
+                "more"
+            ],
+            "Luggage Boot": [
+                "small",
+                "med",
+                "big"
+            ],
+            "Safety": [
+                "low",
+                "med",
+                "high"
+            ]
+        },
+        "original_column_names": {
+            "Buying Price": "buying",
+            "Maintenance": "maint",
+            "Doors": "doors",
+            "Persons": "persons",
+            "Luggage Boot": "lug_boot",
+            "Safety": "safety",
+            "Acceptability": "class"
+        },
+        "class_labels": [
+            "unacc",
+            "acc",
+            "good",
+            "vgood"
+        ],
+        "class_encoding": {
+            "unacc": 0,
+            "acc": 1,
+            "good": 2,
+            "vgood": 3
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [],
+        "categorical_features": [
+            "Buying Price",
+            "Maintenance",
+            "Doors",
+            "Persons",
+            "Luggage Boot",
+            "Safety"
+        ],
+        "categorical_method": "Most Frequent Imputation + OneHotEncoder",
+        "target_method": "Ordered label encoding (unacc=0, acc=1, good=2, vgood=3)",
+        "class_imbalance_handling": "Stratified split and class_weight='balanced' for Logistic, Decision Tree, Random Forest and SVM"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 1382,
+        "test_rows": 346,
+        "metrics": [
+            "Accuracy",
+            "F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over the four acceptability classes. F1 Macro is also stored because the classes are imbalanced.",
+        "results": [
+            {
+                "Model": "SVM",
+                "Accuracy": 0.99711,
+                "Accuracy Percentage": 99.710983,
+                "F1": 0.99711,
+                "F1 Percentage": 99.710983,
+                "F1 Macro": 0.981481
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.962428,
+                "Accuracy Percentage": 96.242775,
+                "F1": 0.960919,
+                "F1 Percentage": 96.091931,
+                "F1 Macro": 0.870548
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.959538,
+                "Accuracy Percentage": 95.953757,
+                "F1": 0.959781,
+                "F1 Percentage": 95.978105,
+                "F1 Macro": 0.901418
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.855491,
+                "Accuracy Percentage": 85.549133,
+                "F1": 0.86458,
+                "F1 Percentage": 86.457967,
+                "F1 Macro": 0.793487
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.855491,
+                "Accuracy Percentage": 85.549133,
+                "F1": 0.838818,
+                "F1 Percentage": 83.881785,
+                "F1 Macro": 0.613144
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.774566,
+                "Accuracy Percentage": 77.456647,
+                "F1": 0.793418,
+                "F1 Percentage": 79.341811,
+                "F1 Macro": 0.727795
+            }
+        ],
+        "recommended_model": "SVM",
+        "selection_rule": "Highest test Accuracy (weighted F1 breaks ties)",
+        "best_model_per_class_report": {
+            "unacc": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 242
+            },
+            "acc": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 77
+            },
+            "good": {
+                "precision": 1.0,
+                "recall": 0.928571,
+                "f1": 0.962963,
+                "support": 14
+            },
+            "vgood": {
+                "precision": 0.928571,
+                "recall": 1.0,
+                "f1": 0.962963,
+                "support": 13
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "unacc",
+                "acc",
+                "good",
+                "vgood"
+            ],
+            "matrix": [
+                [
+                    242,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    77,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    13,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    13
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Buying Price": {
+            "Buying Price": 1.0,
+            "Maintenance": -0.0,
+            "Doors": -3.433467502e-17,
+            "Persons": -1.530088864e-16,
+            "Luggage Boot": -1.045865709e-16,
+            "Safety": -4.082113805e-16,
+            "Acceptability (encoded)": -0.2827504044
+        },
+        "Maintenance": {
+            "Buying Price": -0.0,
+            "Maintenance": 1.0,
+            "Doors": -2.547345051e-16,
+            "Persons": -4.265105114e-17,
+            "Luggage Boot": 8.544286482e-17,
+            "Safety": -7.826397503e-17,
+            "Acceptability (encoded)": -0.2324215314
+        },
+        "Doors": {
+            "Buying Price": -3.433467502e-17,
+            "Maintenance": -2.547345051e-16,
+            "Doors": 1.0,
+            "Persons": 1.956599376e-17,
+            "Luggage Boot": -2.674488355e-18,
+            "Safety": 3.406453589e-17,
+            "Acceptability (encoded)": 0.0660566458
+        },
+        "Persons": {
+            "Buying Price": -1.530088864e-16,
+            "Maintenance": -4.265105114e-17,
+            "Doors": 1.956599376e-17,
+            "Persons": 1.0,
+            "Luggage Boot": -9.251858539e-18,
+            "Safety": 1.137207612e-17,
+            "Acceptability (encoded)": 0.3417067524
+        },
+        "Luggage Boot": {
+            "Buying Price": -1.045865709e-16,
+            "Maintenance": 8.544286482e-17,
+            "Doors": -2.674488355e-18,
+            "Persons": -9.251858539e-18,
+            "Luggage Boot": 1.0,
+            "Safety": 1.927470529e-18,
+            "Acceptability (encoded)": 0.1579316923
+        },
+        "Safety": {
+            "Buying Price": -4.082113805e-16,
+            "Maintenance": -7.826397503e-17,
+            "Doors": 3.406453589e-17,
+            "Persons": 1.137207612e-17,
+            "Luggage Boot": 1.927470529e-18,
+            "Safety": 1.0,
+            "Acceptability (encoded)": 0.4393372531
+        },
+        "Acceptability (encoded)": {
+            "Buying Price": -0.2827504044,
+            "Maintenance": -0.2324215314,
+            "Doors": 0.0660566458,
+            "Persons": 0.3417067524,
+            "Luggage Boot": 0.1579316923,
+            "Safety": 0.4393372531,
+            "Acceptability (encoded)": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance (summed over one-hot columns)",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Safety",
+                "Importance": 0.247451
+            },
+            {
+                "Feature": "Buying Price",
+                "Importance": 0.20372
+            },
+            {
+                "Feature": "Maintenance",
+                "Importance": 0.180465
+            },
+            {
+                "Feature": "Luggage Boot",
+                "Importance": 0.156622
+            },
+            {
+                "Feature": "Persons",
+                "Importance": 0.137872
+            },
+            {
+                "Feature": "Doors",
+                "Importance": 0.073871
+            }
+        ],
+        "most_influential_feature": "Safety"
+    },
+    "charts": [
+        "Class Distribution",
+        "Acceptability Share by Feature Value",
+        "PCA Projection of Samples",
+        "Correlation Heatmap (Ordered Categories)",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Car Evaluation (D05)",
+        "category": "Automobile",
+        "task": "Classification",
+        "level": "Beginner",
+        "rows": 1728,
+        "columns": 7
+    },
+    "output_files": {
+        "original_dataset": "DataSets/car.data",
+        "processed_dataset": "DataSets/Processed/car_evaluation_classification_results.csv",
+        "metrics": "DataSets/Processed/car_evaluation_metrics.csv",
+        "feature_importance": "DataSets/Processed/car_evaluation_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/car_evaluation_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/car_evaluation_feature_columns.joblib",
+        "metadata": "Metadata/D05_car_evaluation.json"
+    },
+    "run_timestamp": "2026-11-27 07:03:11"
+}
