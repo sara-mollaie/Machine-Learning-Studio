@@ -1,0 +1,294 @@
+{
+    "id": "D29",
+    "name": "Banknote Authentication",
+    "title": "Banknote Authentication (D29)",
+    "level": "Advanced",
+    "domain": "Banking/Finance",
+    "task": "Classification",
+    "description": "Classify banknote-like specimens using four image-derived wavelet features.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 1372,
+        "columns": 5,
+        "column_names": [
+            "Variance",
+            "Skewness",
+            "Curtosis",
+            "Entropy",
+            "Class"
+        ],
+        "data_types": {
+            "Variance": "float64",
+            "Skewness": "float64",
+            "Curtosis": "float64",
+            "Entropy": "float64",
+            "Class": "str"
+        },
+        "missing_values": {
+            "Variance": 0,
+            "Skewness": 0,
+            "Curtosis": 0,
+            "Entropy": 0,
+            "Class": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 24,
+        "descriptive_statistics": {
+            "Variance": {
+                "count": 1372.0,
+                "mean": 0.43373525707,
+                "std": 2.842762586279,
+                "min": -7.0421,
+                "25%": -1.773,
+                "50%": 0.49618,
+                "75%": 2.821475,
+                "max": 6.8248
+            },
+            "Skewness": {
+                "count": 1372.0,
+                "mean": 1.922353120639,
+                "std": 5.869046743696,
+                "min": -13.7731,
+                "25%": -1.7082,
+                "50%": 2.31965,
+                "75%": 6.814625,
+                "max": 12.9516
+            },
+            "Curtosis": {
+                "count": 1372.0,
+                "mean": 1.397627117267,
+                "std": 4.310030090107,
+                "min": -5.2861,
+                "25%": -1.574975,
+                "50%": 0.61663,
+                "75%": 3.17925,
+                "max": 17.9274
+            },
+            "Entropy": {
+                "count": 1372.0,
+                "mean": -1.191656520044,
+                "std": 2.10101313736,
+                "min": -8.5482,
+                "25%": -2.41345,
+                "50%": -0.58665,
+                "75%": 0.39481,
+                "max": 2.4495
+            }
+        },
+        "class_distribution": {
+            "Genuine": 762,
+            "Forged": 610
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Variance",
+            "Skewness",
+            "Curtosis",
+            "Entropy"
+        ],
+        "target_column": "Class",
+        "feature_description": "Four numeric attributes: variance, skewness, curtosis and entropy.",
+        "class_labels": [
+            "Genuine",
+            "Forged"
+        ],
+        "class_descriptions": {
+            "Genuine": "Class 0",
+            "Forged": "Class 1"
+        },
+        "class_encoding": {
+            "Genuine": 0,
+            "Forged": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Variance",
+            "Skewness",
+            "Curtosis",
+            "Entropy"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Original class codes 0 and 1 mapped to Genuine and Forged"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 1097,
+        "test_rows": 275,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over two banknote classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "KNN",
+                "Accuracy": 1.0,
+                "Accuracy Percentage": 100.0,
+                "F1": 1.0,
+                "F1 Percentage": 100.0,
+                "F1 Macro": 1.0,
+                "CV Macro F1": 0.998162
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 1.0,
+                "Accuracy Percentage": 100.0,
+                "F1": 1.0,
+                "F1 Percentage": 100.0,
+                "F1 Macro": 1.0,
+                "CV Macro F1": 1.0
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.996364,
+                "Accuracy Percentage": 99.636364,
+                "F1": 0.996365,
+                "F1 Percentage": 99.63651,
+                "F1 Macro": 0.99632,
+                "CV Macro F1": 0.994473
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.985455,
+                "Accuracy Percentage": 98.545455,
+                "F1": 0.985476,
+                "F1 Percentage": 98.547552,
+                "F1 Macro": 0.985313,
+                "CV Macro F1": 0.97884
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.970909,
+                "Accuracy Percentage": 97.090909,
+                "F1": 0.97098,
+                "F1 Percentage": 97.098037,
+                "F1 Macro": 0.970704,
+                "CV Macro F1": 0.984363
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.858182,
+                "Accuracy Percentage": 85.818182,
+                "F1": 0.857988,
+                "F1 Percentage": 85.798757,
+                "F1 Macro": 0.85598,
+                "CV Macro F1": 0.837939
+            }
+        ],
+        "recommended_model": "KNN",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "Genuine": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 153
+            },
+            "Forged": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1": 1.0,
+                "support": 122
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "Genuine",
+                "Forged"
+            ],
+            "matrix": [
+                [
+                    153,
+                    0
+                ],
+                [
+                    0,
+                    122
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Variance": {
+            "Variance": 1.0,
+            "Skewness": 0.26402553,
+            "Curtosis": -0.380849972,
+            "Entropy": 0.276816696
+        },
+        "Skewness": {
+            "Variance": 0.26402553,
+            "Skewness": 1.0,
+            "Curtosis": -0.7868952243,
+            "Entropy": -0.5263208425
+        },
+        "Curtosis": {
+            "Variance": -0.380849972,
+            "Skewness": -0.7868952243,
+            "Curtosis": 1.0,
+            "Entropy": 0.3188408877
+        },
+        "Entropy": {
+            "Variance": 0.276816696,
+            "Skewness": -0.5263208425,
+            "Curtosis": 0.3188408877,
+            "Entropy": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Variance",
+                "Importance": 0.570387
+            },
+            {
+                "Feature": "Skewness",
+                "Importance": 0.234792
+            },
+            {
+                "Feature": "Curtosis",
+                "Importance": 0.143971
+            },
+            {
+                "Feature": "Entropy",
+                "Importance": 0.050849
+            }
+        ],
+        "most_influential_feature": "Variance"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Banknote Authentication (D29)",
+        "category": "Banking/Finance",
+        "task": "Classification",
+        "level": "Advanced",
+        "rows": 1372,
+        "columns": 5
+    },
+    "output_files": {
+        "original_dataset": "DataSets/data_banknote_authentication.txt",
+        "processed_dataset": "DataSets/Processed/banknote_authentication_classification_results.csv",
+        "metrics": "DataSets/Processed/banknote_authentication_metrics.csv",
+        "feature_importance": "DataSets/Processed/banknote_authentication_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/banknote_authentication_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/banknote_authentication_feature_columns.joblib",
+        "metadata": "Metadata/D29_banknote_authentication.json"
+    },
+    "run_timestamp": "2026-11-27 05:53:11"
+}

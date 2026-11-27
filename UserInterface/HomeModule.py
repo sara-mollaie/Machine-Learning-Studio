@@ -243,7 +243,7 @@ class HomeModule(tk.Canvas):
 
     def _cards(self):
         c = theme.c
-        cards = [("feature_dataset", 137, "32", "Datasets", 208, 40),
+        cards = [("feature_dataset", 137, "31", "Datasets", 208, 40),
                  ("feature_algorithms", 510, "3", "Algorithms", 584, 40),
                  ("feature_analytics", 871, "Train & Evaluate", "Build and compare models", 938, 28),
                  ("feature_prediction", 1293, "Real Projects", "Apply ML to real-world data", 1361, 28)]

@@ -1,0 +1,323 @@
+{
+    "id": "D24",
+    "name": "Occupancy Detection",
+    "title": "Occupancy Detection (D24)",
+    "level": "Intermediate",
+    "domain": "Energy/Buildings",
+    "task": "Classification",
+    "description": "Detect room occupancy from five environmental sensor measurements.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 9752,
+        "columns": 7,
+        "column_names": [
+            "Date",
+            "Temperature",
+            "Humidity",
+            "Light",
+            "CO2",
+            "Humidity Ratio",
+            "Occupancy"
+        ],
+        "data_types": {
+            "Date": "str",
+            "Temperature": "float64",
+            "Humidity": "float64",
+            "Light": "float64",
+            "CO2": "float64",
+            "Humidity Ratio": "float64",
+            "Occupancy": "int64"
+        },
+        "missing_values": {
+            "Date": 0,
+            "Temperature": 0,
+            "Humidity": 0,
+            "Light": 0,
+            "CO2": 0,
+            "Humidity Ratio": 0,
+            "Occupancy": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 27,
+        "descriptive_statistics": {
+            "Temperature": {
+                "count": 9752.0,
+                "mean": 21.00176844066,
+                "std": 1.020693215021,
+                "min": 19.5,
+                "25%": 20.29,
+                "50%": 20.79,
+                "75%": 21.53333333,
+                "max": 24.39
+            },
+            "Humidity": {
+                "count": 9752.0,
+                "mean": 29.891910206469,
+                "std": 3.952843806912,
+                "min": 21.865,
+                "25%": 26.6420833325,
+                "50%": 30.2,
+                "75%": 32.7,
+                "max": 39.5
+            },
+            "Light": {
+                "count": 9752.0,
+                "mean": 123.067929655418,
+                "std": 208.221275117141,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 208.25,
+                "max": 1581.0
+            },
+            "CO2": {
+                "count": 9752.0,
+                "mean": 753.224831658183,
+                "std": 297.096113611423,
+                "min": 484.6666667,
+                "25%": 542.312499975,
+                "50%": 639.0,
+                "75%": 831.125,
+                "max": 2076.5
+            },
+            "Humidity Ratio": {
+                "count": 9752.0,
+                "mean": 0.004588778039,
+                "std": 0.000530984621,
+                "min": 0.003274764,
+                "25%": 0.00419630675,
+                "50%": 0.0045933095,
+                "75%": 0.004997966,
+                "max": 0.005768608
+            }
+        },
+        "class_distribution": {
+            "0": 7703,
+            "1": 2049
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Temperature",
+            "Humidity",
+            "Light",
+            "CO2",
+            "Humidity Ratio"
+        ],
+        "target_column": "Occupancy",
+        "feature_description": "Five numeric sensor attributes; Date is retained but excluded from training.",
+        "class_labels": [
+            0,
+            1
+        ],
+        "class_descriptions": {
+            "0": "Not Occupied",
+            "1": "Occupied"
+        },
+        "class_encoding": {
+            "0": 0,
+            "1": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Temperature",
+            "Humidity",
+            "Light",
+            "CO2",
+            "Humidity Ratio"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Occupancy labels 0 and 1"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 7801,
+        "test_rows": 1951,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over two occupancy classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "KNN",
+                "Accuracy": 0.9959,
+                "Accuracy Percentage": 99.589954,
+                "F1": 0.995907,
+                "F1 Percentage": 99.590683,
+                "F1 Macro": 0.993846
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.994874,
+                "Accuracy Percentage": 99.487442,
+                "F1": 0.994888,
+                "F1 Percentage": 99.488804,
+                "F1 Macro": 0.992321
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.993337,
+                "Accuracy Percentage": 99.333675,
+                "F1": 0.993363,
+                "F1 Percentage": 99.336316,
+                "F1 Macro": 0.990044
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.993337,
+                "Accuracy Percentage": 99.333675,
+                "F1": 0.993357,
+                "F1 Percentage": 99.335737,
+                "F1 Macro": 0.990026
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.991799,
+                "Accuracy Percentage": 99.179908,
+                "F1": 0.991842,
+                "F1 Percentage": 99.184219,
+                "F1 Macro": 0.987779
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.960533,
+                "Accuracy Percentage": 96.053306,
+                "F1": 0.961721,
+                "F1 Percentage": 96.172136,
+                "F1 Macro": 0.944267
+            }
+        ],
+        "recommended_model": "KNN",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "0": {
+                "precision": 0.998699,
+                "recall": 0.996106,
+                "f1": 0.997401,
+                "support": 1541
+            },
+            "1": {
+                "precision": 0.985507,
+                "recall": 0.995122,
+                "f1": 0.990291,
+                "support": 410
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                0,
+                1
+            ],
+            "matrix": [
+                [
+                    1535,
+                    6
+                ],
+                [
+                    2,
+                    408
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Temperature": {
+            "Temperature": 1.0,
+            "Humidity": -0.4729214146,
+            "Light": 0.7055381712,
+            "CO2": 0.1996455298,
+            "Humidity Ratio": -0.010407186
+        },
+        "Humidity": {
+            "Temperature": -0.4729214146,
+            "Humidity": 1.0,
+            "Light": -0.1874770697,
+            "CO2": -0.0792236151,
+            "Humidity Ratio": 0.884103584
+        },
+        "Light": {
+            "Temperature": 0.7055381712,
+            "Humidity": -0.1874770697,
+            "Light": 1.0,
+            "CO2": 0.1902125882,
+            "Humidity Ratio": 0.1626807533
+        },
+        "CO2": {
+            "Temperature": 0.1996455298,
+            "Humidity": -0.0792236151,
+            "Light": 0.1902125882,
+            "CO2": 1.0,
+            "Humidity Ratio": 0.0431971969
+        },
+        "Humidity Ratio": {
+            "Temperature": -0.010407186,
+            "Humidity": 0.884103584,
+            "Light": 0.1626807533,
+            "CO2": 0.0431971969,
+            "Humidity Ratio": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Light",
+                "Importance": 0.660739
+            },
+            {
+                "Feature": "Temperature",
+                "Importance": 0.234462
+            },
+            {
+                "Feature": "CO2",
+                "Importance": 0.065772
+            },
+            {
+                "Feature": "Humidity",
+                "Importance": 0.024021
+            },
+            {
+                "Feature": "Humidity Ratio",
+                "Importance": 0.015006
+            }
+        ],
+        "most_influential_feature": "Light"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Occupancy Detection (D24)",
+        "category": "Energy/Buildings",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 9752,
+        "columns": 7
+    },
+    "output_files": {
+        "original_dataset": "DataSets/datatest2.csv",
+        "original_datasets": [
+            "DataSets/datatest2.csv"
+        ],
+        "processed_dataset": "DataSets/Processed/occupancy_detection_classification_results.csv",
+        "metrics": "DataSets/Processed/occupancy_detection_metrics.csv",
+        "feature_importance": "DataSets/Processed/occupancy_detection_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/occupancy_detection_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/occupancy_detection_feature_columns.joblib",
+        "metadata": "Metadata/D24_occupancy_detection.json"
+    },
+    "run_timestamp": "2026-11-27 04:44:02"
+}

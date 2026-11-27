@@ -1,7 +1,7 @@
 {
-    "id": "D03",
+    "id": "D05",
     "name": "Car Evaluation",
-    "title": "Car Evaluation (D03)",
+    "title": "Car Evaluation (D05)",
     "level": "Beginner",
     "domain": "Automobile",
     "task": "Classification",
@@ -327,7 +327,7 @@
     ],
     "model_verification": true,
     "ui_card": {
-        "title": "Car Evaluation (D03)",
+        "title": "Car Evaluation (D05)",
         "category": "Automobile",
         "task": "Classification",
         "level": "Beginner",
@@ -341,7 +341,7 @@
         "feature_importance": "DataSets/Processed/car_evaluation_feature_importance.csv",
         "models_bundle": "ModelsOutcome/car_evaluation_classification_models.joblib",
         "feature_columns": "ModelsOutcome/car_evaluation_feature_columns.joblib",
-        "metadata": "Metadata/D03_car_evaluation.json"
+        "metadata": "Metadata/D05_car_evaluation.json"
     },
-    "run_timestamp": "2026-11-26 23:56:14"
+    "run_timestamp": "2026-11-27 04:18:55"
 }

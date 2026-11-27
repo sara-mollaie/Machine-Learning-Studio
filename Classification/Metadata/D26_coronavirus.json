@@ -1,0 +1,506 @@
+{
+    "id": "D26",
+    "name": "Coronavirus",
+    "title": "Coronavirus (D26)",
+    "level": "Intermediate",
+    "domain": "Health Sciences",
+    "task": "Classification",
+    "description": "Predict whether new confirmed cases increase tomorrow compared with today.",
+    "source": "Kaggle / Johns Hopkins University",
+    "dataset_statistics": {
+        "rows": 1642,
+        "columns": 13,
+        "column_names": [
+            "Date",
+            "Country/Region",
+            "Confirmed",
+            "Deaths",
+            "Recovered",
+            "Active Cases",
+            "New Confirmed",
+            "New Deaths",
+            "New Recovered",
+            "Mortality Rate",
+            "Recovery Rate",
+            "Daily Growth Rate",
+            "Trend"
+        ],
+        "data_types": {
+            "Date": "datetime64[us]",
+            "Country/Region": "str",
+            "Confirmed": "float64",
+            "Deaths": "float64",
+            "Recovered": "float64",
+            "Active Cases": "float64",
+            "New Confirmed": "float64",
+            "New Deaths": "float64",
+            "New Recovered": "float64",
+            "Mortality Rate": "float64",
+            "Recovery Rate": "float64",
+            "Daily Growth Rate": "float64",
+            "Trend": "int64"
+        },
+        "missing_values": {
+            "Date": 0,
+            "Country/Region": 0,
+            "Confirmed": 0,
+            "Deaths": 0,
+            "Recovered": 0,
+            "Active Cases": 0,
+            "New Confirmed": 0,
+            "New Deaths": 0,
+            "New Recovered": 0,
+            "Mortality Rate": 0,
+            "Recovery Rate": 0,
+            "Daily Growth Rate": 2,
+            "Trend": 0
+        },
+        "total_missing_values": 2,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Confirmed": {
+                "count": 1642.0,
+                "mean": 1450.613276492083,
+                "std": 9529.757746093363,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 8.0,
+                "75%": 25.0,
+                "max": 80652.0
+            },
+            "Deaths": {
+                "count": 1642.0,
+                "mean": 43.014007308161,
+                "std": 306.950695123742,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 3070.0
+            },
+            "Recovered": {
+                "count": 1642.0,
+                "mean": 449.056029232643,
+                "std": 3970.737533037635,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 1.0,
+                "75%": 4.0,
+                "max": 55478.0
+            },
+            "Active Cases": {
+                "count": 1642.0,
+                "mean": 958.543239951279,
+                "std": 6069.503778754138,
+                "min": 0.0,
+                "25%": 1.0,
+                "50%": 6.0,
+                "75%": 20.0,
+                "max": 58046.0
+            },
+            "New Confirmed": {
+                "count": 1642.0,
+                "mean": 63.99634591961,
+                "std": 510.290174453576,
+                "min": -20.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 2.0,
+                "max": 15133.0
+            },
+            "New Deaths": {
+                "count": 1642.0,
+                "mean": 2.155298416565,
+                "std": 14.49640941704,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 252.0
+            },
+            "New Recovered": {
+                "count": 1642.0,
+                "mean": 35.524360535932,
+                "std": 273.902707526743,
+                "min": -1.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 3994.0
+            },
+            "Mortality Rate": {
+                "count": 1642.0,
+                "mean": 1.266335080717,
+                "std": 5.42878685153,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 50.0
+            },
+            "Recovery Rate": {
+                "count": 1642.0,
+                "mean": 21.193053993666,
+                "std": 32.830144524146,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.909166046781,
+                "75%": 31.229707792208,
+                "max": 100.0
+            },
+            "Daily Growth Rate": {
+                "count": 1640.0,
+                "mean": 22.318407764592,
+                "std": 81.991143382385,
+                "min": -50.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 15.789473684211,
+                "max": 2200.0
+            }
+        },
+        "class_distribution": {
+            "0": 1153,
+            "1": 489
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Confirmed",
+            "Deaths",
+            "Recovered",
+            "Active Cases",
+            "New Confirmed",
+            "New Deaths",
+            "New Recovered",
+            "Mortality Rate",
+            "Recovery Rate",
+            "Daily Growth Rate"
+        ],
+        "target_column": "Trend",
+        "feature_description": "Ten numeric epidemiological features; date and country excluded from training.",
+        "class_labels": [
+            0,
+            1
+        ],
+        "class_descriptions": {
+            "0": "Stable / Decreasing",
+            "1": "Increasing"
+        },
+        "class_encoding": {
+            "0": 0,
+            "1": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Confirmed",
+            "Deaths",
+            "Recovered",
+            "Active Cases",
+            "New Confirmed",
+            "New Deaths",
+            "New Recovered",
+            "Mortality Rate",
+            "Recovery Rate",
+            "Daily Growth Rate"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Next-day increase labels 0 and 1"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Chronological date split with one-day purge",
+        "train_rows": 921,
+        "test_rows": 672,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over two trend classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.64881,
+                "Accuracy Percentage": 64.880952,
+                "F1": 0.646963,
+                "F1 Percentage": 64.696282,
+                "F1 Macro": 0.627704
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.639881,
+                "Accuracy Percentage": 63.988095,
+                "F1": 0.643004,
+                "F1 Percentage": 64.300443,
+                "F1 Macro": 0.629592
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.608631,
+                "Accuracy Percentage": 60.863095,
+                "F1": 0.460555,
+                "F1 Percentage": 46.055515,
+                "F1 Macro": 0.378353
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.604167,
+                "Accuracy Percentage": 60.416667,
+                "F1": 0.466242,
+                "F1 Percentage": 46.624186,
+                "F1 Macro": 0.386962
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.504464,
+                "Accuracy Percentage": 50.446429,
+                "F1": 0.503948,
+                "F1 Percentage": 50.394842,
+                "F1 Macro": 0.478843
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.46131,
+                "Accuracy Percentage": 46.130952,
+                "F1": 0.434691,
+                "F1 Percentage": 43.469108,
+                "F1 Macro": 0.45102
+            }
+        ],
+        "recommended_model": "Random Forest",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "0": {
+                "precision": 0.704492,
+                "recall": 0.728606,
+                "f1": 0.716346,
+                "support": 409
+            },
+            "1": {
+                "precision": 0.554217,
+                "recall": 0.524715,
+                "f1": 0.539062,
+                "support": 263
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                0,
+                1
+            ],
+            "matrix": [
+                [
+                    298,
+                    111
+                ],
+                [
+                    125,
+                    138
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Confirmed": {
+            "Confirmed": 1.0,
+            "Deaths": 0.9855801651,
+            "Recovered": 0.876923569,
+            "Active Cases": 0.9465683044,
+            "New Confirmed": 0.4232205108,
+            "New Deaths": 0.7415572799,
+            "New Recovered": 0.9281593451,
+            "Mortality Rate": 0.0476648095,
+            "Recovery Rate": 0.0452955232,
+            "Daily Growth Rate": -0.0311952466
+        },
+        "Deaths": {
+            "Confirmed": 0.9855801651,
+            "Deaths": 1.0,
+            "Recovered": 0.9408509097,
+            "Active Cases": 0.8813764176,
+            "New Confirmed": 0.3194933401,
+            "New Deaths": 0.6539707466,
+            "New Recovered": 0.9447808186,
+            "Mortality Rate": 0.0497554027,
+            "Recovery Rate": 0.0605054087,
+            "Daily Growth Rate": -0.0309197233
+        },
+        "Recovered": {
+            "Confirmed": 0.876923569,
+            "Deaths": 0.9408509097,
+            "Recovered": 1.0,
+            "Active Cases": 0.6750694867,
+            "New Confirmed": 0.1368074393,
+            "New Deaths": 0.4318157633,
+            "New Recovered": 0.8835368914,
+            "Mortality Rate": 0.0442042265,
+            "Recovery Rate": 0.0838613992,
+            "Daily Growth Rate": -0.0285640858
+        },
+        "Active Cases": {
+            "Confirmed": 0.9465683044,
+            "Deaths": 0.8813764176,
+            "Recovered": 0.6750694867,
+            "Active Cases": 1.0,
+            "New Confirmed": 0.5588420286,
+            "New Deaths": 0.8487509995,
+            "New Recovered": 0.8315077587,
+            "Mortality Rate": 0.0434035895,
+            "Recovery Rate": 0.0131957377,
+            "Daily Growth Rate": -0.0287290825
+        },
+        "New Confirmed": {
+            "Confirmed": 0.4232205108,
+            "Deaths": 0.3194933401,
+            "Recovered": 0.1368074393,
+            "Active Cases": 0.5588420286,
+            "New Confirmed": 1.0,
+            "New Deaths": 0.783515461,
+            "New Recovered": 0.3050003626,
+            "Mortality Rate": 0.0239434732,
+            "Recovery Rate": -0.0435615839,
+            "Daily Growth Rate": 0.0048598312
+        },
+        "New Deaths": {
+            "Confirmed": 0.7415572799,
+            "Deaths": 0.6539707466,
+            "Recovered": 0.4318157633,
+            "Active Cases": 0.8487509995,
+            "New Confirmed": 0.783515461,
+            "New Deaths": 1.0,
+            "New Recovered": 0.6761354802,
+            "Mortality Rate": 0.0441102899,
+            "Recovery Rate": -0.0138911238,
+            "Daily Growth Rate": -0.0142703942
+        },
+        "New Recovered": {
+            "Confirmed": 0.9281593451,
+            "Deaths": 0.9447808186,
+            "Recovered": 0.8835368914,
+            "Active Cases": 0.8315077587,
+            "New Confirmed": 0.3050003626,
+            "New Deaths": 0.6761354802,
+            "New Recovered": 1.0,
+            "Mortality Rate": 0.0459012856,
+            "Recovery Rate": 0.0600568422,
+            "Daily Growth Rate": -0.0291923942
+        },
+        "Mortality Rate": {
+            "Confirmed": 0.0476648095,
+            "Deaths": 0.0497554027,
+            "Recovered": 0.0442042265,
+            "Active Cases": 0.0434035895,
+            "New Confirmed": 0.0239434732,
+            "New Deaths": 0.0441102899,
+            "New Recovered": 0.0459012856,
+            "Mortality Rate": 1.0,
+            "Recovery Rate": -0.0119936428,
+            "Daily Growth Rate": -0.0076907748
+        },
+        "Recovery Rate": {
+            "Confirmed": 0.0452955232,
+            "Deaths": 0.0605054087,
+            "Recovered": 0.0838613992,
+            "Active Cases": 0.0131957377,
+            "New Confirmed": -0.0435615839,
+            "New Deaths": -0.0138911238,
+            "New Recovered": 0.0600568422,
+            "Mortality Rate": -0.0119936428,
+            "Recovery Rate": 1.0,
+            "Daily Growth Rate": -0.1344310636
+        },
+        "Daily Growth Rate": {
+            "Confirmed": -0.0311952466,
+            "Deaths": -0.0309197233,
+            "Recovered": -0.0285640858,
+            "Active Cases": -0.0287290825,
+            "New Confirmed": 0.0048598312,
+            "New Deaths": -0.0142703942,
+            "New Recovered": -0.0291923942,
+            "Mortality Rate": -0.0076907748,
+            "Recovery Rate": -0.1344310636,
+            "Daily Growth Rate": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Active Cases",
+                "Importance": 0.22011
+            },
+            {
+                "Feature": "Confirmed",
+                "Importance": 0.196475
+            },
+            {
+                "Feature": "Recovery Rate",
+                "Importance": 0.145144
+            },
+            {
+                "Feature": "Daily Growth Rate",
+                "Importance": 0.109955
+            },
+            {
+                "Feature": "New Confirmed",
+                "Importance": 0.105313
+            },
+            {
+                "Feature": "Recovered",
+                "Importance": 0.079856
+            },
+            {
+                "Feature": "Mortality Rate",
+                "Importance": 0.04979
+            },
+            {
+                "Feature": "New Recovered",
+                "Importance": 0.043737
+            },
+            {
+                "Feature": "Deaths",
+                "Importance": 0.029787
+            },
+            {
+                "Feature": "New Deaths",
+                "Importance": 0.019833
+            }
+        ],
+        "most_influential_feature": "Active Cases"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Coronavirus (D26)",
+        "category": "Health Sciences",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 1642,
+        "columns": 13
+    },
+    "output_files": {
+        "original_dataset": "DataSets/covid_19_data.csv",
+        "original_datasets": [
+            "DataSets/covid_19_data.csv"
+        ],
+        "processed_dataset": "DataSets/Processed/coronavirus_classification_results.csv",
+        "metrics": "DataSets/Processed/coronavirus_metrics.csv",
+        "feature_importance": "DataSets/Processed/coronavirus_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/coronavirus_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/coronavirus_feature_columns.joblib",
+        "metadata": "Metadata/D26_coronavirus.json"
+    },
+    "run_timestamp": "2026-11-27 05:15:11"
+}

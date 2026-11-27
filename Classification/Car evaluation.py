@@ -30,7 +30,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 
 # ============================================================
-# Car Evaluation (D03) - Multi-class Classification
+# Car Evaluation (D05) - Multi-class Classification
 # Target = Acceptability (unacc, acc, good, vgood)
 # Six models are saved together in one JOBLIB file.
 # ============================================================
@@ -50,7 +50,7 @@ RANDOM_STATE = 42
 TEST_SIZE = 0.20
 SHOW_FIGURES = True
 
-DATASET_ID = "D03"
+DATASET_ID = "D05"
 DATASET_NAME = "Car Evaluation"
 TARGET = "Acceptability"
 
@@ -832,7 +832,7 @@ print("Models in bundle:", list(loaded_bundle["models"].keys()))
 
 
 # -----------------------------
-# Save one D03 metadata file
+# Save one D05 metadata file
 # -----------------------------
 
 metadata_folder = BASE_DIR / "Metadata"
@@ -875,7 +875,7 @@ per_class_metadata = {
 metadata = {
     "id": DATASET_ID,
     "name": DATASET_NAME,
-    "title": "Car Evaluation (D03)",
+    "title": "Car Evaluation (D05)",
     "level": "Beginner",
     "domain": "Automobile",
     "task": "Classification",
@@ -967,7 +967,7 @@ metadata = {
     ],
     "model_verification": model_verification,
     "ui_card": {
-        "title": "Car Evaluation (D03)",
+        "title": "Car Evaluation (D05)",
         "category": "Automobile",
         "task": "Classification",
         "level": "Beginner",
@@ -981,12 +981,12 @@ metadata = {
         "feature_importance": feature_importance_path.relative_to(BASE_DIR).as_posix(),
         "models_bundle": models_bundle_path.relative_to(BASE_DIR).as_posix(),
         "feature_columns": feature_columns_path.relative_to(BASE_DIR).as_posix(),
-        "metadata": "Metadata/D03_car_evaluation.json",
+        "metadata": "Metadata/D05_car_evaluation.json",
     },
     "run_timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 }
 
-metadata_path = metadata_folder / "D03_car_evaluation.json"
+metadata_path = metadata_folder / "D05_car_evaluation.json"
 with metadata_path.open("w", encoding="utf-8") as file:
     json.dump(metadata, file, ensure_ascii=False, indent=4, allow_nan=False)
 
@@ -1007,4 +1007,4 @@ print("Best F1:", round(float(best_metrics["F1 Percentage"]), 2), "%")
 print("Metadata:", metadata_path)
 print("Model bundle:", models_bundle_path)
 print("Model verification:", model_verification)
-print("\nOnly one dataset entry is generated: Car Evaluation (D03).")
+print("\nOnly one dataset entry is generated: Car Evaluation (D05).")

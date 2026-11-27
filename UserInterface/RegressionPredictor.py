@@ -15,6 +15,7 @@ from .RegressionData import RegressionData
 
 class RegressionPredictor(PredictorModule):
     PAGE_SIZE = 6
+    DATA_CLASS = RegressionData          # <-- CHANGE 1: subclasses (Classification) override this
 
     def __init__(self, master, scale=1.0, on_navigate=None):
         self.data = None
@@ -61,9 +62,41 @@ class RegressionPredictor(PredictorModule):
         self._date_years = {}
         self._date_months = {}
         try:
-            self.data = RegressionData(ds)
+            self.data = self.DATA_CLASS(ds)          # <-- CHANGE 2: was RegressionData(ds)
             self.meta = self.data.meta
             ranges, decimals = {}, {}
+            integer_features = set()
+            self._numeric_choices = {}
+            if self.DATA_CLASS is not RegressionData:
+                # Inspect actual processed values, not just integer min/max.
+                import pandas as pd
+                processed = self.meta.get('output_files', {}).get('processed_dataset')
+                if isinstance(processed, str):
+                    source = Path(ds.path).parent.parent / processed.replace('\\', '/')
+                    if source.is_file():
+                        try:
+                            frame = pd.read_csv(source, usecols=lambda c: c in self.data.features)
+                            for col in frame:
+                                raw = frame[col].dropna()
+                                nums = pd.to_numeric(raw, errors='coerce')
+                                if len(nums) and nums.notna().all() and all(math.isfinite(v) for v in nums):
+                                    unique = sorted(set(float(v) for v in nums))
+                                    if 2 <= len(unique) <= 10 and col.lower().strip() not in ('age', 'sitting hours', 'age at heart attack'):
+                                        self._numeric_choices[col] = unique
+                                if len(nums) and nums.notna().all() and all(
+                                    math.isfinite(v) and float(v).is_integer() for v in nums
+                                ):
+                                    integer_features.add(col)
+                        except (OSError, ValueError):
+                            pass
+                # Verified integer fields in Blood Transfusion, even without CSV.
+                if {'Recency', 'Frequency', 'Monetary', 'Time'} == set(self.data.features):
+                    integer_features.update(self.data.features)
+            if self.DATA_CLASS is not RegressionData:
+                for f in self.data.features:
+                    key = f.lower().strip().replace('_', ' ')
+                    if key == 'pericardial effusion':
+                        self._numeric_choices.setdefault(f, [0, 1])
             for f in self.data.features:
                 options = self.data.categories.get(f)
                 if f.lower() != 'x1 transaction date' and options is not None and len(options):
@@ -84,7 +117,16 @@ class RegressionPredictor(PredictorModule):
                     if f.lower() != 'x1 transaction date' and f in self.data.categorical:
                         raise ValueError('Unknown categories')
                     ranges[f] = (lo, hi)
-                    decimals[f] = 0 if f.lower() in ('weight','age','x4 number of convenience stores') or 'volume' in f.lower() else 4 if hi-lo < 1 else 3
+                    dataset_name = str(self.data.bundle.get('dataset_name', '')).strip().casefold()
+                    feature_name = f.lower().strip().replace('_', ' ')
+                    if 'fertility' in dataset_name and feature_name in ('age', 'sitting hours'):
+                        decimals[f] = 2
+                    elif 'echocardiogram' in dataset_name and feature_name == 'age at heart attack':
+                        decimals[f] = 0
+                    elif f in integer_features:
+                        decimals[f] = 0
+                    else:
+                        decimals[f] = 0 if f.lower() in ('weight','age','x4 number of convenience stores') or 'volume' in f.lower() else 4 if hi-lo < 1 else 3
                 except (KeyError, TypeError, ValueError):
                     ranges[f] = (0, 0)
                     self.manual.add(f)
@@ -140,6 +182,8 @@ class RegressionPredictor(PredictorModule):
         options = self.data.categories.get(f)
         if options is not None and len(options):
             return str(options[int(v)])
+        if f in getattr(self, '_numeric_choices', {}):
+            return format(float(v), 'g')
         if f in self.manual or self._kind(f) != 'slider':
             return str(v)
         return super()._fmt_feat(f, v)
@@ -148,6 +192,9 @@ class RegressionPredictor(PredictorModule):
         options = self.data.categories.get(f)
         if options is not None and len(options):
             return [(str(v), i) for i, v in enumerate(options)]
+        numeric = getattr(self, '_numeric_choices', {}).get(f)
+        if numeric and f not in self.manual:
+            return [(format(v, 'g'), v) for v in numeric]
         st = self.data.stats.get(f, {})
         key = f.lower().strip()
         try:
@@ -257,6 +304,8 @@ class RegressionPredictor(PredictorModule):
         if count>1:
             y = PY+420
             for label,x,delta in [('Previous',x0,-1),('Next',x0+inner-60,1)]:
+                if (delta == -1 and self.feature_page == 0) or (delta == 1 and self.feature_page == count - 1):
+                    continue
                 tag = 'feature_page_'+str(delta)
                 self.text(x,y,label,15,c('accent'),True,tags=(tag,))
                 self.hover(tag)
@@ -550,3 +599,4 @@ class RegressionPredictor(PredictorModule):
         line([(left,610),(right,610)],'#795184',1)
         txt(left,632,'Learning Type',18,True)
         txt(right,632,'Supervised Learning',17,True,muted,'e')
+

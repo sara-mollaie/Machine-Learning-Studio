@@ -1,0 +1,548 @@
+{
+    "id": "D18",
+    "name": "Glass Identification",
+    "title": "Glass Identification (D18)",
+    "level": "Intermediate",
+    "domain": "Physical",
+    "task": "Classification",
+    "description": "Predict glass type from refractive index and chemical composition.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 214,
+        "columns": 10,
+        "column_names": [
+            "RI",
+            "Na",
+            "Mg",
+            "Al",
+            "Si",
+            "K",
+            "Ca",
+            "Ba",
+            "Fe",
+            "Glass Type"
+        ],
+        "data_types": {
+            "RI": "float64",
+            "Na": "float64",
+            "Mg": "float64",
+            "Al": "float64",
+            "Si": "float64",
+            "K": "float64",
+            "Ca": "float64",
+            "Ba": "float64",
+            "Fe": "float64",
+            "Glass Type": "str"
+        },
+        "missing_values": {
+            "RI": 0,
+            "Na": 0,
+            "Mg": 0,
+            "Al": 0,
+            "Si": 0,
+            "K": 0,
+            "Ca": 0,
+            "Ba": 0,
+            "Fe": 0,
+            "Glass Type": 0
+        },
+        "total_missing_values": 0,
+        "duplicate_rows": 1,
+        "descriptive_statistics": {
+            "RI": {
+                "count": 214.0,
+                "mean": 1.518365420561,
+                "std": 0.003036863739,
+                "min": 1.51115,
+                "25%": 1.5165225,
+                "50%": 1.51768,
+                "75%": 1.5191575,
+                "max": 1.53393
+            },
+            "Na": {
+                "count": 214.0,
+                "mean": 13.40785046729,
+                "std": 0.816603555715,
+                "min": 10.73,
+                "25%": 12.9075,
+                "50%": 13.3,
+                "75%": 13.825,
+                "max": 17.38
+            },
+            "Mg": {
+                "count": 214.0,
+                "mean": 2.68453271028,
+                "std": 1.44240784487,
+                "min": 0.0,
+                "25%": 2.115,
+                "50%": 3.48,
+                "75%": 3.6,
+                "max": 4.49
+            },
+            "Al": {
+                "count": 214.0,
+                "mean": 1.444906542056,
+                "std": 0.4992696456,
+                "min": 0.29,
+                "25%": 1.19,
+                "50%": 1.36,
+                "75%": 1.63,
+                "max": 3.5
+            },
+            "Si": {
+                "count": 214.0,
+                "mean": 72.650934579439,
+                "std": 0.774545794765,
+                "min": 69.81,
+                "25%": 72.28,
+                "50%": 72.79,
+                "75%": 73.0875,
+                "max": 75.41
+            },
+            "K": {
+                "count": 214.0,
+                "mean": 0.497056074766,
+                "std": 0.652191845559,
+                "min": 0.0,
+                "25%": 0.1225,
+                "50%": 0.555,
+                "75%": 0.61,
+                "max": 6.21
+            },
+            "Ca": {
+                "count": 214.0,
+                "mean": 8.956962616822,
+                "std": 1.423153487281,
+                "min": 5.43,
+                "25%": 8.24,
+                "50%": 8.6,
+                "75%": 9.1725,
+                "max": 16.19
+            },
+            "Ba": {
+                "count": 214.0,
+                "mean": 0.175046728972,
+                "std": 0.4972192606,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.0,
+                "max": 3.15
+            },
+            "Fe": {
+                "count": 214.0,
+                "mean": 0.057009345794,
+                "std": 0.097438700637,
+                "min": 0.0,
+                "25%": 0.0,
+                "50%": 0.0,
+                "75%": 0.1,
+                "max": 0.51
+            }
+        },
+        "class_distribution": {
+            "Type 1": 70,
+            "Type 2": 76,
+            "Type 3": 17,
+            "Type 5": 13,
+            "Type 6": 9,
+            "Type 7": 29
+        }
+    },
+    "feature_selection": {
+        "selected_features": [
+            "RI",
+            "Na",
+            "Mg",
+            "Al",
+            "Si",
+            "K",
+            "Ca",
+            "Ba",
+            "Fe"
+        ],
+        "target_column": "Glass Type",
+        "feature_description": "Nine numeric attributes: refractive index and eight chemical composition measurements.",
+        "class_labels": [
+            "Type 1",
+            "Type 2",
+            "Type 3",
+            "Type 5",
+            "Type 6",
+            "Type 7"
+        ],
+        "class_descriptions": {
+            "Type 1": "Building windows (float)",
+            "Type 2": "Building windows (non-float)",
+            "Type 3": "Vehicle windows (float)",
+            "Type 5": "Containers",
+            "Type 6": "Tableware",
+            "Type 7": "Headlamps"
+        },
+        "class_encoding": {
+            "Type 1": 0,
+            "Type 2": 1,
+            "Type 3": 2,
+            "Type 5": 3,
+            "Type 6": 4,
+            "Type 7": 5
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "RI",
+            "Na",
+            "Mg",
+            "Al",
+            "Si",
+            "K",
+            "Ca",
+            "Ba",
+            "Fe"
+        ],
+        "categorical_features": [],
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Original glass types 1, 2, 3, 5, 6, 7 mapped to contiguous codes 0–5"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 171,
+        "test_rows": 43,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over six glass classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.744186,
+                "Accuracy Percentage": 74.418605,
+                "F1": 0.748173,
+                "F1 Percentage": 74.817276,
+                "F1 Macro": 0.759524,
+                "CV Macro F1": 0.698624
+            },
+            {
+                "Model": "KNN",
+                "Accuracy": 0.72093,
+                "Accuracy Percentage": 72.093023,
+                "F1": 0.694491,
+                "F1 Percentage": 69.449102,
+                "F1 Macro": 0.60876,
+                "CV Macro F1": 0.527792
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.72093,
+                "Accuracy Percentage": 72.093023,
+                "F1": 0.69346,
+                "F1 Percentage": 69.345984,
+                "F1 Macro": 0.637068,
+                "CV Macro F1": 0.525069
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.581395,
+                "Accuracy Percentage": 58.139535,
+                "F1": 0.592765,
+                "F1 Percentage": 59.276486,
+                "F1 Macro": 0.605115,
+                "CV Macro F1": 0.666944
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.581395,
+                "Accuracy Percentage": 58.139535,
+                "F1": 0.575252,
+                "F1 Percentage": 57.525173,
+                "F1 Macro": 0.619731,
+                "CV Macro F1": 0.631778
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.511628,
+                "Accuracy Percentage": 51.162791,
+                "F1": 0.450592,
+                "F1 Percentage": 45.05916,
+                "F1 Macro": 0.455263,
+                "CV Macro F1": 0.406877
+            }
+        ],
+        "recommended_model": "Random Forest",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "Type 1": {
+                "precision": 0.909091,
+                "recall": 0.714286,
+                "f1": 0.8,
+                "support": 14
+            },
+            "Type 2": {
+                "precision": 0.75,
+                "recall": 0.6,
+                "f1": 0.666667,
+                "support": 15
+            },
+            "Type 3": {
+                "precision": 0.428571,
+                "recall": 1.0,
+                "f1": 0.6,
+                "support": 3
+            },
+            "Type 5": {
+                "precision": 0.75,
+                "recall": 1.0,
+                "f1": 0.857143,
+                "support": 3
+            },
+            "Type 6": {
+                "precision": 0.666667,
+                "recall": 1.0,
+                "f1": 0.8,
+                "support": 2
+            },
+            "Type 7": {
+                "precision": 0.833333,
+                "recall": 0.833333,
+                "f1": 0.833333,
+                "support": 6
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "Type 1",
+                "Type 2",
+                "Type 3",
+                "Type 5",
+                "Type 6",
+                "Type 7"
+            ],
+            "matrix": [
+                [
+                    10,
+                    2,
+                    2,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    1,
+                    9,
+                    2,
+                    1,
+                    1,
+                    1
+                ],
+                [
+                    0,
+                    0,
+                    3,
+                    0,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    3,
+                    0,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    5
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "RI": {
+            "RI": 1.0,
+            "Na": -0.191885379,
+            "Mg": -0.1222740393,
+            "Al": -0.4073260341,
+            "Si": -0.5420521997,
+            "K": -0.2898327111,
+            "Ca": 0.8104026963,
+            "Ba": -0.0003860189,
+            "Fe": 0.1430096093
+        },
+        "Na": {
+            "RI": -0.191885379,
+            "Na": 1.0,
+            "Mg": -0.2737319608,
+            "Al": 0.1567936672,
+            "Si": -0.0698088065,
+            "K": -0.2660865043,
+            "Ca": -0.2754424856,
+            "Ba": 0.3266028795,
+            "Fe": -0.2413464115
+        },
+        "Mg": {
+            "RI": -0.1222740393,
+            "Na": -0.2737319608,
+            "Mg": 1.0,
+            "Al": -0.481798509,
+            "Si": -0.1659267225,
+            "K": 0.0053956673,
+            "Ca": -0.4437500264,
+            "Ba": -0.4922621178,
+            "Fe": 0.0830595289
+        },
+        "Al": {
+            "RI": -0.4073260341,
+            "Na": 0.1567936672,
+            "Mg": -0.481798509,
+            "Al": 1.0,
+            "Si": -0.0055237204,
+            "K": 0.3259584457,
+            "Ca": -0.2595920102,
+            "Ba": 0.4794039017,
+            "Fe": -0.0744021509
+        },
+        "Si": {
+            "RI": -0.5420521997,
+            "Na": -0.0698088065,
+            "Mg": -0.1659267225,
+            "Al": -0.0055237204,
+            "Si": 1.0,
+            "K": -0.1933308544,
+            "Ca": -0.2087321537,
+            "Ba": -0.1021513105,
+            "Fe": -0.0942007305
+        },
+        "K": {
+            "RI": -0.2898327111,
+            "Na": -0.2660865043,
+            "Mg": 0.0053956673,
+            "Al": 0.3259584457,
+            "Si": -0.1933308544,
+            "K": 1.0,
+            "Ca": -0.3178361547,
+            "Ba": -0.0426180594,
+            "Fe": -0.0077190491
+        },
+        "Ca": {
+            "RI": 0.8104026963,
+            "Na": -0.2754424856,
+            "Mg": -0.4437500264,
+            "Al": -0.2595920102,
+            "Si": -0.2087321537,
+            "K": -0.3178361547,
+            "Ca": 1.0,
+            "Ba": -0.1128409671,
+            "Fe": 0.124968219
+        },
+        "Ba": {
+            "RI": -0.0003860189,
+            "Na": 0.3266028795,
+            "Mg": -0.4922621178,
+            "Al": 0.4794039017,
+            "Si": -0.1021513105,
+            "K": -0.0426180594,
+            "Ca": -0.1128409671,
+            "Ba": 1.0,
+            "Fe": -0.0586917554
+        },
+        "Fe": {
+            "RI": 0.1430096093,
+            "Na": -0.2413464115,
+            "Mg": 0.0830595289,
+            "Al": -0.0744021509,
+            "Si": -0.0942007305,
+            "K": -0.0077190491,
+            "Ca": 0.124968219,
+            "Ba": -0.0586917554,
+            "Fe": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Mg",
+                "Importance": 0.170306
+            },
+            {
+                "Feature": "K",
+                "Importance": 0.144274
+            },
+            {
+                "Feature": "Ca",
+                "Importance": 0.140861
+            },
+            {
+                "Feature": "Na",
+                "Importance": 0.122162
+            },
+            {
+                "Feature": "Al",
+                "Importance": 0.116647
+            },
+            {
+                "Feature": "RI",
+                "Importance": 0.115365
+            },
+            {
+                "Feature": "Si",
+                "Importance": 0.085681
+            },
+            {
+                "Feature": "Ba",
+                "Importance": 0.083211
+            },
+            {
+                "Feature": "Fe",
+                "Importance": 0.021494
+            }
+        ],
+        "most_influential_feature": "Mg"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Glass Identification (D18)",
+        "category": "Physical",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 214,
+        "columns": 10
+    },
+    "output_files": {
+        "original_dataset": "DataSets/glass.data",
+        "processed_dataset": "DataSets/Processed/glass_identification_classification_results.csv",
+        "metrics": "DataSets/Processed/glass_identification_metrics.csv",
+        "feature_importance": "DataSets/Processed/glass_identification_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/glass_identification_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/glass_identification_feature_columns.joblib",
+        "metadata": "Metadata/D18_glass_identification.json"
+    },
+    "run_timestamp": "2026-11-27 04:28:47"
+}

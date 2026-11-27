@@ -662,6 +662,8 @@ class PredictorModule(DatasetsModule):
             if pages > 1:
                 y = PY + 420
                 for label, x, delta in (("Previous", x0, -1), ("Next", x0+inner-60, 1)):
+                    if (delta == -1 and self._cluster_page == 0) or (delta == 1 and self._cluster_page == pages - 1):
+                        continue
                     tag = "cluster_page_" + str(delta)
                     self.text(x, y, label, 15, c("accent"), True, tags=(tag,))
                     self.hover(tag)
@@ -857,4 +859,5 @@ class PredictorModule(DatasetsModule):
         self.create_line(S(left), S(fy - 24), S(right), S(fy - 24), fill="#795184", width=max(1,S(1)), tags=T)
         self.text(left, fy, "Learning Type", 19, "white", True, tags=T)
         self.text(right, fy, "Unsupervised Learning", 18, "#e1c9ed", True, anchor="e", tags=T)
+
 

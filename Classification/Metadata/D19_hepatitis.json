@@ -1,0 +1,1010 @@
+{
+    "id": "D19",
+    "name": "Hepatitis",
+    "title": "Hepatitis (D19)",
+    "level": "Intermediate",
+    "domain": "Healthcare",
+    "task": "Classification",
+    "description": "Predict the recorded survival class from hepatitis patient attributes. Educational use only.",
+    "source": "UCI Machine Learning Repository",
+    "dataset_statistics": {
+        "rows": 155,
+        "columns": 20,
+        "column_names": [
+            "Age",
+            "Sex",
+            "Steroid",
+            "Antivirals",
+            "Fatigue",
+            "Malaise",
+            "Anorexia",
+            "Liver Big",
+            "Liver Firm",
+            "Spleen Palpable",
+            "Spiders",
+            "Ascites",
+            "Varices",
+            "Bilirubin",
+            "Alk Phosphate",
+            "SGOT",
+            "Albumin",
+            "Protime",
+            "Histology",
+            "Survival"
+        ],
+        "data_types": {
+            "Age": "int64",
+            "Sex": "int64",
+            "Steroid": "float64",
+            "Antivirals": "int64",
+            "Fatigue": "float64",
+            "Malaise": "float64",
+            "Anorexia": "float64",
+            "Liver Big": "float64",
+            "Liver Firm": "float64",
+            "Spleen Palpable": "float64",
+            "Spiders": "float64",
+            "Ascites": "float64",
+            "Varices": "float64",
+            "Bilirubin": "float64",
+            "Alk Phosphate": "float64",
+            "SGOT": "float64",
+            "Albumin": "float64",
+            "Protime": "float64",
+            "Histology": "int64",
+            "Survival": "str"
+        },
+        "missing_values": {
+            "Age": 0,
+            "Sex": 0,
+            "Steroid": 1,
+            "Antivirals": 0,
+            "Fatigue": 1,
+            "Malaise": 1,
+            "Anorexia": 1,
+            "Liver Big": 10,
+            "Liver Firm": 11,
+            "Spleen Palpable": 5,
+            "Spiders": 5,
+            "Ascites": 5,
+            "Varices": 5,
+            "Bilirubin": 6,
+            "Alk Phosphate": 29,
+            "SGOT": 4,
+            "Albumin": 16,
+            "Protime": 67,
+            "Histology": 0,
+            "Survival": 0
+        },
+        "total_missing_values": 167,
+        "duplicate_rows": 0,
+        "descriptive_statistics": {
+            "Age": {
+                "count": 155.0,
+                "mean": 41.2,
+                "std": 12.565878349773,
+                "min": 7.0,
+                "25%": 32.0,
+                "50%": 39.0,
+                "75%": 50.0,
+                "max": 78.0
+            },
+            "Sex": {
+                "count": 155.0,
+                "mean": 1.103225806452,
+                "std": 0.305239815202,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 1.0,
+                "max": 2.0
+            },
+            "Steroid": {
+                "count": 154.0,
+                "mean": 1.506493506494,
+                "std": 0.501589020722,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Antivirals": {
+                "count": 155.0,
+                "mean": 1.845161290323,
+                "std": 0.36292347381,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Fatigue": {
+                "count": 154.0,
+                "mean": 1.350649350649,
+                "std": 0.478730176742,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Malaise": {
+                "count": 154.0,
+                "mean": 1.603896103896,
+                "std": 0.490682213746,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Anorexia": {
+                "count": 154.0,
+                "mean": 1.792207792208,
+                "std": 0.407051002494,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Liver Big": {
+                "count": 145.0,
+                "mean": 1.827586206897,
+                "std": 0.379049021789,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Liver Firm": {
+                "count": 144.0,
+                "mean": 1.583333333333,
+                "std": 0.494727444918,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Spleen Palpable": {
+                "count": 150.0,
+                "mean": 1.8,
+                "std": 0.401340037254,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Spiders": {
+                "count": 150.0,
+                "mean": 1.66,
+                "std": 0.475295739796,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Ascites": {
+                "count": 150.0,
+                "mean": 1.866666666667,
+                "std": 0.341073446924,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Varices": {
+                "count": 150.0,
+                "mean": 1.88,
+                "std": 0.326050187597,
+                "min": 1.0,
+                "25%": 2.0,
+                "50%": 2.0,
+                "75%": 2.0,
+                "max": 2.0
+            },
+            "Bilirubin": {
+                "count": 149.0,
+                "mean": 1.427516778523,
+                "std": 1.212149033095,
+                "min": 0.3,
+                "25%": 0.7,
+                "50%": 1.0,
+                "75%": 1.5,
+                "max": 8.0
+            },
+            "Alk Phosphate": {
+                "count": 126.0,
+                "mean": 105.325396825397,
+                "std": 51.508108777563,
+                "min": 26.0,
+                "25%": 74.25,
+                "50%": 85.0,
+                "75%": 132.25,
+                "max": 295.0
+            },
+            "SGOT": {
+                "count": 151.0,
+                "mean": 85.894039735099,
+                "std": 89.650889738502,
+                "min": 14.0,
+                "25%": 31.5,
+                "50%": 58.0,
+                "75%": 100.5,
+                "max": 648.0
+            },
+            "Albumin": {
+                "count": 139.0,
+                "mean": 3.81726618705,
+                "std": 0.651523082616,
+                "min": 2.1,
+                "25%": 3.4,
+                "50%": 4.0,
+                "75%": 4.2,
+                "max": 6.4
+            },
+            "Protime": {
+                "count": 88.0,
+                "mean": 61.852272727273,
+                "std": 22.875243744811,
+                "min": 0.0,
+                "25%": 46.0,
+                "50%": 61.0,
+                "75%": 76.25,
+                "max": 100.0
+            },
+            "Histology": {
+                "count": 155.0,
+                "mean": 1.451612903226,
+                "std": 0.499266323889,
+                "min": 1.0,
+                "25%": 1.0,
+                "50%": 1.0,
+                "75%": 2.0,
+                "max": 2.0
+            }
+        },
+        "class_distribution": {
+            "DIE": 32,
+            "LIVE": 123
+        }
+    },
+    "feature_categories": {
+        "Sex": [
+            1,
+            2
+        ],
+        "Steroid": [
+            1,
+            2
+        ],
+        "Antivirals": [
+            1,
+            2
+        ],
+        "Fatigue": [
+            1,
+            2
+        ],
+        "Malaise": [
+            1,
+            2
+        ],
+        "Anorexia": [
+            1,
+            2
+        ],
+        "Liver Big": [
+            1,
+            2
+        ],
+        "Liver Firm": [
+            1,
+            2
+        ],
+        "Spleen Palpable": [
+            1,
+            2
+        ],
+        "Spiders": [
+            1,
+            2
+        ],
+        "Ascites": [
+            1,
+            2
+        ],
+        "Varices": [
+            1,
+            2
+        ],
+        "Histology": [
+            1,
+            2
+        ]
+    },
+    "feature_selection": {
+        "selected_features": [
+            "Age",
+            "Sex",
+            "Steroid",
+            "Antivirals",
+            "Fatigue",
+            "Malaise",
+            "Anorexia",
+            "Liver Big",
+            "Liver Firm",
+            "Spleen Palpable",
+            "Spiders",
+            "Ascites",
+            "Varices",
+            "Bilirubin",
+            "Alk Phosphate",
+            "SGOT",
+            "Albumin",
+            "Protime",
+            "Histology"
+        ],
+        "target_column": "Survival",
+        "feature_description": "19 clinical features: six numeric and thirteen binary coded attributes.",
+        "class_labels": [
+            "DIE",
+            "LIVE"
+        ],
+        "class_descriptions": {
+            "DIE": "Died",
+            "LIVE": "Survived"
+        },
+        "class_encoding": {
+            "DIE": 0,
+            "LIVE": 1
+        }
+    },
+    "preprocessing": {
+        "numeric_features": [
+            "Age",
+            "Bilirubin",
+            "Alk Phosphate",
+            "SGOT",
+            "Albumin",
+            "Protime"
+        ],
+        "categorical_features": [
+            "Sex",
+            "Steroid",
+            "Antivirals",
+            "Fatigue",
+            "Malaise",
+            "Anorexia",
+            "Liver Big",
+            "Liver Firm",
+            "Spleen Palpable",
+            "Spiders",
+            "Ascites",
+            "Varices",
+            "Histology"
+        ],
+        "categorical_method": "Most frequent imputation; retain numeric codes",
+        "numeric_method": "Median Imputation + StandardScaler",
+        "target_method": "Original 1=DIE, 2=LIVE mapped to 0 and 1"
+    },
+    "model_evaluation": {
+        "test_size": 0.2,
+        "random_state": 42,
+        "split_method": "Stratified train/test split",
+        "train_rows": 124,
+        "test_rows": 31,
+        "metrics": [
+            "Accuracy",
+            "F1",
+            "F1 Macro",
+            "CV Macro F1"
+        ],
+        "metric_definition": "Accuracy = correct predictions / all predictions; F1 = weighted-average F1-score over two survival classes. F1 Macro is also stored as an extra reference.",
+        "results": [
+            {
+                "Model": "KNN",
+                "Accuracy": 0.935484,
+                "Accuracy Percentage": 93.548387,
+                "F1": 0.930273,
+                "F1 Percentage": 93.027295,
+                "F1 Macro": 0.880769,
+                "CV Macro F1": 0.756175
+            },
+            {
+                "Model": "Random Forest",
+                "Accuracy": 0.903226,
+                "Accuracy Percentage": 90.322581,
+                "F1": 0.90596,
+                "F1 Percentage": 90.59604,
+                "F1 Macro": 0.854003,
+                "CV Macro F1": 0.77616
+            },
+            {
+                "Model": "SVM",
+                "Accuracy": 0.870968,
+                "Accuracy Percentage": 87.096774,
+                "F1": 0.860546,
+                "F1 Percentage": 86.054591,
+                "F1 Macro": 0.761538,
+                "CV Macro F1": 0.664701
+            },
+            {
+                "Model": "Decision Tree",
+                "Accuracy": 0.83871,
+                "Accuracy Percentage": 83.870968,
+                "F1": 0.843267,
+                "F1 Percentage": 84.326733,
+                "F1 Macro": 0.756672,
+                "CV Macro F1": 0.659054
+            },
+            {
+                "Model": "Logistic",
+                "Accuracy": 0.83871,
+                "Accuracy Percentage": 83.870968,
+                "F1": 0.843267,
+                "F1 Percentage": 84.326733,
+                "F1 Macro": 0.756672,
+                "CV Macro F1": 0.715756
+            },
+            {
+                "Model": "Naive Bayes",
+                "Accuracy": 0.612903,
+                "Accuracy Percentage": 61.290323,
+                "F1": 0.652493,
+                "F1 Percentage": 65.249267,
+                "F1 Macro": 0.577273,
+                "CV Macro F1": 0.553359
+            }
+        ],
+        "recommended_model": "KNN",
+        "selection_rule": "Highest test Accuracy, then weighted F1, then model name",
+        "best_model_per_class_report": {
+            "DIE": {
+                "precision": 1.0,
+                "recall": 0.666667,
+                "f1": 0.8,
+                "support": 6
+            },
+            "LIVE": {
+                "precision": 0.925926,
+                "recall": 1.0,
+                "f1": 0.961538,
+                "support": 25
+            }
+        },
+        "best_model_confusion_matrix": {
+            "labels": [
+                "DIE",
+                "LIVE"
+            ],
+            "matrix": [
+                [
+                    4,
+                    2
+                ],
+                [
+                    0,
+                    25
+                ]
+            ]
+        }
+    },
+    "correlation_matrix": {
+        "Age": {
+            "Age": 1.0,
+            "Sex": 0.0081261809,
+            "Steroid": -0.0857320812,
+            "Antivirals": -0.013099635,
+            "Fatigue": -0.2822227625,
+            "Malaise": -0.1152355982,
+            "Anorexia": 0.0903943003,
+            "Liver Big": -0.1054795006,
+            "Liver Firm": -0.1093819299,
+            "Spleen Palpable": -0.0748525595,
+            "Spiders": -0.1799974134,
+            "Ascites": -0.0662198037,
+            "Varices": -0.0488932078,
+            "Bilirubin": 0.1254626947,
+            "Alk Phosphate": 0.0089237856,
+            "SGOT": 0.0825446665,
+            "Albumin": -0.2629805096,
+            "Protime": -0.2222325215,
+            "Histology": 0.1707804285
+        },
+        "Sex": {
+            "Age": 0.0081261809,
+            "Sex": 1.0,
+            "Steroid": -0.0469889012,
+            "Antivirals": -0.0892489967,
+            "Fatigue": -0.0718216315,
+            "Malaise": -0.0288200178,
+            "Anorexia": 0.017030036,
+            "Liver Big": -0.0723364233,
+            "Liver Firm": -0.0597614305,
+            "Spleen Palpable": -0.0555555556,
+            "Spiders": -0.0422200331,
+            "Ascites": 0.1307440901,
+            "Varices": 0.0547073293,
+            "Bilirubin": -0.0563491309,
+            "Alk Phosphate": 0.0742433991,
+            "SGOT": -0.0176519547,
+            "Albumin": 0.0058280988,
+            "Protime": -0.011141311,
+            "Histology": -0.1374498056
+        },
+        "Steroid": {
+            "Age": -0.0857320812,
+            "Sex": -0.0469889012,
+            "Steroid": 1.0,
+            "Antivirals": 0.0601007724,
+            "Fatigue": 0.1643255998,
+            "Malaise": 0.2429419265,
+            "Anorexia": 0.0743802536,
+            "Liver Big": 0.214488359,
+            "Liver Firm": 0.0864632215,
+            "Spleen Palpable": 0.0770711405,
+            "Spiders": 0.0286754733,
+            "Ascites": -0.031453493,
+            "Varices": -0.0749254162,
+            "Bilirubin": -0.0502404814,
+            "Alk Phosphate": -0.0401637895,
+            "SGOT": -0.0424577944,
+            "Albumin": 0.2281481303,
+            "Protime": 0.1029781609,
+            "Histology": -0.0901091456
+        },
+        "Antivirals": {
+            "Age": -0.013099635,
+            "Sex": -0.0892489967,
+            "Steroid": 0.0601007724,
+            "Antivirals": 1.0,
+            "Fatigue": -0.0594450435,
+            "Malaise": -0.0185400505,
+            "Anorexia": -0.0435523292,
+            "Liver Big": 0.0423497723,
+            "Liver Firm": 0.0755928946,
+            "Spleen Palpable": -0.1727558298,
+            "Spiders": -0.1596948868,
+            "Ascites": -0.171184197,
+            "Varices": -0.1611645928,
+            "Bilirubin": 0.1850234886,
+            "Alk Phosphate": 0.2052355314,
+            "SGOT": 0.1081384497,
+            "Albumin": -0.1700744971,
+            "Protime": -0.030287399,
+            "Histology": 0.2092419832
+        },
+        "Fatigue": {
+            "Age": -0.2822227625,
+            "Sex": -0.0718216315,
+            "Steroid": 0.1643255998,
+            "Antivirals": -0.0594450435,
+            "Fatigue": 1.0,
+            "Malaise": 0.5951416204,
+            "Anorexia": 0.3763500289,
+            "Liver Big": 0.1128923938,
+            "Liver Firm": 0.2724346821,
+            "Spleen Palpable": 0.1952559306,
+            "Spiders": 0.3833326011,
+            "Ascites": 0.2899314913,
+            "Varices": 0.1871245325,
+            "Bilirubin": -0.2789184549,
+            "Alk Phosphate": -0.1657441906,
+            "SGOT": -0.2020890423,
+            "Albumin": 0.328319458,
+            "Protime": 0.2798437372,
+            "Histology": -0.1515557185
+        },
+        "Malaise": {
+            "Age": -0.1152355982,
+            "Sex": -0.0288200178,
+            "Steroid": 0.2429419265,
+            "Antivirals": -0.0185400505,
+            "Fatigue": 0.5951416204,
+            "Malaise": 1.0,
+            "Anorexia": 0.5996470661,
+            "Liver Big": 0.0570899226,
+            "Liver Firm": 0.1183820101,
+            "Spleen Palpable": 0.013689642,
+            "Spiders": 0.3259791049,
+            "Ascites": 0.3329101993,
+            "Varices": 0.1701929224,
+            "Bilirubin": -0.2996020461,
+            "Alk Phosphate": -0.2158797723,
+            "SGOT": -0.2051281546,
+            "Albumin": 0.3076845595,
+            "Protime": 0.2636905634,
+            "Histology": -0.1405921183
+        },
+        "Anorexia": {
+            "Age": 0.0903943003,
+            "Sex": 0.017030036,
+            "Steroid": 0.0743802536,
+            "Antivirals": -0.0435523292,
+            "Fatigue": 0.3763500289,
+            "Malaise": 0.5996470661,
+            "Anorexia": 1.0,
+            "Liver Big": 0.0912870929,
+            "Liver Firm": 0.0673202771,
+            "Spleen Palpable": 0.0416666667,
+            "Spiders": 0.309613576,
+            "Ascites": 0.1961161351,
+            "Varices": 0.1743796122,
+            "Bilirubin": -0.3031090598,
+            "Alk Phosphate": -0.1816799153,
+            "SGOT": -0.2384081607,
+            "Albumin": 0.1636613124,
+            "Protime": 0.0630014923,
+            "Histology": -0.0788947732
+        },
+        "Liver Big": {
+            "Age": -0.1054795006,
+            "Sex": -0.0723364233,
+            "Steroid": 0.214488359,
+            "Antivirals": 0.0423497723,
+            "Fatigue": 0.1128923938,
+            "Malaise": 0.0570899226,
+            "Anorexia": 0.0912870929,
+            "Liver Big": 1.0,
+            "Liver Firm": 0.4679499876,
+            "Spleen Palpable": 0.0990830168,
+            "Spiders": 0.220389266,
+            "Ascites": -0.1108757355,
+            "Varices": -0.0623663036,
+            "Bilirubin": -0.0023921363,
+            "Alk Phosphate": -0.1305653013,
+            "SGOT": 0.0430228576,
+            "Albumin": -0.0575776739,
+            "Protime": -0.0899966494,
+            "Histology": -0.0722689486
+        },
+        "Liver Firm": {
+            "Age": -0.1093819299,
+            "Sex": -0.0597614305,
+            "Steroid": 0.0864632215,
+            "Antivirals": 0.0755928946,
+            "Fatigue": 0.2724346821,
+            "Malaise": 0.1183820101,
+            "Anorexia": 0.0673202771,
+            "Liver Big": 0.4679499876,
+            "Liver Firm": 1.0,
+            "Spleen Palpable": 0.187541476,
+            "Spiders": 0.3559006287,
+            "Ascites": 0.0379662131,
+            "Varices": 0.1899989431,
+            "Bilirubin": -0.0607034822,
+            "Alk Phosphate": -0.356068488,
+            "SGOT": -0.1383050425,
+            "Albumin": 0.1990218647,
+            "Protime": 0.0567725416,
+            "Histology": -0.1916629695
+        },
+        "Spleen Palpable": {
+            "Age": -0.0748525595,
+            "Sex": -0.0555555556,
+            "Steroid": 0.0770711405,
+            "Antivirals": -0.1727558298,
+            "Fatigue": 0.1952559306,
+            "Malaise": 0.013689642,
+            "Anorexia": 0.0416666667,
+            "Liver Big": 0.0990830168,
+            "Liver Firm": 0.187541476,
+            "Spleen Palpable": 1.0,
+            "Spiders": 0.2744302151,
+            "Ascites": 0.0980580676,
+            "Varices": 0.2256677335,
+            "Bilirubin": -0.2209176191,
+            "Alk Phosphate": -0.2875923899,
+            "SGOT": -0.0020399229,
+            "Albumin": 0.2444320018,
+            "Protime": 0.1586829468,
+            "Histology": -0.2073311914
+        },
+        "Spiders": {
+            "Age": -0.1799974134,
+            "Sex": -0.0422200331,
+            "Steroid": 0.0286754733,
+            "Antivirals": -0.1596948868,
+            "Fatigue": 0.3833326011,
+            "Malaise": 0.3259791049,
+            "Anorexia": 0.309613576,
+            "Liver Big": 0.220389266,
+            "Liver Firm": 0.3559006287,
+            "Spleen Palpable": 0.2744302151,
+            "Spiders": 1.0,
+            "Ascites": 0.2980810698,
+            "Varices": 0.3845725849,
+            "Bilirubin": -0.2927885956,
+            "Alk Phosphate": -0.3015738126,
+            "SGOT": -0.1212960353,
+            "Albumin": 0.319634588,
+            "Protime": 0.3041431057,
+            "Histology": -0.3540943975
+        },
+        "Ascites": {
+            "Age": -0.0662198037,
+            "Sex": 0.1307440901,
+            "Steroid": -0.031453493,
+            "Antivirals": -0.171184197,
+            "Fatigue": 0.2899314913,
+            "Malaise": 0.3329101993,
+            "Anorexia": 0.1961161351,
+            "Liver Big": -0.1108757355,
+            "Liver Firm": 0.0379662131,
+            "Spleen Palpable": 0.0980580676,
+            "Spiders": 0.2980810698,
+            "Ascites": 1.0,
+            "Varices": 0.3379631847,
+            "Bilirubin": -0.3040341457,
+            "Alk Phosphate": -0.1456667286,
+            "SGOT": 0.0208625217,
+            "Albumin": 0.5493345719,
+            "Protime": 0.3451923564,
+            "Histology": -0.3462742541
+        },
+        "Varices": {
+            "Age": -0.0488932078,
+            "Sex": 0.0547073293,
+            "Steroid": -0.0749254162,
+            "Antivirals": -0.1611645928,
+            "Fatigue": 0.1871245325,
+            "Malaise": 0.1701929224,
+            "Anorexia": 0.1743796122,
+            "Liver Big": -0.0623663036,
+            "Liver Firm": 0.1899989431,
+            "Spleen Palpable": 0.2256677335,
+            "Spiders": 0.3845725849,
+            "Ascites": 0.3379631847,
+            "Varices": 1.0,
+            "Bilirubin": -0.4057185173,
+            "Alk Phosphate": -0.3075875381,
+            "SGOT": -0.0306977519,
+            "Albumin": 0.3566602559,
+            "Protime": 0.2942503066,
+            "Histology": -0.3589363738
+        },
+        "Bilirubin": {
+            "Age": 0.1254626947,
+            "Sex": -0.0563491309,
+            "Steroid": -0.0502404814,
+            "Antivirals": 0.1850234886,
+            "Fatigue": -0.2789184549,
+            "Malaise": -0.2996020461,
+            "Anorexia": -0.3031090598,
+            "Liver Big": -0.0023921363,
+            "Liver Firm": -0.0607034822,
+            "Spleen Palpable": -0.2209176191,
+            "Spiders": -0.2927885956,
+            "Ascites": -0.3040341457,
+            "Varices": -0.4057185173,
+            "Bilirubin": 1.0,
+            "Alk Phosphate": 0.2200618615,
+            "SGOT": 0.2329674438,
+            "Albumin": -0.3773175704,
+            "Protime": -0.3026083059,
+            "Histology": 0.2624279933
+        },
+        "Alk Phosphate": {
+            "Age": 0.0089237856,
+            "Sex": 0.0742433991,
+            "Steroid": -0.0401637895,
+            "Antivirals": 0.2052355314,
+            "Fatigue": -0.1657441906,
+            "Malaise": -0.2158797723,
+            "Anorexia": -0.1816799153,
+            "Liver Big": -0.1305653013,
+            "Liver Firm": -0.356068488,
+            "Spleen Palpable": -0.2875923899,
+            "Spiders": -0.3015738126,
+            "Ascites": -0.1456667286,
+            "Varices": -0.3075875381,
+            "Bilirubin": 0.2200618615,
+            "Alk Phosphate": 1.0,
+            "SGOT": 0.2395813949,
+            "Albumin": -0.4038569922,
+            "Protime": -0.2268464259,
+            "Histology": 0.2849142509
+        },
+        "SGOT": {
+            "Age": 0.0825446665,
+            "Sex": -0.0176519547,
+            "Steroid": -0.0424577944,
+            "Antivirals": 0.1081384497,
+            "Fatigue": -0.2020890423,
+            "Malaise": -0.2051281546,
+            "Anorexia": -0.2384081607,
+            "Liver Big": 0.0430228576,
+            "Liver Firm": -0.1383050425,
+            "Spleen Palpable": -0.0020399229,
+            "Spiders": -0.1212960353,
+            "Ascites": 0.0208625217,
+            "Varices": -0.0306977519,
+            "Bilirubin": 0.2329674438,
+            "Alk Phosphate": 0.2395813949,
+            "SGOT": 1.0,
+            "Albumin": -0.1362757629,
+            "Protime": -0.1891492218,
+            "Histology": 0.1311251767
+        },
+        "Albumin": {
+            "Age": -0.2629805096,
+            "Sex": 0.0058280988,
+            "Steroid": 0.2281481303,
+            "Antivirals": -0.1700744971,
+            "Fatigue": 0.328319458,
+            "Malaise": 0.3076845595,
+            "Anorexia": 0.1636613124,
+            "Liver Big": -0.0575776739,
+            "Liver Firm": 0.1990218647,
+            "Spleen Palpable": 0.2444320018,
+            "Spiders": 0.319634588,
+            "Ascites": 0.5493345719,
+            "Varices": 0.3566602559,
+            "Bilirubin": -0.3773175704,
+            "Alk Phosphate": -0.4038569922,
+            "SGOT": -0.1362757629,
+            "Albumin": 1.0,
+            "Protime": 0.4244192016,
+            "Histology": -0.3247505387
+        },
+        "Protime": {
+            "Age": -0.2222325215,
+            "Sex": -0.011141311,
+            "Steroid": 0.1029781609,
+            "Antivirals": -0.030287399,
+            "Fatigue": 0.2798437372,
+            "Malaise": 0.2636905634,
+            "Anorexia": 0.0630014923,
+            "Liver Big": -0.0899966494,
+            "Liver Firm": 0.0567725416,
+            "Spleen Palpable": 0.1586829468,
+            "Spiders": 0.3041431057,
+            "Ascites": 0.3451923564,
+            "Varices": 0.2942503066,
+            "Bilirubin": -0.3026083059,
+            "Alk Phosphate": -0.2268464259,
+            "SGOT": -0.1891492218,
+            "Albumin": 0.4244192016,
+            "Protime": 1.0,
+            "Histology": -0.3120616116
+        },
+        "Histology": {
+            "Age": 0.1707804285,
+            "Sex": -0.1374498056,
+            "Steroid": -0.0901091456,
+            "Antivirals": 0.2092419832,
+            "Fatigue": -0.1515557185,
+            "Malaise": -0.1405921183,
+            "Anorexia": -0.0788947732,
+            "Liver Big": -0.0722689486,
+            "Liver Firm": -0.1916629695,
+            "Spleen Palpable": -0.2073311914,
+            "Spiders": -0.3540943975,
+            "Ascites": -0.3462742541,
+            "Varices": -0.3589363738,
+            "Bilirubin": 0.2624279933,
+            "Alk Phosphate": 0.2849142509,
+            "SGOT": 0.1311251767,
+            "Albumin": -0.3247505387,
+            "Protime": -0.3120616116,
+            "Histology": 1.0
+        }
+    },
+    "feature_importance": {
+        "method": "Random Forest Feature Importance",
+        "model": "Random Forest",
+        "results": [
+            {
+                "Feature": "Albumin",
+                "Importance": 0.13698
+            },
+            {
+                "Feature": "Bilirubin",
+                "Importance": 0.121414
+            },
+            {
+                "Feature": "Protime",
+                "Importance": 0.105386
+            },
+            {
+                "Feature": "Age",
+                "Importance": 0.09352
+            },
+            {
+                "Feature": "Ascites",
+                "Importance": 0.084634
+            },
+            {
+                "Feature": "Alk Phosphate",
+                "Importance": 0.075839
+            },
+            {
+                "Feature": "Spiders",
+                "Importance": 0.075564
+            },
+            {
+                "Feature": "SGOT",
+                "Importance": 0.06859
+            },
+            {
+                "Feature": "Histology",
+                "Importance": 0.038658
+            },
+            {
+                "Feature": "Malaise",
+                "Importance": 0.03864
+            },
+            {
+                "Feature": "Fatigue",
+                "Importance": 0.032175
+            },
+            {
+                "Feature": "Liver Firm",
+                "Importance": 0.022029
+            },
+            {
+                "Feature": "Liver Big",
+                "Importance": 0.021194
+            },
+            {
+                "Feature": "Sex",
+                "Importance": 0.020246
+            },
+            {
+                "Feature": "Steroid",
+                "Importance": 0.019331
+            },
+            {
+                "Feature": "Anorexia",
+                "Importance": 0.014777
+            },
+            {
+                "Feature": "Varices",
+                "Importance": 0.01415
+            },
+            {
+                "Feature": "Spleen Palpable",
+                "Importance": 0.01015
+            },
+            {
+                "Feature": "Antivirals",
+                "Importance": 0.006722
+            }
+        ],
+        "most_influential_feature": "Albumin"
+    },
+    "charts": [
+        "Class Distribution",
+        "Feature Distribution by Class",
+        "PCA Projection",
+        "Correlation Heatmap",
+        "Feature Importance",
+        "Model Comparison (Accuracy and F1)"
+    ],
+    "model_verification": true,
+    "ui_card": {
+        "title": "Hepatitis (D19)",
+        "category": "Healthcare",
+        "task": "Classification",
+        "level": "Intermediate",
+        "rows": 155,
+        "columns": 20
+    },
+    "output_files": {
+        "original_dataset": "DataSets/hepatitis.data",
+        "processed_dataset": "DataSets/Processed/hepatitis_classification_results.csv",
+        "metrics": "DataSets/Processed/hepatitis_metrics.csv",
+        "feature_importance": "DataSets/Processed/hepatitis_feature_importance.csv",
+        "models_bundle": "ModelsOutcome/hepatitis_classification_models.joblib",
+        "feature_columns": "ModelsOutcome/hepatitis_feature_columns.joblib",
+        "metadata": "Metadata/D19_hepatitis.json"
+    },
+    "run_timestamp": "2026-11-27 04:35:51"
+}

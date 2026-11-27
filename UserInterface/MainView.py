@@ -1,3 +1,4 @@
+import importlib
 import tkinter as tk
 from tkinter import messagebox
 
@@ -79,9 +80,22 @@ class MainView(tk.Frame):
         'visualization'
     )
 
+    # الگوریتم‌هایی که صفحهٔ Predictor دارند  (CHANGE 1: classification اضافه شد)
     PREDICTOR_PAGES = {
         'clustering': 'predictor',
-        'regression': 'regression_predictor'
+        'regression': 'regression_predictor',
+        'classification': 'classification_predictor'
+    }
+
+    # الگوریتم‌هایی که صفحه‌های Evaluate و Visualization دارند (Classification هنوز ندارد)
+    EVAL_TASKS = ('clustering', 'regression')              # CHANGE 2
+
+    # صفحه‌هایی که با اولین نیاز ساخته می‌شوند: نام صفحه → (ماژول، کلاس)   CHANGE 3
+    LAZY_PREDICTORS = {
+        'regression_predictor': (
+            'UserInterface.RegressionPredictor', 'RegressionPredictor'),
+        'classification_predictor': (
+            'UserInterface.ClassificationPredictor', 'ClassificationPredictor'),
     }
 
     def __init__(self, master, scale):
@@ -185,23 +199,23 @@ class MainView(tk.Frame):
         ).strip().lower()
 
     # ==============================================
-    # Regression Predictor
+    # Regression / Classification Predictor
     # ==============================================
 
     def _get_predictor(self, name):
 
-        if (
-            name == 'regression_predictor'
-            and name not in self.pages
-        ):
+        if name in self.LAZY_PREDICTORS and name not in self.pages:
 
-            from UserInterface.RegressionPredictor import (
-                RegressionPredictor
+            module_name, class_name = self.LAZY_PREDICTORS[name]
+
+            cls = getattr(
+                importlib.import_module(module_name),
+                class_name
             )
 
             self.register(
                 name,
-                RegressionPredictor(
+                cls(
                     self,
                     scale=self.scale,
                     on_navigate=self.navigate
@@ -282,7 +296,7 @@ class MainView(tk.Frame):
             if self.dataset is None:
                 return
 
-            if task not in self.PREDICTOR_PAGES:
+            if task not in self.EVAL_TASKS:                 # CHANGE 2
 
                 messagebox.showinfo(
                     'Machine Learning Studio',
